@@ -83,7 +83,7 @@ const createProduct = asyncHandler(async (req, res) => {
         category,
         images: productImages,
         isFeatured: isFeatured || false,
-        createdBy: req.user?._id, // Assuming req.user is set by verifyJWT middleware
+        createdBy: req.user?._id, // Assuming req.user is set by verifyJWT middleware is (Admin)
     });
 
     if (!product) {
