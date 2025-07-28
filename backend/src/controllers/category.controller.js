@@ -58,6 +58,7 @@ const createCategory = asyncHandler(async (req, res) => {
             public_id: cloudinaryResponse.public_id,
             url: cloudinaryResponse.secure_url
         };
+        
         deleteLocalFile(categoryImageLocalPath); // Clean up local temp file after successful upload
     }
 

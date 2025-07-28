@@ -25,6 +25,7 @@ import categoryRoutes from './routes/category.routes.js'
 app.use("/api/v1/users", userRouter) 
 app.use("/api/v1/product", productRoutes)
 app.use("/api/v1/categories", categoryRoutes)
+console.log("Hello World");
 
 
 app.use(errorHandler)

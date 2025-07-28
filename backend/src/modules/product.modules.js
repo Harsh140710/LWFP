@@ -7,17 +7,15 @@ const productSchema = new Schema(
             required: [true, 'Product title is required'],
             trim: true,
             unique: true, // Ensures no two products have the exact same title
-            maxLength: [100, 'Product title cannot exceed 100 characters'], // Increased from 20 for more flexibility
-            // Consider adding `index: true` for faster queries on title
-            // text: true, // Uncomment if you enable full-text search
-        }, 
+            maxLength: [20, 'Product title cannot exceed 20 characters'],
+        },
 
         description: {
             type: String,
             required: [true, 'Product description is required'],
             trim: true,
-            maxLength: [2000, 'Product description cannot exceed 2000 characters'], // Increased from 500
-            // text: true, // Uncomment if you enable full-text search
+            maxLength: [100, 'Product description cannot exceed 100 characters'],
+            text: true, // enable full-text search
         },
 
         brand: {
@@ -39,7 +37,7 @@ const productSchema = new Schema(
             validate: {
                 validator: function(v) {
                     // Discount price must be 0 (no discount) OR less than the original price.
-                    return v === 0 || v < this.price; 
+                    return v === 0 || v < this.price;
                 },
                 message: 'Discount price must be 0 or less than the original price.'
             },
@@ -53,45 +51,47 @@ const productSchema = new Schema(
         },
 
         category: {
-            // Using ObjectId reference is the best practice for categories
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category', // Ensure you create a 'Category' model now
+            ref: 'Category',
             required: [true, 'Category is required'],
         },
         
-        images: [ 
+        images: [
             {
-                public_id: { // Cloudinary public ID for deletion and management
+                public_id: {
                     type: String,
-                    required: [true, "Image public ID is required"], // Make sure your upload process gets this
+                    required: [true, "Image public ID is required"],
                 },
-                url: { // Cloudinary secure URL for displaying the image
+                url: {
                     type: String,
                     required: [true, "Image URL is required"],
                 },
             },
         ],
 
-        ratings: { 
+        ratings: {
             type: Number,
             default: 0,
             min: 0,
             max: 5,
         },
 
-        numReviews: { // Total count of reviews
+        numReviews: {
+            // Total count of reviews
             type: Number,
             default: 0,
         },
 
-        reviews: [ 
+        reviews: [
             {
-                user: { // Reference to the User who made the review
+                user: {
+                    // Reference to the User who made the review
                     type: mongoose.Schema.Types.ObjectId,
                     ref: 'User', // Assuming User is your user model
                     required: true,
                 },
-                name: { // Reviewer's name (denormalized for display convenience)
+                name: {
+                    // Reviewer's name (denormalized for display convenience)
                     type: String,
                     required: true,
                 },
@@ -104,7 +104,8 @@ const productSchema = new Schema(
                 comment: {
                     type: String,
                 },
-                createdAt: { // Timestamp for the review
+                createdAt: {
+                    // Timestamp for the review
                     type: Date,
                     default: Date.now,
                 },
@@ -116,19 +117,16 @@ const productSchema = new Schema(
             default: false,
         },
         
-        createdBy: { // User (admin/seller) who created this product
+        createdBy: {
+            // only admin created this product
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User', // ⭐ RECOMMENDED: Reference 'User' model, and use roles to differentiate admins.
-            required: true, // Yes, it's good practice to know who added a product
+            ref: 'User',
+            required: true,
         },
     },
     {
-        timestamps: true, // Adds createdAt and updatedAt fields automatically
+        timestamps: true,
     }
 );
-
-// Optional: Add text index for searchability (uncomment if you need full-text search)
-// productSchema.index({ title: 'text', description: 'text', brand: 'text' });
-// productSchema.index({ "reviews.comment": 'text' }); // Example: indexing review comments
 
 export const Product = mongoose.model('Product', productSchema);

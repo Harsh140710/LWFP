@@ -17,7 +17,6 @@ router.route("/").get(getAllCategories);
 // Get a single category by ID
 router.route("/:id").get(getCategoryById);
 
-
 // secured Routes
 
 // Create a new category
