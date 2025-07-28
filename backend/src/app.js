@@ -21,11 +21,12 @@ import { errorHandler } from './middlewares/error.middleware.js';
 import userRouter from './routes/user.routes.js'
 import productRoutes from './routes/product.routes.js'
 import categoryRoutes from './routes/category.routes.js'
+import orderRoutes from './routes/order.routes.js'
 
-app.use("/api/v1/users", userRouter) 
+app.use("/api/v1/users", userRouter)
 app.use("/api/v1/product", productRoutes)
 app.use("/api/v1/categories", categoryRoutes)
-console.log("Hello World");
+app.use("/api/v1/orders", orderRoutes)
 
 
 app.use(errorHandler)
