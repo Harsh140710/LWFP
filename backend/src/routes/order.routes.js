@@ -19,6 +19,6 @@ router.route('/:id/pay').put(verifyJWT, updateOrderToPaid);
 
 // only admin can access this routes
 router.route('/:id/deliver').put(verifyJWT, isAdmin, updateOrderToDelivered);
-router.route('/all-orders').get(verifyJWT, isAdmin, getAllOrders);
+router.route('/').get(verifyJWT, isAdmin, getAllOrders);
 
 export default router;

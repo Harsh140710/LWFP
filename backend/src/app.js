@@ -22,11 +22,15 @@ import userRouter from './routes/user.routes.js'
 import productRoutes from './routes/product.routes.js'
 import categoryRoutes from './routes/category.routes.js'
 import orderRoutes from './routes/order.routes.js'
+import reviewRoutes from './routes/review.routes.js'
+import cartRoutes from './routes/cart.routes.js'; 
 
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/product", productRoutes)
 app.use("/api/v1/categories", categoryRoutes)
 app.use("/api/v1/orders", orderRoutes)
+app.use("/api/v1/reviews", reviewRoutes)
+app.use("/api/v1/cart", cartRoutes)
 
 
 app.use(errorHandler)

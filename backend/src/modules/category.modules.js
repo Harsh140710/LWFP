@@ -9,9 +9,9 @@ const categorySchema = new Schema(
             trim: true,
             maxLength: [50, 'Category name cannot exceed 50 characters'],
             lowercase: true, // Store category names in lowercase for consistent querying
-            // text: true, // Optional: for full-text search on categories
         },
-        slug: { // A URL-friendly version of the name, useful for routing
+        slug: {
+            // A URL-friendly version of the name, useful for routing
             type: String,
             unique: true, // Slugs should also be unique
             lowercase: true,
@@ -24,25 +24,27 @@ const categorySchema = new Schema(
             default: '', // Default to empty string if no description
         },
         image: {
-            public_id: { // Cloudinary public ID
+            public_id: {
+                // Cloudinary public ID
                 type: String,
-                // required: true, // Make required if every category must have an image
             },
-            url: { // Cloudinary URL
+            url: {
+                // Cloudinary URL
                 type: String,
-                // required: true, // Make required if every category must have an image
             },
         },
+        
         // Optional: For nested categories (e.g., "Men's Watches" under "Luxury Watches")
         parentCategory: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Category',
             default: null, // Null if it's a top-level category
         },
-        createdBy: { // To track which admin created the category
+
+        createdBy: {
+            // To track which admin created the category
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User', // Assuming 'User' model for admins with a 'role' field
-            // required: true, // Make required if you want to track who created it
         }
     },
     {
