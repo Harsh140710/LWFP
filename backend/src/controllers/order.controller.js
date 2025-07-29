@@ -68,6 +68,7 @@ const getOrderById = asyncHandler(async (req, res) => {
 const updateOrderToPaid = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
+    
     if (order) {
         // Check if order is already paid to prevent double payment attempts causing issues
         if (order.isPaid) {

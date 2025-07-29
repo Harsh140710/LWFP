@@ -3,8 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Category } from "../modules/category.modules.js";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/Cloudinary.js";
-import fs from 'fs'; // For file system operations (deleting local temp files)
-import mongoose from "mongoose"; // For isValidObjectId
+import fs from 'fs';
+import mongoose from "mongoose";
 
 // Helper function to delete local files (for category image)
 const deleteLocalFile = (filePath) => {
