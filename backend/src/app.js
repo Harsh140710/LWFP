@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 const app = express();
 
@@ -15,6 +17,14 @@ app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))
 app.use(cookieParser())
+
+
+// Load the Swagger/OpenAPI spec file
+const swaggerDocument = YAML.load('src/docs/swagger.yaml'); // Adjust path if your swagger.yaml is in a different folder, e.g., './docs/swagger.yaml'
+
+// Serve Swagger UI at a specific endpoint
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 // Import your error handler and user router
 import { errorHandler } from './middlewares/error.middleware.js';

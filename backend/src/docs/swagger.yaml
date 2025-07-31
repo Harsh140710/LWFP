@@ -1,0 +1,1915 @@
+# src/docs/swagger.yaml
+openapi: 3.0.0
+info:
+  title: Your E-commerce API 1.0.0
+  description: API documentation for your Node.js E-commerce backend, including User, Product, Category, Order, Review, and Cart management.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development Server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your JWT Access Token in the format 'Bearer YOUR_TOKEN'
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        data:
+          type: object
+          nullable: true
+        message:
+          type: string
+        success:
+          type: boolean
+      example:
+        statusCode: 200
+        data: { someKey: "someValue" }
+        message: "Operation successful"
+        success: true
+
+    ApiError:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+        success:
+          type: boolean
+        stack:
+          type: string
+      example:
+        statusCode: 400
+        message: "All fields are required"
+        errors: []
+        success: false
+        stack: "Error: All fields are required\n    at..."
+
+    UserRegistrationBody:
+      type: object
+      required:
+        - username
+        - email
+        - password
+        - fullname
+        - phoneNumber
+      properties:
+        username:
+          type: string
+          description: Unique username for the user
+        email:
+          type: string
+          format: email
+          description: User's email address (must be unique)
+        password:
+          type: string
+          format: password
+          description: User's password
+        fullname:
+          type: string
+          description: User's full name
+        phoneNumber:
+          type: string
+          description: User's phone number
+        avatar:
+          type: string
+          format: binary
+          description: Avatar image file (for multipart/form-data)
+
+    UserLoginBody:
+      type: object
+      required:
+        - identifier
+        - password
+      properties:
+        identifier:
+          type: string
+          description: User's email or username
+        password:
+          type: string
+          format: password
+          description: User's password
+      example:
+        identifier: "harshsuthar6355@gmail.com"
+        password: "12345678"
+
+    UserResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        fullname:
+          type: string
+        phoneNumber:
+          type: string
+        avatar:
+          type: string
+          format: url
+        role:
+          type: string
+          enum: [user, admin]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # Category Schemas
+    CategorySchema:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+        image:
+          type: object
+          properties:
+            public_id:
+              type: string
+            url:
+              type: string
+        parentCategory:
+          type: string
+          format: uuid
+          nullable: true
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        _id: "60c72b2f9b1e8b001c8e4d3a"
+        name: "electronics"
+        slug: "electronics"
+        description: "Electronic gadgets and devices"
+        image:
+          public_id: "ecommerce/categories/abc123xyz"
+          url: "http://res.cloudinary.com/your-cloud/image.jpg"
+        parentCategory: null
+        createdBy: "60c72b2f9b1e8b001c8e4d3b"
+        createdAt: "2023-01-01T10:00:00.000Z"
+        updatedAt: "2023-01-01T10:00:00.000Z"
+
+    CategoryCreateBody:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the category
+        description:
+          type: string
+          description: Optional description of the category
+        parentCategory:
+          type: string
+          format: uuid
+          description: Optional ID of the parent category for nested categories
+        image:
+          type: string
+          format: binary
+          description: Category image file (for multipart/form-data)
+
+    CategoryUpdateBody:
+      type: object
+      properties:
+        name:
+          type: string
+          description: New name of the category
+        description:
+          type: string
+          description: New description of the category
+        parentCategory:
+          type: string
+          format: uuid
+          description: New parent category ID, or null to remove parent
+        image:
+          type: string
+          format: binary
+          description: New category image file (for multipart/form-data)
+        removeImage:
+          type: boolean
+          description: Set to true to remove existing image (ignored if new image is provided)
+
+
+    # Product Schemas
+    ImageSchema:
+      type: object
+      properties:
+        public_id:
+          type: string
+        url:
+          type: string
+
+    ReviewSchema:
+      type: object
+      properties:
+        user:
+          type: string
+          format: uuid
+        name:
+          type: string
+        rating:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    ProductSchema:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        brand:
+          type: string
+        price:
+          type: number
+          format: float
+        discountPrice:
+          type: number
+          format: float
+        stock:
+          type: integer
+          format: int32
+        category:
+          type: string
+          format: uuid
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageSchema'
+        ratings:
+          type: number
+          format: float
+        numReviews:
+          type: integer
+          format: int32
+        reviews:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReviewSchema'
+        isFeatured:
+          type: boolean
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        _id: "60c72b2f9b1e8b001c8e4d3c"
+        title: "Smartphone X"
+        description: "Latest model smartphone with advanced features."
+        brand: "TechCo"
+        price: 799.99
+        discountPrice: 699.99
+        stock: 50
+        category: "60c72b2f9b1e8b001c8e4d3a"
+        images:
+          - public_id: "ecommerce/products/image1"
+            url: "http://res.cloudinary.com/your-cloud/product1.jpg"
+        ratings: 4.5
+        numReviews: 10
+        reviews: []
+        isFeatured: true
+        createdBy: "60c72b2f9b1e8b001c8e4d3b"
+        createdAt: "2023-01-01T10:00:00.000Z"
+        updatedAt: "2023-01-01T10:00:00.000Z"
+
+    ProductCreateBody:
+      type: object
+      required:
+        - title
+        - description
+        - brand
+        - price
+        - stock
+        - category
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        brand:
+          type: string
+        price:
+          type: number
+          format: float
+        discountPrice:
+          type: number
+          format: float
+          default: 0
+        stock:
+          type: integer
+          format: int32
+        category:
+          type: string
+          format: uuid
+          description: ID of the category this product belongs to
+        isFeatured:
+          type: boolean
+          default: false
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Array of product image files (for multipart/form-data)
+
+    ProductUpdateBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        brand:
+          type: string
+        price:
+          type: number
+          format: float
+        discountPrice:
+          type: number
+          format: float
+        stock:
+          type: integer
+          format: int32
+        category:
+          type: string
+          format: uuid
+        isFeatured:
+          type: boolean
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Array of new product image files (for multipart/form-data)
+        removeImagePublicIds:
+          type: array
+          items:
+            type: string
+          description: Array of Cloudinary public_ids of images to remove
+
+
+    # Review Schemas
+    ReviewCreateBody:
+      type: object
+      required:
+        - productId
+        - rating
+      properties:
+        productId:
+          type: string
+          format: uuid
+          description: ID of the product being reviewed
+        rating:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 5
+          description: Rating given to the product (1 to 5)
+        comment:
+          type: string
+          description: Optional review comment (max 100 characters)
+
+    # Cart Schemas
+    CartItem:
+      type: object
+      properties:
+        product:
+          type: string
+          format: uuid
+          description: ID of the product in the cart
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+        price:
+          type: number
+          format: float
+      example:
+        product: "60c72b2f9b1e8b001c8e4d3c"
+        quantity: 2
+        price: 699.99
+
+    CartSchema:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+        user:
+          type: string
+          format: uuid
+          description: ID of the user owning the cart
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        _id: "60c72b2f9b1e8b001c8e4d3d"
+        user: "60c72b2f9b1e8b001c8e4d3b"
+        items:
+          - product: "60c72b2f9b1e8b001c8e4d3c"
+            quantity: 1
+            price: 799.99
+          - product: "60c72b2f9b1e8b001c8e4d3e"
+            quantity: 3
+            price: 25.00
+        createdAt: "2023-01-01T10:00:00.000Z"
+        updatedAt: "2023-01-01T10:00:00.000Z"
+
+    AddItemToCartBody:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: string
+          format: uuid
+          description: ID of the product to add
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Quantity of the product to add
+
+    UpdateCartItemQuantityBody:
+      type: object
+      required:
+        - quantity
+      properties:
+        quantity:
+          type: integer
+          format: int32
+          minimum: 0
+          description: New quantity for the product in the cart. Set to 0 to remove the item.
+
+    # Order Schemas
+    ProductRef:
+      type: object
+      properties:
+        name:
+          type: string
+        qty:
+          type: integer
+        image:
+          type: string
+        price:
+          type: number
+        product:
+          type: string
+          format: uuid
+
+    ShippingAddress:
+      type: object
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        postalCode:
+          type: string
+        country:
+          type: string
+
+    PaymentResult:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        update_time:
+          type: string
+        email_address:
+          type: string
+
+    Order:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: uuid
+        user:
+          type: string
+          format: uuid
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductRef'
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        paymentMethod:
+          type: string
+        paymentResult:
+          $ref: '#/components/schemas/PaymentResult'
+        taxPrice:
+          type: number
+        shippingPrice:
+          type: number
+        totalPrice:
+          type: number
+        isPaid:
+          type: boolean
+        paidAt:
+          type: string
+          format: date-time
+        isDelivered:
+          type: boolean
+        deliveredAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OrderCreateBody:
+      type: object
+      required:
+        - orderItems
+        - shippingAddress
+        - paymentMethod
+        - taxPrice
+        - shippingPrice
+        - totalPrice
+      properties:
+        orderItems:
+          type: array
+          items:
+            type: object
+            required:
+              - product
+              - qty
+            properties:
+              product:
+                type: string
+                format: uuid
+                description: Product ID
+              qty:
+                type: integer
+                description: Quantity
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddress'
+        paymentMethod:
+          type: string
+        taxPrice:
+          type: number
+        shippingPrice:
+          type: number
+        totalPrice:
+          type: number
+
+    PaymentResultBody:
+      type: object
+      required:
+        - id
+        - status
+        - update_time
+        - email_address
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+        update_time:
+          type: string
+        email_address:
+          type: string
+
+tags:
+  - name: Users
+    description: User authentication and management
+  - name: Categories
+    description: Product category management
+  - name: Products
+    description: E-commerce product management
+  - name: Reviews
+    description: Product reviews management
+  - name: Carts
+    description: User shopping cart management
+  - name: Orders
+    description: E-commerce order management
+
+paths:
+  /users/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationBody'
+      responses:
+        201:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 201
+                  data: { /* User details */ }
+                  message: "User Registered Successfully"
+                  success: true
+        400:
+          description: Bad request (e.g., missing fields, invalid data)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+                example:
+                  statusCode: 400
+                  message: "All fields are required"
+                  success: false
+        409:
+          description: User with email/username already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+                example:
+                  statusCode: 409
+                  message: "User Is Already exist !"
+                  success: false
+        500:
+          description: Internal server error (e.g., file upload failed, database error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /users/login:
+    post:
+      summary: Login a user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginBody'
+      responses:
+        200:
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 200
+                  data: { accessToken: "...", refreshToken: "..." }
+                  message: "User Logged In Successfully"
+                  success: true
+        400:
+          description: Bad request (e.g., missing fields)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+                example:
+                  statusCode: 400
+                  message: "Email is Required.."
+                  success: false
+        401:
+          description: Unauthorized (invalid credentials)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+                example:
+                  statusCode: 401
+                  message: "Invalid credentials"
+                  success: false
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /users/logout:
+    post:
+      summary: Logout a user
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 200
+                  data: null
+                  message: "User Logged Out"
+                  success: true
+        401:
+          description: Unauthorized (no token or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  # Category Routes
+  /categories:
+    post:
+      summary: Create a new category
+      tags:
+        - Categories
+      security:
+        - bearerAuth: [] # Assumes only authenticated users can create categories
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryCreateBody'
+      responses:
+        201:
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 201
+                  data: { _id: "...", name: "...", description: "..." }
+                  message: "Category created successfully"
+                  success: true
+        400:
+          description: Bad request (e.g., missing name, invalid parentCategory ID)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized (missing or invalid token)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to create)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        409:
+          description: Category with this name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error (e.g., Cloudinary upload failure, database error)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    get:
+      summary: Get all categories
+      tags:
+        - Categories
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Optional search term for category name or description
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of categories to return per page
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+      responses:
+        200:
+          description: Categories fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategorySchema'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /categories/{id}:
+    get:
+      summary: Get category by ID
+      tags:
+        - Categories
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the category to retrieve
+      responses:
+        200:
+          description: Category fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CategorySchema'
+        400:
+          description: Invalid category ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    patch:
+      summary: Update a category by ID
+      tags:
+        - Categories
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the category to update
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryUpdateBody'
+      responses:
+        200:
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CategorySchema'
+        400:
+          description: Bad request (e.g., invalid ID, invalid parentCategory ID, trying to set parent to itself)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to update)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        409:
+          description: Category name already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      summary: Delete a category by ID
+      tags:
+        - Categories
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the category to delete
+      responses:
+        200:
+          description: Category deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 200
+                  data: null
+                  message: "Category deleted successfully."
+                  success: true
+        400:
+          description: Invalid category ID format or cannot delete (e.g., has sub-categories or linked products)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to delete)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  # Product Routes
+  /products:
+    post:
+      summary: Create a new product (Admin only)
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductCreateBody'
+      responses:
+        201:
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductSchema'
+        400:
+          description: Bad request (e.g., missing fields, invalid category ID, no images)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to create product)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Category not found for provided ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error (e.g., Cloudinary upload failure)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Optional search term for product title or description
+        - in: query
+          name: category
+          schema:
+            type: string
+            format: uuid
+          description: Filter products by category ID
+        - in: query
+          name: isFeatured
+          schema:
+            type: boolean
+          description: Filter products by featured status
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum: [createdAt, price, ratings, title]
+            default: createdAt
+          description: Field to sort by
+        - in: query
+          name: sortType
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+          description: Sort order (asc/desc)
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Number of products to return per page
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+      responses:
+        200:
+          description: Products fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProductSchema'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /products/{id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the product to retrieve
+      responses:
+        200:
+          description: Product fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductSchema'
+        400:
+          description: Invalid product ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    patch:
+      summary: Update a product by ID (Admin only)
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the product to update
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductUpdateBody'
+      responses:
+        200:
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ProductSchema'
+        400:
+          description: Bad request (e.g., invalid ID, invalid category ID)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to update)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product or Category not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      summary: Delete a product by ID (Admin only)
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the product to delete
+      responses:
+        200:
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 200
+                  data: null
+                  message: "Product deleted successfully."
+                  success: true
+        400:
+          description: Invalid product ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to delete)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  # Review Routes
+  /reviews/{productId}:
+    post:
+      summary: Create a new review for a product
+      tags:
+        - Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the product to review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewCreateBody'
+      responses:
+        201:
+          description: Review added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        400:
+          description: Bad request (e.g., missing product ID, rating, or invalid input)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        409:
+          description: User already reviewed this product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    get:
+      summary: Get all reviews for a specific product
+      tags:
+        - Reviews
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the product to get reviews for
+      responses:
+        200:
+          description: Product reviews fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReviewSchema'
+        404:
+          description: Reviews not found for this product (or product not found)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /reviews/{id}:
+    delete:
+      summary: Delete a review by ID (User who created it or Admin)
+      tags:
+        - Reviews
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the review to delete
+      responses:
+        200:
+          description: Review deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        400:
+          description: Invalid review ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (not authorized to delete this review)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Review not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  # Cart Routes
+  /cart:
+    get:
+      summary: Get the current user's cart
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Cart fetched successfully (or empty cart if none exists)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CartSchema'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    post:
+      summary: Add an item to the current user's cart
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddItemToCartBody'
+      responses:
+        200:
+          description: Item added to cart successfully (or quantity updated)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CartSchema'
+        400:
+          description: Bad request (e.g., missing product ID, quantity, or not enough stock)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    put:
+      summary: Update quantity of an item in the cart or remove it
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCartItemQuantityBody'
+      parameters:
+        - in: query
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the product to update in the cart
+      responses:
+        200:
+          description: Cart item quantity updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/CartSchema'
+        400:
+          description: Bad request (e.g., missing product ID, quantity, or not enough stock)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product or cart not found, or product not in cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      summary: Clear the current user's cart
+      tags:
+        - Carts
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Cart cleared successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                example:
+                  statusCode: 200
+                  data: null
+                  message: "Cart cleared successfully"
+                  success: true
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Cart not found for this user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  # Order Routes
+  /orders:
+    post:
+      summary: Create a new order
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreateBody'
+      responses:
+        201:
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Order'
+        400:
+          description: Bad request (e.g., no order items, not enough stock)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /orders/{orderId}:
+    get:
+      summary: Get order by ID
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the order to retrieve
+      responses:
+        200:
+          description: Order fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Order'
+        400:
+          description: Invalid order ID format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized (if user tries to access another user's order)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /orders/{orderId}/pay:
+    put:
+      summary: Update order to paid status
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the order to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentResultBody'
+      responses:
+        200:
+          description: Order marked as paid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Order'
+        400:
+          description: Bad request (e.g., order already paid)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /orders/{orderId}/deliver:
+    put:
+      summary: Update order to delivered status (Admin only)
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: ID of the order to update
+      responses:
+        200:
+          description: Order marked as delivered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Order'
+        400:
+          description: Bad request (e.g., order already delivered)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to mark as delivered)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        404:
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /orders/myorders:
+    get:
+      summary: Get current user's orders
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: User's orders fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+
+  /orders/all:
+    get:
+      summary: Get all orders (Admin only)
+      tags:
+        - Orders
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: All orders fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        403:
+          description: Forbidden (if non-admin user tries to access)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
