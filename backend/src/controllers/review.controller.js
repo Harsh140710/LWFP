@@ -1,8 +1,8 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
-import { Review } from '../modules/review.modules.js';
-import { Product } from '../modules/product.modules.js';
+import { Review } from '../models/review.models.js';
+import { Product } from '../models/product.models.js';
 
 const updateProductRating = async (productId) => {
     const reviews = await Review.find({ product: productId });

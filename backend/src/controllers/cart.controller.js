@@ -1,8 +1,8 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
-import { Cart } from '../modules/cart.modules.js';
-import { Product } from '../modules/product.modules.js';
+import { Cart } from '../models/cart.models.js';
+import { Product } from '../models/product.models.js';
 
 
 const getCart = asyncHandler(async (req, res) => {

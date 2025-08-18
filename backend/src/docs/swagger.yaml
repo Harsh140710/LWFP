@@ -92,7 +92,7 @@ components:
     UserLoginBody:
       type: object
       required:
-        - identifier
+        - email
         - password
       properties:
         identifier:
@@ -140,7 +140,6 @@ components:
       properties:
         _id:
           type: string
-          format: uuid
         name:
           type: string
         slug:
@@ -156,11 +155,9 @@ components:
               type: string
         parentCategory:
           type: string
-          format: uuid
           nullable: true
         createdBy:
           type: string
-          format: uuid
         createdAt:
           type: string
           format: date-time
@@ -193,11 +190,9 @@ components:
           description: Optional description of the category
         parentCategory:
           type: string
-          format: uuid
           description: Optional ID of the parent category for nested categories
         image:
           type: string
-          format: binary
           description: Category image file (for multipart/form-data)
 
     CategoryUpdateBody:
@@ -211,11 +206,9 @@ components:
           description: New description of the category
         parentCategory:
           type: string
-          format: uuid
           description: New parent category ID, or null to remove parent
         image:
           type: string
-          format: binary
           description: New category image file (for multipart/form-data)
         removeImage:
           type: boolean
@@ -241,7 +234,6 @@ components:
           type: string
         rating:
           type: integer
-          format: int32
           minimum: 1
           maximum: 5
         comment:
@@ -340,14 +332,11 @@ components:
           format: float
         discountPrice:
           type: number
-          format: float
           default: 0
         stock:
           type: integer
-          format: int32
         category:
           type: string
-          format: uuid
           description: ID of the category this product belongs to
         isFeatured:
           type: boolean
@@ -376,10 +365,8 @@ components:
           format: float
         stock:
           type: integer
-          format: int32
         category:
           type: string
-          format: uuid
         isFeatured:
           type: boolean
         images:
@@ -404,11 +391,9 @@ components:
       properties:
         productId:
           type: string
-          format: uuid
           description: ID of the product being reviewed
         rating:
           type: integer
-          format: int32
           minimum: 1
           maximum: 5
           description: Rating given to the product (1 to 5)
@@ -422,11 +407,9 @@ components:
       properties:
         product:
           type: string
-          format: uuid
           description: ID of the product in the cart
         quantity:
           type: integer
-          format: int32
           minimum: 1
         price:
           type: number
@@ -441,10 +424,8 @@ components:
       properties:
         _id:
           type: string
-          format: uuid
         user:
           type: string
-          format: uuid
           description: ID of the user owning the cart
         items:
           type: array
@@ -477,11 +458,10 @@ components:
       properties:
         productId:
           type: string
-          format: uuid
+      
           description: ID of the product to add
         quantity:
           type: integer
-          format: int32
           minimum: 1
           description: Quantity of the product to add
 
@@ -492,7 +472,6 @@ components:
       properties:
         quantity:
           type: integer
-          format: int32
           minimum: 0
           description: New quantity for the product in the cart. Set to 0 to remove the item.
 
@@ -510,7 +489,7 @@ components:
           type: number
         product:
           type: string
-          format: uuid
+      
 
     ShippingAddress:
       type: object
@@ -544,7 +523,6 @@ components:
           format: uuid
         user:
           type: string
-          format: uuid
         orderItems:
           type: array
           items:
@@ -598,7 +576,6 @@ components:
             properties:
               product:
                 type: string
-                format: uuid
                 description: Product ID
               qty:
                 type: integer
@@ -885,7 +862,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the category to retrieve
       responses:
@@ -927,7 +903,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the category to update
       requestBody:
@@ -993,7 +968,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the category to delete
       responses:
@@ -1107,7 +1081,6 @@ paths:
           name: category
           schema:
             type: string
-            format: uuid
           description: Filter products by category ID
         - in: query
           name: isFeatured
@@ -1169,7 +1142,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the product to retrieve
       responses:
@@ -1211,7 +1183,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the product to update
       requestBody:
@@ -1271,7 +1242,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the product to delete
       responses:
@@ -1330,7 +1300,6 @@ paths:
           name: productId
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the product to review
       requestBody:
@@ -1385,7 +1354,6 @@ paths:
           name: productId
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the product to get reviews for
       responses:
@@ -1425,7 +1393,6 @@ paths:
           name: id
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the review to delete
       responses:
@@ -1559,7 +1526,6 @@ paths:
           name: productId
           schema:
             type: string
-            format: uuid
           required: true
           description: ID of the product to update in the cart
       responses:
@@ -1634,7 +1600,7 @@ paths:
                 $ref: '#/components/schemas/ApiError'
 
   # Order Routes
-  /orders:
+  /orders/addOrderItems:
     post:
       summary: Create a new order
       tags:

@@ -1,8 +1,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { Product } from "../modules/product.modules.js";
-import { Category } from "../modules/category.modules.js"; // Import Category model
+import { Product } from "../models/product.models.js";
+import { Category } from "../models/category.models.js"; // Import Category model
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/Cloudinary.js";
 import fs from 'fs'; // For file system operations (deleting local temp files)
 import mongoose from "mongoose"; // For isValidObjectId

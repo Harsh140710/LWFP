@@ -21,14 +21,14 @@ router.route("/:id").get(getCategoryById);
 
 // Create a new category
 // Expects a single file named 'image' for the category icon/banner
-router.route("/create-category").post(verifyJWT,isAdmin,upload.single("image"),createCategory);
+router.route("/").post(verifyJWT,isAdmin,upload.single("image"),createCategory);
 
 // Update a category by ID
 // Allows updating fields and potentially changing the category image
-router.route("/update-category/:id").patch(verifyJWT,isAdmin,upload.single("image"), updateCategory);
+router.route("/:id").patch(verifyJWT,isAdmin,upload.single("image"), updateCategory);
 
 // Delete a category by ID
-router.route("/delete-category/:id").delete(verifyJWT,isAdmin,deleteCategory);
+router.route("/:id").delete(verifyJWT,isAdmin,deleteCategory);
 
 
 export default router;

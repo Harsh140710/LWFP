@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
+import helmet from 'helmet';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))
 app.use(cookieParser())
 
+app.use(helmet())
 
 // Load the Swagger/OpenAPI spec file
 const swaggerDocument = YAML.load('src/docs/swagger.yaml'); // Adjust path if your swagger.yaml is in a different folder, e.g., './docs/swagger.yaml'
@@ -33,7 +35,7 @@ import productRoutes from './routes/product.routes.js'
 import categoryRoutes from './routes/category.routes.js'
 import orderRoutes from './routes/order.routes.js'
 import reviewRoutes from './routes/review.routes.js'
-import cartRoutes from './routes/cart.routes.js'; 
+import cartRoutes from './routes/cart.routes.js'
 
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/product", productRoutes)

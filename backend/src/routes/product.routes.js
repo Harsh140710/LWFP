@@ -22,14 +22,14 @@ router.route("/:id").get(getProductById);
 // secured Routes
 
 // Create a new product
-router.route("/create-product").post(verifyJWT,isAdmin,upload.array("images", 10),createProduct);
+router.route("/").post(verifyJWT,isAdmin,upload.array("images", 10),createProduct);
 
 // Update a product by ID
 // Allows updating fields and potentially adding new images
-router.route("update-product//:id").patch(verifyJWT,isAdmin,upload.array("images", 10),updateProduct);
+router.route("/:id").patch(verifyJWT,isAdmin,upload.array("images", 10),updateProduct);
 
 // Delete a product by ID
-router.route("/delete-product/:id").delete(verifyJWT,isAdmin,deleteProduct);
+router.route("/:id").delete(verifyJWT,isAdmin,deleteProduct);
 
 // --- Authenticated User Routes (Requires verifyJWT middleware) ---
 // Create or update a review for a product

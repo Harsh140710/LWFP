@@ -10,12 +10,12 @@ import {
 } from '../controllers/review.controller.js';
 
 
-router.route('/create-product-review').post(verifyJWT, createProductReview);
+router.route('/:productId').post(verifyJWT, createProductReview);
 
-router.route('/product/:productId').get(getProductReviews);
+router.route('/:productId').get(getProductReviews);
 
 // DELETE /api/v1/reviews/:id - Delete a review (Private/User or Admin)
 router.route('/:id').delete(verifyJWT, deleteReview);
 
 
-export default router;
+export default router;  

@@ -13,12 +13,12 @@ const router = express.Router();
 
 // all people can access routes
 router.route('/addOrderItems').post(verifyJWT, addOrderItems);
-router.route('/my-orders').get(verifyJWT, getMyOrders);
+router.route('/myorders').get(verifyJWT, getMyOrders);
 router.route('/:id').get(verifyJWT, getOrderById);
 router.route('/:id/pay').put(verifyJWT, updateOrderToPaid);
 
 // only admin can access this routes
 router.route('/:id/deliver').put(verifyJWT, isAdmin, updateOrderToDelivered);
-router.route('/').get(verifyJWT, isAdmin, getAllOrders);
+router.route('/all').get(verifyJWT, isAdmin, getAllOrders);
 
 export default router;

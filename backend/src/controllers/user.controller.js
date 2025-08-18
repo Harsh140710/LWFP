@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { User } from "../modules/user.modules.js";
+import { User } from "../models/user.models.js";
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
@@ -185,30 +185,47 @@ const logOut = asyncHandler(async (req, res) => {
 
 })
 
-const changeCurrentPassword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassword } = req.body;
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { phone } = req.body;
 
-  const user = await User.findById(req.user?._id);
+  const user = await User.findOne({ phone });
+  if (!user) throw new ApiError(404, "User not found");
 
-  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+  const otp = generateOTP(phone);
+  await sendOTP(phone, otp);
 
-  if (!isPasswordValid) {
-    throw new ApiError(401, "Old Password id incorrect");
-  }
+  return res.status(200).json(new ApiResponse(200, null, "OTP sent for password reset"));
+});
 
+const resetPassword = asyncHandler(async (req, res) => {
+  const { phone, otp, newPassword } = req.body;
+
+  if (!verifyOTP(phone, otp)) throw new ApiError(400, "Invalid OTP");
+
+  const user = await User.findOne({ phone });
   user.password = newPassword;
+  await user.save();
 
-  await user.save({ validateBeforeSave: false });
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Password Changed successfully"));
+  return res.status(200).json(new ApiResponse(200, null, "Password reset successful"));
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-  res
-  .status(200)
-  .json(new ApiResponse(200, req.user, "Current user details"))
+  const userId = req.user?._id;
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized - No user found in request");
+  }
+
+  const user = await User.findById(userId).select(
+    "-password -refreshToken" // exclude sensitive fields
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Current user fetched successfully"));
 })
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
@@ -317,7 +334,8 @@ export {
     refreshAccessToken,
     loginUser,
     logOut,
-    changeCurrentPassword,
+    forgotPassword,
+    resetPassword,
     getCurrentUser,
     updateAccountDetails,
     changeAvatar,

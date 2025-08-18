@@ -1,8 +1,8 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import { ApiError } from '../utils/ApiError.js';
-import { Order } from '../modules/order.modules.js';
-import { Product } from '../modules/product.modules.js';
+import { Order } from '../models/order.models.js';
+import { Product } from '../models/product.models.js';
 
 const addOrderItems = asyncHandler(async (req, res) => {
     const {
