@@ -9,6 +9,12 @@ const sendOtpEmailController = asyncHandler(async (req, res) => {
   const { email, purpose } = req.body;
   if (!email || !purpose) throw new ApiError(400, "email and purpose are required");
 
+  const existedUser = await User.findOne({email});
+
+  if (existedUser) {
+      throw new ApiError(409, "User Is Already exist !");
+  }
+
   await sendOtpEmail({ email, purpose });
   return res.status(200).json(new ApiResponse(200, null, "OTP sent"));
 });
@@ -51,8 +57,11 @@ const verifyOtpEmailController = asyncHandler(async (req, res) => {
       username: username.toLowerCase(),
       email,
       password,
+      fullname,
+      phoneNumber,
       createdAt
     });
+
 
     return res
       .status(201)
