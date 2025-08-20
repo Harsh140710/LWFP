@@ -37,6 +37,7 @@ const userSchema = new Schema(
     phoneNumber:{
         type: String,
         required: true,
+        sparse: true, // optional at registration
         match: /^[6-9]\d{9}$/  // Indian phone number format
     },
 
@@ -53,7 +54,11 @@ const userSchema = new Schema(
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
-    }
+    },
+
+    cart: { type: Schema.Types.ObjectId, ref: 'Cart' },
+    orders: [{ type: Schema.Types.ObjectId, ref: 'Order' }],
+    reviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }]
   },
   
   { timestamps: true }

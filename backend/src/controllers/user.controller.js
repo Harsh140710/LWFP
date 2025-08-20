@@ -69,7 +69,12 @@ const registerUser = asyncHandler(async (req, res) => {
   } catch (error) {
     console.log("Error uploading file", error);
     throw new ApiError(500, "Failed to upload avatar !");
-  }
+  } 
+
+    const otpVerified = await OtpCode.findOne({ email, purpose: "register" });
+    if (!otpVerified) {
+      throw new ApiError(400, "Please verify your email OTP first");
+    }
 
   try {
     const user = await User.create({

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import { registerUser,refreshAccessToken,loginUser,forgotPassword, resetPassword,getCurrentUser,updateAccountDetails,changeAvatar, logOut } from "../controllers/user.controller.js";
 import { verifyJWT, isAdmin } from "../middlewares/auth.middleware.js";
-import { sendOtpController, verifyOtpController } from "../controllers/otp.controller.js";
+import { sendOtpEmailController, verifyOtpEmailController } from '../controllers/otp.controller.js'
 
 const router = Router();
 
@@ -28,7 +28,7 @@ router.route("/reset-password").patch(verifyJWT, resetPassword)
 router.route("/profile").get(verifyJWT, getCurrentUser)
 router.route("/update-account").patch(verifyJWT, updateAccountDetails)
 router.route("/changeAvatar").patch(verifyJWT, upload.single("avatar"), changeAvatar)
-router.post("/otp/send", sendOtpController);
-router.post("/otp/verify", verifyOtpController);
+router.post("/otp/email/send", sendOtpEmailController);
+router.post("/otp/email/verify", verifyOtpEmailController);
 
 export default router;

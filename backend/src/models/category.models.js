@@ -45,8 +45,9 @@ const categorySchema = new Schema(
             // To track which admin created the category
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User', // Assuming 'User' model for admins with a 'role' field
-        }
+        },
     },
+
     {
         timestamps: true, // Adds createdAt and updatedAt fields
     }

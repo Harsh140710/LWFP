@@ -1,33 +1,77 @@
+// services/otpEmail.service.js
 import nodemailer from "nodemailer";
+import bcrypt from "bcrypt";
+import { OtpCode } from "../models/otp.models.js";
+import { User } from '../models/user.models.js'
 
-export const sendEmail = async ({ to, subject, text, html }) => {
-  try {
-    // Create transporter
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === "true", // true for 465, false for 587
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+const EXP_MIN = Number(process.env.OTP_EXPIRY_MINUTES || 3);
 
-    // Send mail
-    const mailOptions = {
-      from: `"Luxury Watch" <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      text,
-      html, // optional: use either `text` or `html`
-    };
+const transporter = nodemailer.createTransport({
+  service: "gmail", // or use SMTP provider
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-    const info = await transporter.sendMail(mailOptions);
-
-    console.log("Email sent: %s", info.messageId);
-    return info;
-  } catch (error) {
-    console.error("Email send error:", error);
-    throw error;
-  }
+const generateNumericOtp = (len = 6) => {
+  const min = 10 ** (len - 1);
+  const max = 10 ** len - 1;
+  return Math.floor(min + Math.random() * (max - min));
 };
+
+const sendOtpEmail = async ({ email, purpose }) => {
+  const code = String(generateNumericOtp(6));
+  const codeHash = await bcrypt.hash(code, 10);
+  const expiresAt = new Date(Date.now() + EXP_MIN * 60 * 1000);
+
+  await OtpCode.findOneAndUpdate(
+    { email, purpose },
+    {
+      codeHash,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      attempts: 0
+    },
+    { upsert: true, new: true }
+  );
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Your OTP Code",
+    text: `Your OTP code is: ${code}`,
+  });
+
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`[DEBUG] OTP for ${email} (${purpose}): ${code}`);
+  }
+
+  return true;
+};
+
+const verifyOtpEmail = async ({ email, purpose, code }) => {
+  const record = await OtpCode.findOne({ email, purpose });
+  if (!record) return { ok: false, reason: "OTP not found" };
+
+  if (record.expiresAt < new Date()) {
+    await record.deleteOne();
+    return { ok: false, reason: "OTP expired" };
+  }
+
+  if (record.attempts >= record.maxAttempts) {
+    await record.deleteOne();
+    return { ok: false, reason: "Too many attempts" };
+  }
+
+  const match = await bcrypt.compare(String(code), record.codeHash);
+  if (!match) {
+    record.attempts += 1;
+    await record.save();
+    return { ok: false, reason: "Invalid OTP" };
+  }
+
+  await record.deleteOne(); // one-time use
+  return { ok: true };
+};
+
+export { sendOtpEmail, verifyOtpEmail };
