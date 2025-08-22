@@ -5,7 +5,7 @@ import { OtpCode } from "../models/otp.models.js";
 const EXP_MIN = Number(process.env.OTP_EXPIRY_MINUTES || 3);
 
 const transporter = nodemailer.createTransport({
-  service: "gmail", // or use SMTP provider
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
