@@ -1,14 +1,18 @@
-import Header from '@/components/Header'
-import Login from '@/components/Login'
-import React from 'react'
-import { Routes, Route,Link } from 'react-router-dom'
+import Header from "@/components/Header";
+import React from "react";
+import { Outlet } from "react-router-dom";
+
 const UserLayout = () => {
   return (
-    <div>
-        <Header />
-        <Link to={"/user/login"}><Login /></Link>
-    </div>
-  )
-}
+    <div className="bg-gray-100 min-h-screen">
+      <Header />
 
-export default UserLayout
+      {/* Render whatever child route is active */}
+      <div>
+        <Outlet />
+      </div>
+    </div>
+  );
+};
+
+export default UserLayout;
