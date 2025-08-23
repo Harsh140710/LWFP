@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react"; // install lucide-react if not already
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,15 +17,15 @@ const Login = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-92px)] flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+    <div className="h-[calc(100vh-85px)] flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="w-[90%] sm:w-[350px] md:w-[450px] lg:w-[550px] bg-white dark:bg-gray-800 shadow-2xl rounded-2xl p-8 dark:shadow-2xl">
         <h2 className="font-bold sm:text-3xl md:text-4xl lg:text-4xl text-2xl mb-8 text-gray-900 dark:text-gray-100 text-center">
           Login
         </h2>
 
         <form className="flex flex-col gap-4">
-          <h3 className="font-bold text-lg">Enter your Email</h3>
-          <input
+          <Label className="font-semibold text-lg">Enter your Email</Label>
+          <Input
             type="email"
             placeholder="Email"
             required
@@ -34,9 +37,9 @@ const Login = () => {
           />
 
           {/* Password with Eye toggle */}
-          <h3 className="font-bold text-lg mt-3">Enter your Password</h3>
+          <Label className="font-semibold text-lg mt-2">Enter your Password</Label>
           <div className="relative w-full">
-            <input
+            <Input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
               required
