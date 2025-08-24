@@ -1,10 +1,8 @@
 import { motion, useScroll, useSpring } from "framer-motion";
 
 const ScrollLine = () => {
-  // detect scroll position
   const { scrollYProgress } = useScroll();
 
-  // spring effect for smooth animation
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 120,
     damping: 30,
@@ -13,7 +11,7 @@ const ScrollLine = () => {
 
   return (
     <motion.div
-      className="h-[2px] bottom-1 fixed bg-[#B48E57] origin-left"
+      className="fixed bottom-0 left-0 h-[3px] bg-[#B48E57] origin-left z-50"
       style={{ scaleX }}
     />
   );

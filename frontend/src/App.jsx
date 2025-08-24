@@ -1,6 +1,7 @@
 import "./index.css";
 import { Routes, Route } from "react-router-dom";
 import { Navigate } from "react-router-dom"
+import PageTransition from "./animation/PageTransition";
 import UserLayout from "@/pages/User/UserLayout";
 import Home from "./components/Home";
 import Login from "./components/Login";

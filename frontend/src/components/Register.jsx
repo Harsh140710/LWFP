@@ -1,16 +1,20 @@
 import React, { useState } from "react";
+import {motion} from "framer-motion"
 import { Eye, EyeOff, MoveRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
+import { MotionWrapper } from "@/animation/MotionWrapper";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    fullname: {
+      firstname: "",
+      lastname: "",
+    },
     username: "",
     phone: "",
     email: "",
@@ -18,15 +22,32 @@ const Register = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "firstname" || name === "lastname") {
+      setFormData((prev) => ({
+        ...prev,
+        fullname: {
+          ...prev.fullname,
+          [name]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
     setFormData({
-      firstname: "",
-      lastname: "",
+      fullname: {
+        firstname: "",
+        lastname: "",
+      },
       username: "",
       phone: "",
       email: "",
@@ -35,27 +56,40 @@ const Register = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col lg:flex-row bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+    <div className="min-h-screen lg:h-screen flex flex-col lg:flex-row bg-[#F9FAFB] dark:bg-[#0B0B0D]">
       {/* Left Section */}
-      <div className="hidden lg:flex w-1/2 items-center justify-center p-10 bg-transparent">
-        <div className="text-center max-w-md">
-          <img
-            src="/logo-2-removebg-preview.png"
-            alt="Product"
-            className="w-40 mx-auto mb-6 dark:invert"
-          />
-          <h2 className="text-3xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-4">
-            Explore Our Collection
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            Timeless elegance crafted just for you. Discover the best watches
-            and accessories.
-          </p>
+      <MotionWrapper>
+        <div className="hidden lg:flex w-3/4 items-center justify-center p-10 bg-transparent">
+          <div className="text-center max-w-md">
+            <img
+              src="/logo-2-removebg-preview.png"
+              alt="Product"
+              className="w-40 mx-auto mb-6 dark:invert"
+            />
+            <h2 className="text-3xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-4">
+              Explore Our Collection
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Timeless elegance crafted just for you. Discover the best watches
+              and accessories.
+            </p>
+          </div>
         </div>
-      </div>
+      </MotionWrapper>
 
       {/* Right Section */}
-      <div className="flex w-full lg:w-1/2 items-center justify-center overflow-y-auto">
+      <motion.div
+      key="register-form"
+        initial={{ opacity: 0, y: 40, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -40, scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 22,
+          duration: 0.5,
+        }}
+      className="flex w-full lg:w-1/2 items-center justify-center overflow-y-auto">
         <div className="w-[90%] sm:w-[350px] md:w-[450px] bg-transparent p-8">
           <h2 className="font-bold text-3xl mb-6 text-[#111827] dark:text-[#F9FAFB] text-center">
             Register
@@ -69,10 +103,10 @@ const Register = () => {
                 <Input
                   type="text"
                   name="firstname"
-                  value={formData.firstname}
+                  value={formData.fullname.firstname}
                   onChange={handleChange}
                   placeholder="Firstname"
-                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                   text-gray-900 dark:text-gray-100 rounded-lg"
                 />
               </div>
@@ -81,10 +115,10 @@ const Register = () => {
                 <Input
                   type="text"
                   name="lastname"
-                  value={formData.lastname}
+                  value={formData.fullname.lastname}
                   onChange={handleChange}
                   placeholder="Lastname"
-                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                   text-gray-900 dark:text-gray-100 rounded-lg"
                 />
               </div>
@@ -100,7 +134,7 @@ const Register = () => {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="Choose a username"
-                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                   text-gray-900 dark:text-gray-100 rounded-lg"
                 />
               </div>
@@ -112,7 +146,7 @@ const Register = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
-                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                   text-gray-900 dark:text-gray-100 rounded-lg"
                 />
               </div>
@@ -128,7 +162,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                   text-gray-900 dark:text-gray-100 rounded-lg"
                 />
               </div>
@@ -141,7 +175,7 @@ const Register = () => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Password"
-                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                     text-gray-900 dark:text-gray-100 rounded-lg pr-10"
                   />
                   <button
@@ -189,7 +223,7 @@ const Register = () => {
             </div>
           </form>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

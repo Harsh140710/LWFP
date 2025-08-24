@@ -7,10 +7,10 @@ const UserLayout = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <Header />
+      <ScrollLine />
       {/* Render whatever child route is active */}
       <div>
         <Outlet />
-        <ScrollLine />
       </div>
     </div>
   );

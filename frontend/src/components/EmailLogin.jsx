@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import {motion} from "framer-motion"
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
@@ -20,13 +21,25 @@ const EmailLogin = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-74px)] flex items-center justify-center bg-[#F9FAFB] dark:bg-[#0B0B0D]">
-      <div className="w-[90%] sm:w-[350px] md:w-[450px] lg:w-[550px] bg-[#FFFFFF] dark:bg-[#151517] rounded-2xl p-8 dark:shadow-lg shadow-lg">
+    <div className="h-[calc(100vh-68px)] lg:h-[calc(100vh-74px)] flex items-center justify-center bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+      <motion.div
+      key="register-form"
+        initial={{ opacity: 0, y: 40, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -40, scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 22,
+          duration: 0.5,
+        }}
+      className="w-[90%] sm:w-[350px] md:w-[350px] lg:w-[450px] bg-[#F9FAFB] dark:bg-[#0B0B0D] rounded-2xl p-8 shadow-lg dark:shadow-none">
         <h2 className="font-bold sm:text-3xl md:text-4xl lg:text-4xl text-2xl text-center mb-16 text-[#111827] dark:text-[#F9FAFB]">
           Register with Email
         </h2>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <form
+        className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <Label className="font-semibold text-lg">Enter your Email</Label>
           <Input
             type="email"
@@ -53,14 +66,14 @@ const EmailLogin = () => {
           <Separator />
           
           {/* Login Link */}
-          <h3 className="font-semibold">
+          <h3 className="font-semibold font-lg lg:font-xl">
             You already have an account?{" "}
             <Link to="/user/login" className="text-blue-800 font-bold">
               Log In
             </Link>
           </h3>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

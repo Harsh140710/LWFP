@@ -15,6 +15,7 @@ import { Separator } from "./ui/separator";
 const Header = () => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
+  const [orientation, setOreintation] = useState("vetical");
   const searchRef = useRef(null);
 
   const items = [
@@ -31,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 left-0 w-full z-50 flex items-center justify-between px-4 sm:px-6 py-4 bg-[#F9FAFB] dark:bg-[#0B0B0D] shadow-md">
+    <header className="relative top-0 left-0 w-full z-50 flex items-center justify-between px-4 sm:px-6 py-4 bg-[#F9FAFB] dark:bg-[#0B0B0D] shadow-md">
       {/* Hamburger / Cross Button */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
@@ -45,7 +46,7 @@ const Header = () => {
           <SheetHeader>
             <SheetTitle className="text-lg font-bold">Menu</SheetTitle>
           </SheetHeader>
-          <nav className="mt-6 flex relative pl-10">
+          <nav className="mt-6 flex flex-col md:flex-row relative pl-10">
             {/* Menu Items */}
             <div className="flex flex-col gap-4 w-[200px] shrink-0">
               {items.map((item) => {
@@ -54,12 +55,15 @@ const Header = () => {
                   <Link
                     key={item.title}
                     to={item.url}
-                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:underline
-            transition-all duration-300 hover:text-[#B48E57]
-            text-gray-800 dark:text-gray-200 font-medium"
+                    className="group flex items-center gap-3 px-3 py-2 rounded-lg
+             transition-all duration-300 hover:text-[#B48E57]
+             text-gray-800 dark:text-gray-200 dark:hover:text-[#B48E57] font-medium"
                     onClick={() => setOpen(false)}
                   >
-                    <Icon className="w-5 h-5 text-[#111827] dark:text-[#F9FAFB]" />
+                    <Icon
+                      className="w-5 h-5 text-[#111827] dark:text-[#F9FAFB] 
+                   group-hover:text-[#B48E57] dark:group-hover:text-[#B48E57]"
+                    />
                     {item.title}
                   </Link>
                 );
@@ -69,17 +73,18 @@ const Header = () => {
             {/* Vertical Separator */}
             <Separator
               orientation="vertical"
-              className="h-full mx-4 bg-gray-600"
+              className="h-full mx-4 bg-gray-600 hidden md:block"
             />
 
-            {/* Right Side (Products / other content) */}
-            <div className="flex-1 px-4">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Products
-              </h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Your product list or any component will show here.
-              </p>
+            <div className="hidden md:flex flex-1 px-4">
+              <div className="flex flex-col">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  Products
+                </h3>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  Your product list or any component will show here.
+                </p>
+              </div>
             </div>
           </nav>
         </SheetContent>
@@ -104,8 +109,8 @@ const Header = () => {
 
       {/* Right Section */}
       <div className="flex items-center gap-4 ml-auto">
-        {/* Search Bar (hidden on mobile, visible on md+) */}
-        <div className="hidden md:flex items-center relative bg-[#F9FAFB] dark:bg-[#0B0B0D] shadow-lg rounded-lg">
+        {/* Search Bar */}
+        <div className="hidden md:flex items-center relative bg-[#F9FAFB] dark:bg-[#0B0B0D] rounded-lg">
           <input
             ref={searchRef}
             value={search}
