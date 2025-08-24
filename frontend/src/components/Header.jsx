@@ -1,13 +1,28 @@
 import React, { useState, useRef } from "react";
 import ThemeToggleButton from "./ui/theme-toggle-button";
 import { Link } from "react-router-dom";
-import { Search, Menu, X } from "lucide-react";
+import { Book, Home, LogIn, Menu, MenuIcon, Search, Watch } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import MenuButton from "@/animation/MenuButton";
+import { Separator } from "./ui/separator";
 
 const Header = () => {
   const [search, setSearch] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [open, setOpen] = useState(false);
   const searchRef = useRef(null);
+
+  const items = [
+    { title: "Home", url: "/home", icons: Home },
+    { title: "About Us", url: "/about-us", icons: Book },
+    { title: "Products", url: "/product", icons: Watch },
+    { title: "Log In", url: "/user/login", icons: LogIn },
+  ];
 
   const handleSearchFocus = () => {
     if (searchRef.current) {
@@ -16,100 +31,101 @@ const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 bg-gray-100 dark:bg-gray-900 shadow-md">
-      {/* Logo & Title */}
-      <div className="flex items-center gap-3">
+    <header className="sticky top-0 left-0 w-full z-50 flex items-center justify-between px-4 sm:px-6 py-4 bg-[#F9FAFB] dark:bg-[#0B0B0D] shadow-md">
+      {/* Hamburger / Cross Button */}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <button>
+            <MenuButton open={open} />
+          </button>
+        </SheetTrigger>
+
+        {/* Top Slide Menu */}
+        <SheetContent side="top" className="h-screen dark:bg-[#0B0B0D]">
+          <SheetHeader>
+            <SheetTitle className="text-lg font-bold">Menu</SheetTitle>
+          </SheetHeader>
+          <nav className="mt-6 flex relative pl-10">
+            {/* Menu Items */}
+            <div className="flex flex-col gap-4 w-[200px] shrink-0">
+              {items.map((item) => {
+                const Icon = item.icons;
+                return (
+                  <Link
+                    key={item.title}
+                    to={item.url}
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:underline
+            transition-all duration-300 hover:text-[#B48E57]
+            text-gray-800 dark:text-gray-200 font-medium"
+                    onClick={() => setOpen(false)}
+                  >
+                    <Icon className="w-5 h-5 text-[#111827] dark:text-[#F9FAFB]" />
+                    {item.title}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Vertical Separator */}
+            <Separator
+              orientation="vertical"
+              className="h-full mx-4 bg-gray-600"
+            />
+
+            {/* Right Side (Products / other content) */}
+            <div className="flex-1 px-4">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Products
+              </h3>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                Your product list or any component will show here.
+              </p>
+            </div>
+          </nav>
+        </SheetContent>
+      </Sheet>
+
+      <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-3">
         <img
           src="/logo-2-removebg-preview.png"
           alt="Watch-logo"
-          className="w-14 h-auto dark:invert"
+          className="w-12 h-auto dark:invert"
         />
-        <h2 className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-900 dark:text-white">
+        <h2 className="font-bold text-lg sm:text-xl md:text-2xl text-[#111827] dark:text-[#F9FAFB]">
           Timeless
           <span
             style={{ fontFamily: "'Great Vibes', cursive" }}
-            className="ml-1.5"
+            className="ml-1.5 text-[#B48E57]"
           >
             Elegance
           </span>
         </h2>
       </div>
 
-      {/* Navbar Links (Hidden on small screens) */}
-      <div className="hidden md:flex items-center justify-center gap-10 font-bold">
-        <Link to={"/home"}>Home</Link>
-        <Link to={"/about-us"}>About Us</Link>
-        <Link to={"/product"}>Products</Link>
-        <Link to={"/user/login"}>LogIn</Link>
-        <Link to={"/user/register"}>Sign Up</Link>
-      </div>
-
-      {/* Right Section: Search + Toggle + Hamburger */}
-      <div className="flex items-center gap-4">
-        {/* Search Bar */}
-        <div className="flex items-center relative bg-gray-50 dark:bg-gray-700 shadow-lg rounded-lg">
+      {/* Right Section */}
+      <div className="flex items-center gap-4 ml-auto">
+        {/* Search Bar (hidden on mobile, visible on md+) */}
+        <div className="hidden md:flex items-center relative bg-[#F9FAFB] dark:bg-[#0B0B0D] shadow-lg rounded-lg">
           <input
             ref={searchRef}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             type="search"
             placeholder="Search"
-            className="font-semibold border border-gray-300 dark:border-gray-600
+            className="font-semibold border border-[#E5E7EB] dark:border-[#1E293B]
                        bg-transparent text-gray-900 dark:text-gray-100
-                       px-3 py-2 rounded-lg w-40 sm:w-48
-                       placeholder:text-sm focus:outline-none focus:ring-1
+                       px-3 py-2 rounded-lg w-48
+                       placeholder:text-sm placeholder:text-[#9CA3AF] focus:outline-none focus:ring-1
                        focus:ring-gray-500 pr-10"
           />
           <button type="button" onClick={handleSearchFocus}>
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-[#] dark:text-gray-300" />
           </button>
         </div>
 
         {/* Theme Toggle */}
         <ThemeToggleButton />
-
-        {/* Hamburger Menu (Visible on small screens only) */}
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="md:hidden p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800"
-        >
-          <Menu className="w-6 h-6 text-gray-800 dark:text-gray-200" />
-        </button>
       </div>
-
-      {/* Sidebar Drawer */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
-          <div className="fixed top-0 left-0 w-64 h-full bg-gray-100 dark:bg-gray-900 shadow-lg p-6 flex flex-col">
-            {/* Close Button */}
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="self-end mb-6"
-            >
-              <X className="w-6 h-6 text-gray-800 dark:text-gray-200" />
-            </button>
-
-            {/* Sidebar Links */}
-            <nav className="flex flex-col gap-6 font-bold text-lg">
-              <Link to={"/home"} onClick={() => setSidebarOpen(false)}>
-                Home
-              </Link>
-              <Link to={"/about-us"} onClick={() => setSidebarOpen(false)}>
-                About Us
-              </Link>
-              <Link to={"/product"} onClick={() => setSidebarOpen(false)}>
-                Products
-              </Link>
-              <Link to={"/user/login"} onClick={() => setSidebarOpen(false)}>
-                LogIn
-              </Link>
-              <Link to={"/user/register"} onClick={() => setSidebarOpen(false)}>
-                Sign Up
-              </Link>
-            </nav>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

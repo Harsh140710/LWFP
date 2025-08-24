@@ -8,6 +8,9 @@
 
 html, body {
   @apply bg-gray-100 dark:bg-gray-900;
+  overflow-x: hidden; /* prevents horizontal scroll */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
 }
 
 @theme inline {

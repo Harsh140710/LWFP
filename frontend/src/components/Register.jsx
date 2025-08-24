@@ -1,9 +1,197 @@
-import React from 'react'
+import React, { useState } from "react";
+import { Eye, EyeOff, MoveRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "./ui/separator";
 
 const Register = () => {
-  return (
-    <div>Register</div>
-  )
-}
+  const [showPassword, setShowPassword] = useState(false);
 
-export default Register
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    username: "",
+    phone: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(formData);
+    setFormData({
+      firstname: "",
+      lastname: "",
+      username: "",
+      phone: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  return (
+    <div className="h-screen flex flex-col lg:flex-row bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+      {/* Left Section */}
+      <div className="hidden lg:flex w-1/2 items-center justify-center p-10 bg-transparent">
+        <div className="text-center max-w-md">
+          <img
+            src="/logo-2-removebg-preview.png"
+            alt="Product"
+            className="w-40 mx-auto mb-6 dark:invert"
+          />
+          <h2 className="text-3xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-4">
+            Explore Our Collection
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Timeless elegance crafted just for you. Discover the best watches
+            and accessories.
+          </p>
+        </div>
+      </div>
+
+      {/* Right Section */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center overflow-y-auto">
+        <div className="w-[90%] sm:w-[350px] md:w-[450px] bg-transparent p-8">
+          <h2 className="font-bold text-3xl mb-6 text-[#111827] dark:text-[#F9FAFB] text-center">
+            Register
+          </h2>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {/* Firstname + Lastname */}
+            <div className="flex gap-3 flex-col sm:flex-row">
+              <div className="flex-1">
+                <Label className="font-semibold text-lg">Firstname</Label>
+                <Input
+                  type="text"
+                  name="firstname"
+                  value={formData.firstname}
+                  onChange={handleChange}
+                  placeholder="Firstname"
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  text-gray-900 dark:text-gray-100 rounded-lg"
+                />
+              </div>
+              <div className="flex-1">
+                <Label className="font-semibold text-lg">Lastname</Label>
+                <Input
+                  type="text"
+                  name="lastname"
+                  value={formData.lastname}
+                  onChange={handleChange}
+                  placeholder="Lastname"
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  text-gray-900 dark:text-gray-100 rounded-lg"
+                />
+              </div>
+            </div>
+
+            {/* Username + Phone */}
+            <div className="flex gap-3 flex-col sm:flex-row">
+              <div className="flex-1">
+                <Label className="font-semibold text-lg">Username</Label>
+                <Input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="Choose a username"
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  text-gray-900 dark:text-gray-100 rounded-lg"
+                />
+              </div>
+              <div className="flex-1">
+                <Label className="font-semibold text-lg">Phone Number</Label>
+                <Input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  text-gray-900 dark:text-gray-100 rounded-lg"
+                />
+              </div>
+            </div>
+
+            {/* Email + Password */}
+            <div className="flex gap-3 flex-col sm:flex-row">
+              <div className="flex-1">
+                <Label className="font-semibold text-lg">Email</Label>
+                <Input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                  text-gray-900 dark:text-gray-100 rounded-lg"
+                />
+              </div>
+              <div className="flex-1">
+                <Label className="font-semibold text-lg">Password</Label>
+                <div className="relative mt-2">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Password"
+                    className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D] 
+                    text-gray-900 dark:text-gray-100 rounded-lg pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              className="w-full bg-[#B48E57] hover:bg-[#A37E4D] text-white font-semibold py-2 rounded-lg transition-all"
+            >
+              Submit
+            </button>
+
+            <Separator />
+
+            <p className="font-semibold text-center">
+              You have an account?{" "}
+              <Link to="/user/login" className="text-blue-700 font-bold">
+                Log In
+              </Link>
+            </p>
+
+            {/* Continue with Email */}
+            <div className="relative w-full flex items-center justify-center">
+              <Link
+                to={"/user/email-register"}
+                className="w-full text-center bg-[#B48E57] hover:bg-[#A37E4D] text-white font-semibold py-2 rounded-lg transition-all"
+              >
+                Continue with Email?
+              </Link>
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
+              >
+                <MoveRight size={20} />
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Register;
