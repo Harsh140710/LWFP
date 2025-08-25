@@ -28,10 +28,16 @@ const userSchema = new Schema(
     },
 
     fullname: {
-      type: String,
-      required: true,
-      trim: true,
-      index: true,
+      firstname:{
+        type: String,
+        required: true,
+        trim: true,
+        index: true,
+      },
+      lastname:{
+        type: String,
+        trim: true,
+      }
     },
 
     phoneNumber:{
@@ -43,7 +49,7 @@ const userSchema = new Schema(
 
     avatar: {
       type: String, // Cloudinary URL
-      required: true,
+      required: false,
     },
 
     refreshToken: {

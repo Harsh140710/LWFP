@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import {motion} from "framer-motion"
+import React, { useState, useContext } from "react";
+import { motion } from "framer-motion";
 import { Eye, EyeOff, MoveRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
 import { MotionWrapper } from "@/animation/MotionWrapper";
+import { UserDataContext } from "@/context/userContext";
+import axios from "axios";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,7 +18,7 @@ const Register = () => {
       lastname: "",
     },
     username: "",
-    phone: "",
+    phoneNumber: "",
     email: "",
     password: "",
   });
@@ -40,19 +42,36 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const { userData, setUserData } = useContext(UserDataContext);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    setFormData({
-      fullname: {
-        firstname: "",
-        lastname: "",
-      },
-      username: "",
-      phone: "",
-      email: "",
-      password: "",
-    });
+
+    const newUser = {
+      firstname: formData.fullname.firstname,
+      lastname: formData.fullname.lastname,
+      username: formData.username,
+      phoneNumber: formData.phoneNumber,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/api/v1/users/register`,
+      newUser
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      const data = response.data
+      const { user, refreshToken } = response.data.data;
+      setUserData(user)
+      localStorage.setItem("token", refreshToken)
+
+      navigate("/home")
+    }
+    // console.log(response.data);
+    // console.log("Registration Successful");
   };
 
   return (
@@ -79,7 +98,7 @@ const Register = () => {
 
       {/* Right Section */}
       <motion.div
-      key="register-form"
+        key="register-form"
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: -40, scale: 0.98 }}
@@ -89,7 +108,8 @@ const Register = () => {
           damping: 22,
           duration: 0.5,
         }}
-      className="flex w-full lg:w-1/2 items-center justify-center overflow-y-auto">
+        className="flex w-full lg:w-1/2 items-center justify-center overflow-y-auto"
+      >
         <div className="w-[90%] sm:w-[350px] md:w-[450px] bg-transparent p-8">
           <h2 className="font-bold text-3xl mb-6 text-[#111827] dark:text-[#F9FAFB] text-center">
             Register
@@ -142,8 +162,8 @@ const Register = () => {
                 <Label className="font-semibold text-lg">Phone Number</Label>
                 <Input
                   type="tel"
-                  name="phone"
-                  value={formData.phone}
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
                   className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
@@ -194,7 +214,7 @@ const Register = () => {
               type="submit"
               className="w-full bg-[#B48E57] hover:bg-[#A37E4D] text-white font-semibold py-2 rounded-lg transition-all"
             >
-              Submit
+              Create Account
             </button>
 
             <Separator />

@@ -33,76 +33,62 @@ const generateAccessAndRefreshToken = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  //ToDO
-  const { fullname, email, username, password, phoneNumber } = req.body;
+  const { firstname, lastname, email, username, password, phoneNumber } = req.body;
 
-  // validation
-  if (
-    [fullname, email, username, password, phoneNumber].some((field) => field?.trim() === "")
-  ) {
+  if ([firstname, email, username, password, phoneNumber].some((field) => !field?.trim())) {
     throw new ApiError(400, "All fields are required");
   }
-  console.log("Register hit");
+
+  if(password.length !== 6) {
+    throw new ApiError(401, "Password is too short !")
+  }
 
   const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 
   if (existedUser) {
-      throw new ApiError(409, "User Is Already exist !");
-  }
-    const avatarLocalPath = req.files?.avatar?.[0]?.path;
-    console.log("Avatar hitted");
-
-  if (!avatarLocalPath || !fs.existsSync(avatarLocalPath)) {
-    throw new ApiError(
-      400,
-      "Avatar file is missing or not uploaded correctly!"
-    );
+    throw new ApiError(409, "User already exists!");
   }
 
-  let avatar = "";
-  try {
-    avatar = await uploadOnCloudinary(avatarLocalPath);
-    console.log("Uploaded avatar", avatar);
-    fs.unlinkSync(avatarLocalPath);
-  } catch (error) {
-    console.log("Error uploading file", error);
-    throw new ApiError(500, "Failed to upload avatar !");
+  let avatarUrl = "";
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+
+  if (avatarLocalPath && fs.existsSync(avatarLocalPath)) {
+    try {
+      const uploaded = await uploadOnCloudinary(avatarLocalPath);
+      avatarUrl = uploaded?.secure_url || "";
+      fs.unlinkSync(avatarLocalPath); // cleanup local file
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      throw new ApiError(500, "Failed to upload avatar!");
+    }
   }
 
   try {
     const user = await User.create({
       username: username.toLowerCase(),
-      fullname,
+      fullname: { firstname, lastname },
       email,
       password,
       phoneNumber,
-      avatar: avatar?.secure_url,
+      avatar: avatarUrl, // only saved if uploaded
     });
 
-    const createdUser = await User.findById(user._id).select(
-      "-password -refreshToken"
-    );
+    const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
     if (!createdUser) {
-      throw new ApiError(500, "Something Went Wrong While registering USER!");
+      throw new ApiError(500, "Something went wrong while registering USER!");
     }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
     return res
       .status(201)
-      .json(new ApiResponse(200, createdUser, "User Registered Successfully"));
-  } catch (error) {
-    console.log("User Creation Failed");
-
-    if (avatar) {
-      await deleteFromCloudinary(avatar.public_id);
-    }
-    
-    throw new ApiError(
-      500,
-      "Something Went Wrong While registering USER! and images were deleted"
-    );
+      .json(new ApiResponse(200, {user:createdUser, accessToken, refreshToken}, "User registered successfully"));
+  } catch (error) { 
+    console.error("User Creation Failed:", error);
+    throw new ApiError(500, error.message || "Something went wrong while registering USER!");
   }
 });
 

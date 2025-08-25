@@ -4,7 +4,6 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import helmet from 'helmet';
-import cors from 'cors'
 
 const app = express();
 

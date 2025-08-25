@@ -1,26 +1,42 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
 import { MotionRightWrapper } from "@/animation/MotionRightWrapper";
+import {UserDataContext} from "@/context/UserContext";
+import axios from "axios";
+
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
+  // const [userData, setUserData] = useState({});
 
-  const handelSubmit = (e) => {
+  const {userData, setUserData} = useContext(UserDataContext)
+  const navigate = useNavigate()
+
+  const handelSubmit = async (e) => {
     e.preventDefault();
 
-    setUserData({
-      email: email,
-      password: password,
-    });
+    const logInUser = {
+      email:email,
+      password:password
+    }
+
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/login`, logInUser)
+
+    if(response.status === 200 || response.status === 201) {
+      const data = response.data
+      const { user, refreshToken } = response.data.data;
+      setUserData(user)
+      localStorage.setItem("token", refreshToken)
+      navigate("/product")
+    }
 
     setEmail("");
     setPassword("");

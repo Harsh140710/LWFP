@@ -1,6 +1,6 @@
 import "./index.css";
 import { Routes, Route } from "react-router-dom";
-import { Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom";
 import PageTransition from "./animation/PageTransition";
 import UserLayout from "@/pages/User/UserLayout";
 import Home from "./components/Home";
@@ -12,6 +12,7 @@ import EmailLogin from "./components/EmailLogin";
 import AboutUs from "./components/AboutUs";
 import PorductLayout from "./pages/Product/PorductLayout";
 import OTPVerification from "./components/OtpVerifivation";
+import UserProtectedWrapper from "./pages/User/UserProtectedWrapper";
 
 const App = () => {
   return (
@@ -22,7 +23,6 @@ const App = () => {
       {/* Default route is Home */}
       <Route path="/home" element={<Home />} />
 
-
       {/* User Routes*/}
       <Route path="/user" element={<UserLayout />}>
         <Route index element={<Navigate to="register" replace />} />
@@ -30,14 +30,28 @@ const App = () => {
         <Route path="register" element={<Register />} />
         <Route path="email-register" element={<EmailLogin />} />
         <Route path="email-register/otp-send" element={<OTPVerification />} />
-        <Route path="logout" element={<Logout />} />
+        <Route
+          path="logout"
+          element={
+            <UserProtectedWrapper>
+              <Logout />
+            </UserProtectedWrapper>
+          }
+        />
       </Route>
 
       {/* About Us our company */}
       <Route path="/about-us" element={<AboutUs />} />
 
       {/*Product Routes*/}
-      <Route path="/product" element={<PorductLayout />}></Route>
+      <Route
+        path="/product"
+        element={
+          <UserProtectedWrapper>
+            <PorductLayout />
+          </UserProtectedWrapper>
+        }
+      ></Route>
     </Routes>
   );
 };
