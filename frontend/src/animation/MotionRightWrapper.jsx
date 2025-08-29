@@ -21,7 +21,7 @@ export const MotionRightWrapper = ({ children, direction = "left" }) => {
       initial="hidden"
       animate="visible"
       exit="exit"
-      className="w-1/2 hidden lg:flex items-center justify-center p-10 bg-transparent"
+      className="w-3/4 hidden lg:flex items-center justify-center p-10 bg-transparent"
     >
       {children}
     </motion.div>

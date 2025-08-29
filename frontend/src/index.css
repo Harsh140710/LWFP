@@ -6,6 +6,10 @@
   themes: light --default, dark --prefersdark, cupcake;
 }
 
+@font-face {
+  font-family: "'Great Vibes', cursive" ;
+  src: url();
+}
 html, body {
   background-color: #111;
   @apply bg-gray-100 dark:bg-gray-900;

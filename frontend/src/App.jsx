@@ -13,6 +13,7 @@ import AboutUs from "./components/AboutUs";
 import PorductLayout from "./pages/Product/PorductLayout";
 import OTPVerification from "./components/OtpVerifivation";
 import UserProtectedWrapper from "./pages/User/UserProtectedWrapper";
+import Cart from "./components/Cart";
 
 const App = () => {
   return (
@@ -51,7 +52,11 @@ const App = () => {
             <PorductLayout />
           </UserProtectedWrapper>
         }
-      ></Route>
+        />
+
+        {/* User Cart */}
+        <Route path="/cart" element={<Cart />}/>
+
     </Routes>
   );
 };
