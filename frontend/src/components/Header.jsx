@@ -45,7 +45,9 @@ const Header = () => {
             </SheetTrigger>
             <SheetContent side="top" className="h-screen dark:bg-[#0B0B0D]">
               <SheetHeader>
-                <SheetTitle className="text-lg font-bold text-[#B48E57]">Menu</SheetTitle>
+                <SheetTitle className="text-lg font-bold text-[#B48E57]">
+                  Menu
+                </SheetTitle>
               </SheetHeader>
               <nav className="mt-6 flex flex-col md:flex-row relative pl-10">
                 {/* Menu Items */}
@@ -56,10 +58,13 @@ const Header = () => {
                       <Link
                         key={item.title}
                         to={item.url}
-                        className="group flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-300 hover:text-[#B48E57] text-gray-800 dark:text-gray-200 dark:hover:text-[#B48E57] font-medium"
                         onClick={() => setOpen(false)}
+                        className="group flex items-center gap-3 px-3 py-2 rounded-lg font-medium
+                          transition-colors duration-300
+                        text-gray-800 dark:text-gray-200
+                        hover:text-[#B48E57] dark:hover:text-[#B48E57]"
                       >
-                        <Icon className="w-5 h-5 text-[#111827] dark:text-[#F9FAFB] group-hover:text-[#B48E57]" />
+                        <Icon className="w-5 h-5 shrink-0 transition-colors duration-300" />
                         {item.title}
                       </Link>
                     );
@@ -131,9 +136,9 @@ const Header = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-ghost btn-circle hover:bg-[#ded5d5] hover:text-white hover:border hover:border-black transition-colors"
+                className="btn btn-circle dark:border-[#0B0B0D] bg-[#FEFEFE] hover:border-[#B48E57] dark:hover:border-[#B48E57] hover:border-2 dark:bg-[#0B0B0D] border-[#FEFEFE] shadow-none hover:text-white transition-colors"
               >
-                <ShoppingCart className="text-[#B48E57]"/>
+                <ShoppingCart className="text-[#B48E57]" />
               </div>
               <div
                 tabIndex={0}
@@ -143,9 +148,12 @@ const Header = () => {
                   <span className="text-lg font-bold">8 Items</span>
                   <span className="text-info">Subtotal: $999</span>
                   <div className="card-actions">
-                    <button className="btn btn-primary btn-block hover:outline-[#B48E57] bg-[#B48E57] border-none outline-none shadow-none">
+                    <Link
+                      to="/cart"
+                      className="btn btn-primary btn-block hover:outline-[#B48E57] bg-[#B48E57] border-none outline-none shadow-none"
+                    >
                       View cart
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>

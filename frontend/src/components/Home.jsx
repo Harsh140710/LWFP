@@ -1,71 +1,103 @@
 import React from "react";
 import Header from "./Header";
 import { motion } from "framer-motion";
-import { MotionRightWrapper } from "@/animation/MotionRightWrapper";
 import { MoveRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ScrollAnimationWrapper } from "@/animation/ScrollAnimationWrapper";
+import { containerVariant, itemVariant } from "@/animation/ScrollVarient";
+
+const Watch = () => (
+  <ScrollAnimationWrapper>
+    <model-viewer
+      src="/golden_watch.glb"
+      alt="Golden Watch"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1"
+      style={{ width: "100%", height: "300px", display: "block" }}
+      camera-orbit="80deg 30deg auto"
+      field-of-view="auto"
+      disable-zoom
+    ></model-viewer>
+  </ScrollAnimationWrapper>
+);
+
 const Home = () => {
   return (
     <div>
       <Header />
 
-      <div className="h-screen w-full lg:p-20 bg-[#F9FAFB] dark:bg-[#0B0B0D] flex items-center">
-        <div className="flex flex-col m-15">
-          <h1 className="font-bold sm:text-2xl md:text-3xl md:w-full lg:text-4xl w-full text-2xl md:text-center lg:text-center xl:text-left text-center mb-5 justify-center text-[#111827] dark:text-[#F9FAFB]">
+      <div className="min-h-screen w-full lg:p-20 bg-[#F9FAFB] dark:bg-[#0B0B0D] flex flex-col lg:flex-row items-center justify-center gap-10">
+        {/* ---- MOBILE/TABLET: Watch on TOP (no text under it) ---- */}
+        <motion.div
+          className="w-full lg:hidden flex justify-center order-1"
+          initial={{ opacity: 0, y: -24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <div className="w-full max-w-md px-4">
+            <Watch />
+          </div>
+        </motion.div>
+
+        {/* ---- TEXT SECTION ---- */}
+        <motion.div
+          variants={containerVariant}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl order-2 lg:order-1"
+        >
+          <motion.h1
+            variants={itemVariant}
+            className="font-bold sm:text-2xl md:text-3xl lg:text-4xl text-2xl mb-5 text-[#111827] dark:text-[#F9FAFB]"
+          >
             Redefining{" "}
-            <span
-              style={{ fontFamily: "'Great Vibes', cursive" }}
-              className="text-[#B48E57]"
-            >
+            <span style={{ fontFamily: "'Great Vibes', cursive" }} className="text-[#B48E57]">
               Luxury
             </span>
-            &nbsp;, One Timeless Moment at a Time
-          </h1>
+            , One Timeless Moment at a Time
+          </motion.h1>
 
-          <p className="text-[#111827] dark:text-[#FEFEFE]">
-            Discover our curated collection of premium watches crafted for
-            elegance and precision
-          </p>
+          <motion.p variants={itemVariant} className="text-[#111827] dark:text-[#FEFEFE] mb-5">
+            Discover our curated collection of premium watches crafted for elegance and precision.
+          </motion.p>
 
-          <div className="mt-5 flex gap-3">
-            <button className="bg-[#B48E57] text-white uppercase hover:cursor-pointer px-3 py-2 rounded-xl font-bold">
+          <motion.div variants={itemVariant} className="mt-3 flex flex-row gap-3 w-full justify-center lg:justify-start">
+            <Link
+              to="/product"
+              className="bg-[#B48E57] text-white uppercase px-4 py-2 rounded-xl font-bold min-w-[140px] text-center"
+            >
               Shop Now
-            </button>
+            </Link>
 
-            <button type="button" className="border-2 relative border-[#B48E57] px-5 py-3 rounded-xl hover:cursor-pointer">
-              <span className="pr-9 text-[#B48E57] font-bold">Explore Collection</span>
-              <MoveRight className="absolute size-[1.2rem] right-6 top-1/2 -translate-y-1/2 text-[#B48E57]"/>
+            <button
+              type="button"
+              className="relative border-2 border-[#B48E57] px-4 py-2 rounded-xl min-w-[140px] flex items-center justify-center hover:cursor-pointer"
+            >
+              <span className="pr-2 text-[#B48E57] font-bold">Explore Collection</span>
+              <MoveRight className="size-[1.2rem] text-[#B48E57]" />
             </button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <MotionRightWrapper>
-          <div className="hidden lg:flex w-3/4 items-center justify-center bg-transparent">
-            <div className="text-center max-w-md">
-              <motion.img
-                key="register-form"
-                initial={{ opacity: 0, y: -40, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 40, scale: 0.98 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 150,
-                  damping: 22,
-                  duration: 0.5,
-                }}
-                src="/logo-2-removebg-preview.png"
-                alt="Product"
-                className="w-96 mx-auto mb-6 dark:invert"
-              />
-              <h2 className="text-3xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-4">
-                Explore Our Collection
-              </h2>
-              <p className="text-gray-600 dark:text-gray-400">
-                Timeless elegance crafted just for you. Discover the best
-                watches and accessories.
-              </p>
-            </div>
+        {/* ---- DESKTOP: Watch on the RIGHT (no text under it) ---- */}
+        <motion.div
+          className="hidden lg:flex w-1/2 justify-center order-2"
+          initial={{ opacity: 0, x: 24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <div className="w-full max-w-md">
+            <Watch />
           </div>
-        </MotionRightWrapper>
+        </motion.div>
+      </div>
+    
+      {/* Featured Collection */}
+      <div className="h-screen -mt-20">
+        <h2 className="text-center font-bold lg:text-3xl md:text-2xl text-xl">Featured Collection</h2>
       </div>
     </div>
   );
