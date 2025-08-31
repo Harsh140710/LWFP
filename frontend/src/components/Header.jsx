@@ -112,7 +112,7 @@ const Header = () => {
 
         {/* Right - Actions */}
         <div className="flex items-center gap-3 justify-end">
-          {/* Search (Desktop / Tablet only) */}
+          {/* Search (Desktop / Tablet only)
           <div className="hidden md:flex items-center relative">
             <input
               ref={searchRef}
@@ -125,7 +125,7 @@ const Header = () => {
             <button type="button" onClick={handleSearchFocus}>
               <Search className="absolute size-[1.1rem] right-3 top-1/2 -translate-y-1/2 text-[#B48E57] dark:text-[#B48E57]" />
             </button>
-          </div>
+          </div> */}
 
           {/* Theme Toggle */}
           <ThemeToggleButton />
@@ -199,7 +199,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Search (below header) */}
+      {/* Mobile Search (below header)
       <div className="px-4 pb-3 flex md:hidden items-center relative bg-[#F9FAFB] dark:bg-[#0B0B0D]">
         <input
           ref={searchRef}
@@ -212,7 +212,7 @@ const Header = () => {
         <button type="button" onClick={handleSearchFocus}>
           <Search className="absolute size-[1.1rem] right-6 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300" />
         </button>
-      </div>
+      </div> */}
     </header>
   );
 };
