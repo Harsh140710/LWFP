@@ -42,7 +42,7 @@ const Landing = () => {
   }, [navigate]);
 
   return (
-    <div className="bg-black h-screen w-screen">
+    <div className="bg-black h-screen w-screen scale-[1.2]">
         <Spline scene="https://prod.spline.design/D8PdnjVUhgt2GhVI/scene.splinecode" />
     </div>
   );

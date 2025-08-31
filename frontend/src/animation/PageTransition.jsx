@@ -1,4 +1,3 @@
-// /animation/PageTransition.jsx
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 

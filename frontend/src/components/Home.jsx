@@ -119,9 +119,7 @@ const Home = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
         >
-          <div className="w-full max-w-md">
-            {/* <Watch /> */}
-          </div>
+          <div className="w-full max-w-md">{/* <Watch /> */}</div>
         </motion.div>
       </div>
 
@@ -132,9 +130,22 @@ const Home = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 md:px-16">
-          {[1, 2, 3].map((item, i) => (
+          {[
+            {
+              id: 1,
+              img: "/OIP-removebg-preview.png",
+              description:
+                "A Rolex without mechanical movement offers the timeless elegance of the brand while running on a quartz battery-powered system. It delivers unmatched accuracy and requires very little maintenance apart from occasional battery replacement, making it convenient for everyday wear. Although it does not carry the intricate craftsmanship of traditional Rolex engineering, it still embodies the luxury design, durability, and prestige that the name Rolex represents.",
+            },
+            { id: 2, img: null, description: "" }, // 🔥 empty slot for animation
+            {
+              id: 3,
+              img: "/Macanic_Watch-removebg-preview.png",
+              description: "",
+            },
+          ].map((item, i) => (
             <motion.div
-              key={item}
+              key={item.id}
               variants={fadeInVariants(i % 2 === 0 ? "left" : "right")}
               initial="hidden"
               whileInView="visible"
@@ -142,28 +153,46 @@ const Home = () => {
               className="relative group flex flex-col border-2 border-[#B48E57] rounded-xl overflow-hidden"
             >
               <div className="bg-[#FEFEFE] dark:bg-[#0B0B0D] w-full aspect-square flex items-center justify-center">
-                <model-viewer
-                  src="/golden_watch.glb"
-                  alt="Golden Watch"
-                  auto-rotate
-                  camera-controls
-                  shadow-intensity="1"
-                  style={{ width: "100%", height: "100%", maxHeight: "14rem" }}
-                  camera-orbit="80deg 30deg auto"
-                  field-of-view="auto"
-                  disable-zoom
-                ></model-viewer>
+                {item.img ? (
+                  item.img.endsWith(".glb") || item.img.endsWith(".gltf") ? (
+                    <model-viewer
+                      src={item.img}
+                      alt="Luxury Watch"
+                      auto-rotate
+                      camera-controls
+                      shadow-intensity="1"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        maxHeight: "14rem",
+                      }}
+                      camera-orbit="80deg 30deg auto"
+                      field-of-view="auto"
+                      disable-zoom
+                    ></model-viewer>
+                  ) : (
+                    <img
+                      src={item.img}
+                      alt="Luxury Watch"
+                      className="w-full h-full object-contain scale-[1.2]"
+                    />
+                  )
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    {/* 🔥 Empty space for your animation */}
+                  </div>
+                )}
               </div>
 
               {/* Hover Overlay */}
               <div
                 className="absolute inset-0 flex flex-col p-5 items-center justify-center
-                backdrop-blur-sm bg-[#B48E57]
-                opacity-0 group-hover:opacity-70
-                transition-all duration-500 ease-in-out"
+              backdrop-blur-sm bg-[#B48E57]
+              opacity-0 group-hover:opacity-70
+              transition-all duration-500 ease-in-out"
               >
                 <p className="text-[#FEFEFE] font-semibold mb-10">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem nemo quo ipsa repellat, officia earum reiciendis fugiat ipsum? Eaque, tempora asperiores velit magni fugit labore quo sunt reiciendis vitae dignissimos similique pariatur, ipsam exercitationem dolores nulla perferendis laudantium ipsa facere repudiandae ratione numquam amet consectetur eius adipisci! Quisquam, reprehenderit asperiores.
                 </p>
                 <Link
                   to={"/products"}
