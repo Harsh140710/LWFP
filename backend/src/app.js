@@ -18,11 +18,12 @@ app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))
 app.use(cookieParser())
+app.use("/uploads", express.static("uploads"));
 
 app.use(helmet())
 
 // Load the Swagger/OpenAPI spec file
-const swaggerDocument = YAML.load('src/docs/swagger.yaml'); // Adjust path if your swagger.yaml is in a different folder, e.g., './docs/swagger.yaml'
+const swaggerDocument = YAML.load('src/docs/swagger.yaml');
 
 // Serve Swagger UI at a specific endpoint
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

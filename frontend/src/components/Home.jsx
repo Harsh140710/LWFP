@@ -134,10 +134,8 @@ const Home = () => {
             {
               id: 1,
               img: "/OIP-removebg-preview.png",
-              description:
-                "A Rolex without mechanical movement offers the timeless elegance of the brand while running on a quartz battery-powered system. It delivers unmatched accuracy and requires very little maintenance apart from occasional battery replacement, making it convenient for everyday wear. Although it does not carry the intricate craftsmanship of traditional Rolex engineering, it still embodies the luxury design, durability, and prestige that the name Rolex represents.",
             },
-            { id: 2, img: null, description: "" }, // 🔥 empty slot for animation
+            { id: 2, img: null, description: "" }, // empty slot for animation
             {
               id: 3,
               img: "/Macanic_Watch-removebg-preview.png",
@@ -179,7 +177,7 @@ const Home = () => {
                   )
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    {/* 🔥 Empty space for your animation */}
+                    {/* Empty space for your animation */}
                   </div>
                 )}
               </div>
@@ -205,12 +203,12 @@ const Home = () => {
           ))}
         </div>
 
-        {/* 📌 Our Services in Animated Rotating Ring */}
+        {/* Our Services in Animated Rotating Ring */}
         <ServicesRing />
       </div>
 
-      {/* 📌 Brand Values */}
-      {/* 📌 Brand Values with Infinite Scroll (Single Row, Responsive) */}
+      {/* Brand Values */}
+      {/*  Brand Values with Infinite Scroll (Single Row, Responsive) */}
       <section className="py-16 px-6 bg-[#F9FAFB] dark:bg-[#0B0B0D] text-center overflow-hidden">
         <h2 className="text-3xl font-bold mb-20 text-[#111827] dark:text-white">
           Why Choose Us
@@ -253,7 +251,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 📌 Lifestyle Section */}
+      {/* Lifestyle Section */}
       <section
         className="py-16 bg-cover bg-center relative"
         style={{ backgroundImage: "url('/lifestyle-bg.jpg')" }}
@@ -273,7 +271,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      {/* 📌 What Our Customers Say */}
+      {/* What Our Customers Say */}
       <section className="py-16 px-6 bg-white dark:bg-[#0B0B0D] text-center overflow-hidden">
         <h2 className="text-3xl font-bold mb-20 text-[#111827] dark:text-white">
           What Our Customers Say
@@ -327,7 +325,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 📌 Call to Action */}
+      {/* Call to Action */}
       <section className="py-16 px-6 text-center bg-[#B48E57] text-white">
         <h2 className="text-3xl font-bold mb-4">Own Your Timeless Luxury</h2>
         <p className="mb-6">Discover exclusive watches crafted for elegance.</p>
@@ -339,7 +337,7 @@ const Home = () => {
         </Link>
       </section>
 
-      {/* 📌 Footer */}
+      {/* Footer */}
       <footer className="py-8 px-6 bg-[#0B0B0D] text-gray-400 text-center">
         <p>
           &copy; {new Date().getFullYear()} Timeless Luxury. All Rights

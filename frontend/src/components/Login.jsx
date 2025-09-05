@@ -1,14 +1,14 @@
-import React, { useState,useContext } from "react";
+import React, { useState, useContext } from "react";
+import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
 import { MotionRightWrapper } from "@/animation/MotionRightWrapper";
-import {UserDataContext} from "@/context/UserContext";
+import { UserDataContext } from "@/context/UserContext";
 import axios from "axios";
-
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,25 +17,35 @@ const Login = () => {
   const [password, setPassword] = useState("");
   // const [userData, setUserData] = useState({});
 
-  const {userData, setUserData} = useContext(UserDataContext)
-  const navigate = useNavigate()
+  const { userData, setUserData } = useContext(UserDataContext);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handelSubmit = async (e) => {
     e.preventDefault();
 
     const logInUser = {
-      email:email,
-      password:password
-    }
+      email: email,
+      password: password,
+    };
 
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/login`, logInUser,  { withCredentials: true })
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/api/v1/users/login`,
+      logInUser
+    );
 
-    if(response.status === 200 || response.status === 201) {
-      const data = response.data
-      const { user, refreshToken } = response.data.data;
-      setUserData(user)
-      localStorage.setItem("token", refreshToken)
-      navigate("/product")
+    if (response.status === 200 || response.status === 201) {
+      const data = response.data;
+      const { user, accessToken, refreshToken } = response.data.data;
+      setUserData(user);
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      // Redirect to "from" if it exists, else default to /product
+      const redirectTo = location.state?.from || "/product";
+      console.log("redirect to: ", redirectTo);
+
+      navigate(redirectTo, { replace: true });
     }
 
     setEmail("");

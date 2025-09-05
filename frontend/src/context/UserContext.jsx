@@ -1,27 +1,30 @@
-import React, { createContext } from "react";
-import { useContext, useState } from "react";
+// src/context/UserContext.js
+import { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
-export const UserDataContext = createContext()
+export const UserDataContext = createContext();
 
-const UserContext = ({ children }) => {
+export const UserContext = ({ children }) => {
+  const [user, setUser] = useState(null);
 
-  const [userData, setUserData] = useState({
-    fullname:{
-      firstname:"",
-      lastname:"",
-    },
-    email:"",
-    password:"",
-    phoneNumber:"",
-  });
+  // Fetch user when app loads (if JWT exists in cookies/localstorage)
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users/profile`, {
+          withCredentials: true,
+        });
+        setUser(res.data.user);
+      } catch (error) {
+        console.log("Not logged in", error.response?.data || error.message);
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
-    <>
-      <UserDataContext.Provider value={{userData, setUserData}}>
-        {children}
-      </UserDataContext.Provider>
-    </>
+    <UserDataContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserDataContext.Provider>
   );
 };
-
-export default UserContext;

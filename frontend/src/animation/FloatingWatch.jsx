@@ -130,7 +130,7 @@ export default function FloatingWatch() {
         src="/golden_watch.glb"
         alt="Floating Watch"
         auto-rotate
-        camera-controls
+        // camera-controls
         camera-orbit="50deg 30deg auto"
         disable-zoom
         style={{ width: "280px", height: "280px" }}

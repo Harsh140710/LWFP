@@ -126,6 +126,7 @@ const Register = () => {
                   value={formData.fullname.firstname}
                   onChange={handleChange}
                   placeholder="Firstname"
+                  required
                   className="mt-2 w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#1A1A1D]
                   text-gray-900 dark:text-gray-100 rounded-lg"
                 />

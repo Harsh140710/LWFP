@@ -26,7 +26,7 @@ router.route("/logout").post(verifyJWT, logOut)
 router.route("/change-password").patch(verifyJWT, forgotPassword)
 router.route("/reset-password").patch(verifyJWT, resetPassword)
 router.route("/profile").get(verifyJWT, getCurrentUser)
-router.route("/update-account").patch(verifyJWT, updateAccountDetails)
+router.route("/updateAccount").patch(verifyJWT, updateAccountDetails)
 router.route("/changeAvatar").patch(verifyJWT, upload.single("avatar"), changeAvatar)
 router.post("/otp/email/send", sendOtpEmailController);
 router.post("/otp/email/verify", verifyOtpEmailController);

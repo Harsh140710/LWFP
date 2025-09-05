@@ -13,11 +13,11 @@ const Logout = () => {
   }).then((response) => {
     if(response.status === 200 || response.status === 201){
       localStorage.removeItem("token")
-      navigate("/user/login")
+      navigate("/user/home")
     }
   })
   return (
-    <div>Logout</div>
+    <div>User Logged Out successfully...</div>
   )
 }
 

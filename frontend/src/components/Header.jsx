@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
+import { UserDataContext } from "@/context/UserContext";
 import ThemeToggleButton from "./ui/theme-toggle-button";
 import { Link } from "react-router-dom";
 import { Book, Home, LogIn, Search, ShoppingCart, Watch } from "lucide-react";
@@ -16,6 +17,8 @@ const Header = () => {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const searchRef = useRef(null);
+
+  const { user } = useContext(UserDataContext);
 
   const items = [
     { title: "Home", url: "/home", icons: Home },
@@ -167,10 +170,12 @@ const Header = () => {
               role="button"
               className="btn btn-ghost btn-circle avatar hover:bg-[#B48E57] hover:border hover:border-black transition-colors"
             >
-              <div className="w-9 rounded-full">
+              <div className="w-9 h-9 rounded-full overflow-hidden">
+                {/* ✅ Avatar from backend context */}
                 <img
                   alt="Profile"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  src={user?.avatar || "/default-avatar.png"}
+                  className="object-cover w-full h-full"
                 />
               </div>
             </div>
