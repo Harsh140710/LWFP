@@ -121,7 +121,7 @@ export default function FloatingWatch() {
         y,
         scale,
         opacity,
-        zIndex: 10,
+        zIndex: 100,
         pointerEvents: "none", // doesn’t block clicks
       }}
       transition={{ type: "spring", stiffness: 100, damping: 25 }}

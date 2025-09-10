@@ -1,6 +1,7 @@
 // src/context/UserContext.js
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export const UserDataContext = createContext();
 
@@ -16,7 +17,7 @@ export const UserContext = ({ children }) => {
         });
         setUser(res.data.user);
       } catch (error) {
-        console.log("Not logged in", error.response?.data || error.message);
+        toast.error("You are not logged in", error.response?.data || error.message);
       }
     };
     fetchUser();

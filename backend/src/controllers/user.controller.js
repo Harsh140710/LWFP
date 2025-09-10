@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
 
-  if(password.length !== 6) {
+  if(password.length < 6) {
     throw new ApiError(401, "Password is too short !")
   }
 
@@ -93,40 +93,34 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  // Get login credentials from request body
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
-  //validation
-  if (!email) {
-    throw new ApiError(400, "Email is Required..");
+  // validation
+  if (!email || !password) {
+    throw new ApiError(400, "Email and password are required.");
   }
 
-  const user = await User.findOne({
-    $or: [{ username }, { email }],
-  });
-
+  // Find user by email
+  const user = await User.findOne({ email });
   if (!user) {
-    throw new ApiError(404, "User Not Found..");
+    throw new ApiError(404, "User not found.");
   }
 
-  // validate password
-
+  // Validate password
   const isPasswordValid = await user.isPasswordCorrect(password);
   if (!isPasswordValid) {
-    throw new ApiError(401, "Invalid Credantials");
+    throw new ApiError(401, "Invalid credentials.");
   }
 
+  // Generate tokens
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
     user._id
   );
 
-  const loggedInUSer = await User.findById(user._id).select(
+  // Return safe user info (without password & refreshToken)
+  const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
-
-  if (!loggedInUSer) {
-    throw new ApiError(500, "User is not logged in...");
-  }
 
   const options = {
     httpOnly: true,
@@ -140,8 +134,8 @@ const loginUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user: loggedInUSer, accessToken, refreshToken },
-        "User logged in sucessfully..!"
+        { user: loggedInUser, accessToken, refreshToken },
+        "User logged in successfully."
       )
     );
 });

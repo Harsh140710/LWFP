@@ -6,11 +6,11 @@ import App from "./App.jsx";
 import {UserContext} from "./context/UserContext";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <UserContext>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </UserContext>
-  </StrictMode>
+  // </StrictMode>
 );

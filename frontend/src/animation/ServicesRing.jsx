@@ -51,7 +51,7 @@ const ServicesRing = () => {
               <motion.div
                 key={i}
                 className="absolute flex items-center justify-center
-                           rounded-full bg-white dark:bg-[#111] dark:hover:bg-[#B48E57] shadow-md
+                           rounded-full bg-green-500 dark:bg-[#111] dark:hover:bg-[#B48E57] shadow-md
                            hover:bg-[#B48E57] hover:text-white
                            transition-all duration-300"
                 style={{

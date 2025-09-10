@@ -34,21 +34,21 @@ const Header = () => {
   };
 
   return (
-    <header className="relative top-0 left-0 w-full z-50 bg-[#F9FAFB] dark:bg-[#0B0B0D] shadow-md">
+    <header className="fixed top-0 left-0 w-full z-50 bg-green-700 dark:bg-[#0B0B0D] shadow-md">
       {/* Main Header Row */}
       <div className="grid grid-cols-3 items-center px-4 sm:px-6 py-4">
         {/* Left - Menu */}
-        <div className="flex items-center">
+        <div className="flex relative z-50 items-center">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <button className="flex items-center gap-1 text-[#B48E57]">
+              <button className="flex items-center gap-1 text-white dark:text-[#FEEFEF]">
                 <span className="hidden md:flex text-lg font-bold">MENU</span>
                 <MenuButton open={open} />
               </button>
             </SheetTrigger>
             <SheetContent side="top" className="h-screen dark:bg-[#0B0B0D]">
               <SheetHeader>
-                <SheetTitle className="text-lg font-bold text-[#B48E57]">
+                <SheetTitle className="text-lg font-bold text-black dark:text-[#FEFEFE]">
                   Menu
                 </SheetTitle>
               </SheetHeader>
@@ -65,7 +65,7 @@ const Header = () => {
                         className="group flex items-center gap-3 px-3 py-2 rounded-lg font-medium
                           transition-colors duration-300
                         text-gray-800 dark:text-gray-200
-                        hover:text-[#B48E57] dark:hover:text-[#B48E57]"
+                        hover:text-green-500 dark:hover:text-green-500"
                       >
                         <Icon className="w-5 h-5 shrink-0 transition-colors duration-300" />
                         {item.title}
@@ -100,13 +100,13 @@ const Header = () => {
           <img
             src="/logo-2-removebg-preview.png"
             alt="Watch-logo"
-            className="hidden md:block w-10 h-auto dark:invert"
+            className="hidden md:block w-10 h-auto invert"
           />
-          <h2 className="hidden md:block font-bold text-lg sm:text-xl md:text-2xl text-[#111827] dark:text-[#F9FAFB]">
+          <h2 className="hidden md:block font-bold text-lg sm:text-xl md:text-2xl text-white dark:text-[#F9FAFB]">
             Timeless
             <span
               style={{ fontFamily: "'Great Vibes', cursive" }}
-              className="ml-1.5 text-[#B48E57]"
+              className="ml-1.5 text-white"
             >
               Elegance
             </span>
@@ -139,21 +139,22 @@ const Header = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-circle dark:border-[#0B0B0D] bg-[#FEFEFE] hover:border-[#B48E57] dark:hover:border-[#B48E57] hover:border-2 dark:bg-[#0B0B0D] border-[#FEFEFE] shadow-none hover:text-white transition-colors"
+                className="btn btn-circle transition-all duration-300
+                bg-green-700 hover:border-2 hover:border-white text-white dark:bg-[#0B0B0D] dark:text-white shadow-none border-green-700 dark:border-[#111]"
               >
-                <ShoppingCart className="text-[#B48E57]" />
+                <ShoppingCart className="w-5 h-5" />
               </div>
               <div
                 tabIndex={0}
-                className="card card-compact dropdown-content z-1 mt-3 w-52 shadow"
+                className="card card-compact dropdown-content z-50 mt-3 w-52 shadow"
               >
                 <div className="card-body">
-                  <span className="text-lg font-bold">8 Items</span>
+                  <span className="text-lg font-bold text-black dark:text-white">8 Items</span>
                   <span className="text-info">Subtotal: $999</span>
                   <div className="card-actions">
                     <Link
                       to="/cart"
-                      className="btn btn-primary btn-block hover:outline-[#B48E57] bg-[#B48E57] border-none outline-none shadow-none"
+                      className="btn btn-primary btn-block bg-green-500 hover:bg-green-600 border-none"
                     >
                       View cart
                     </Link>
@@ -168,13 +169,13 @@ const Header = () => {
             <div
               tabIndex={0}
               role="button"
-              className="btn btn-ghost btn-circle avatar hover:bg-[#B48E57] hover:border hover:border-black transition-colors"
+              className="btn btn-ghost btn-circle avatar hover:bg-[#B48E57] hover:border hover:border-green-500 transition-colors"
             >
               <div className="w-9 h-9 rounded-full overflow-hidden">
                 {/* ✅ Avatar from backend context */}
                 <img
                   alt="Profile"
-                  src={user?.avatar || "/default-avatar.png"}
+                  src={user?.avatar || "/default_Avatar.jpg"}
                   className="object-cover w-full h-full"
                 />
               </div>
@@ -186,7 +187,7 @@ const Header = () => {
               <li>
                 <Link
                   to={"/user/profile"}
-                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-[#B48E57] dark:hover:bg-[#B48E57] transition-colors"
+                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-green-500 dark:hover:bg-[#B48E57] transition-colors"
                 >
                   Profile
                 </Link>
@@ -194,7 +195,7 @@ const Header = () => {
               <li>
                 <Link
                   to={"/user/logout"}
-                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-[#B48E57] dark:hover:bg-[#B48E57] transition-colors"
+                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-red-500 dark:hover:bg-[#B48E57] transition-colors"
                 >
                   Log Out
                 </Link>

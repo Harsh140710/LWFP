@@ -1,24 +1,48 @@
-import React from 'react'
-import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import React from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import {toast} from "sonner";
+import { useEffect } from "react";
+import { UserContext, UserDataContext } from "@/context/UserContext";
+import { useContext } from "react";
+
 const Logout = () => {
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-  const token = localStorage.getItem("token")
-  const navigate = useNavigate()
+  const {user, setUser} = useContext(UserDataContext)
+  useEffect(() => {
+    const logoutUser = async () => {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BASE_URL}/api/v1/users/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-  axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/logout`, {
-    headers:{
-      Authorization: `Bearer ${token}`
-    }
-  }).then((response) => {
-    if(response.status === 200 || response.status === 201){
-      localStorage.removeItem("token")
-      navigate("/user/home")
-    }
-  })
-  return (
-    <div>User Logged Out successfully...</div>
-  )
-}
+        if (response.status === 200 || response.status === 201) {
+          localStorage.removeItem("token");
+          
+          setUser(null)
+          toast.success("Logged out successfully");
 
-export default Logout
+          navigate("/home")
+        }
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message || "Logout failed. Try again."
+        );
+      }
+    };
+
+    logoutUser();
+  }, [navigate, token]);
+
+  return <div>User Logged Out successfully...</div>;
+};
+
+export default Logout;

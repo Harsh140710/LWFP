@@ -1,11 +1,43 @@
 @import 'tailwindcss';
 @import "tw-animate-css";
 
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  /* background: #0B0B0D; luxury black background */
+  /* color: #FEFEFE; elegant white text */
+  /* overflow-x: hidden; */
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Playfair Display', serif;
+}
+
+
+.cursive {
+  font-family: 'Great Vibes', cursive;
+}
+
+.text-gold {
+  color: #B48E57; /* luxury gold */
+}
+
+.bg-gold {
+  background-color: #B48E57;
+}
+
+
+
 @custom-variant dark (&:is(.dark *));
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark, cupcake;
 }
 
+@font-face {
+  font-family: "'Poppins', cursive" ;
+  src: url('https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&family=Oswald:wght@200..700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+}
 
 @font-face {
   font-family: "'Great Vibes', cursive" ;

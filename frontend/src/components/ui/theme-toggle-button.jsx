@@ -65,10 +65,13 @@ export default function ThemeToggleButton({
       onClick={toggleTheme}
       variant="ghost"
       size="icon"
-      className="w-9 p-0 h-9 relative group"
+      className="w-9 h-9 p-0 relative rounded-full
+              bg-green-700 hover:bg-green-700 hover:border-white hover:border-2 text-white
+                transition-all duration-300
+              dark:bg-[#0B0B0D] dark:text-white"
       name="Theme Toggle Button">
-      <SunIcon className="size-[1.2rem] hover:border-[#B48E57] hover:border-2 text-[#B48E57] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <MoonIcon className="absolute size-[1.2rem] text-[#B48E57] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <SunIcon className="size-[1.2rem] hover:border-green-500 hover:border-2 text-white rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <MoonIcon className="absolute size-[1.2rem] text-white rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Theme Toggle</span>
       {showLabel && (
         <>
