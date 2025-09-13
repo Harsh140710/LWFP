@@ -11,25 +11,22 @@ import jwt from "jsonwebtoken";
 
 
 const generateAccessAndRefreshToken = async (userId) => {
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
 
-    if (!user) {
-      throw new ApiError(404, "User Not Found...!");
-    }
+  console.log("Using secrets:", process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_SECRET);
+  console.log("Expiries:", process.env.ACCESS_TOKEN_EXPIRY, process.env.REFRESH_TOKEN_EXPIRY);
 
-    const accessToken = await user.generateAccessToken();
-    const refreshToken = await user.generateRefreshToken();
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
 
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(
-      500,
-      "Something went wrong while generating access and refresh tokens...!"
-    );
-  }
+  console.log("AccessToken:", accessToken);
+  console.log("RefreshToken:", refreshToken);
+
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  return { accessToken, refreshToken };
 };
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -39,14 +36,11 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
 
-  if(password.length < 6) {
-    throw new ApiError(401, "Password is too short !")
+  if (password.length < 6) {
+    throw new ApiError(401, "Password is too short !");
   }
 
-  const existedUser = await User.findOne({
-    $or: [{ username }, { email }],
-  });
-
+  const existedUser = await User.findOne({ $or: [{ username }, { email }, { phoneNumber }] });
   if (existedUser) {
     throw new ApiError(409, "User already exists!");
   }
@@ -58,7 +52,7 @@ const registerUser = asyncHandler(async (req, res) => {
     try {
       const uploaded = await uploadOnCloudinary(avatarLocalPath);
       avatarUrl = uploaded?.secure_url || "";
-      fs.unlinkSync(avatarLocalPath); // cleanup local file
+      fs.unlinkSync(avatarLocalPath);
     } catch (error) {
       console.error("Error uploading avatar:", error);
       throw new ApiError(500, "Failed to upload avatar!");
@@ -72,21 +66,37 @@ const registerUser = asyncHandler(async (req, res) => {
       email,
       password,
       phoneNumber,
-      avatar: avatarUrl, // only saved if uploaded
+      avatar: avatarUrl,
     });
+
+    let accessToken, refreshToken;
+    try { 
+      ({ accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id));
+      console.log("Inside generateAccessAndRefreshToken, userId:", user._id);
+    } catch (err) {
+        console.error("Token generation failed:", err);
+      throw new ApiError(500, "Failed to generate tokens!");
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    };
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
 
-    if (!createdUser) {
-      throw new ApiError(500, "Something went wrong while registering USER!");
-    }
-
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
-
     return res
       .status(201)
-      .json(new ApiResponse(200, {user:createdUser, accessToken, refreshToken}, "User registered successfully"));
-  } catch (error) { 
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse(
+          201,
+          { user: createdUser, accessToken, refreshToken },
+          "User registered successfully."
+        )
+      );
+  } catch (error) {
     console.error("User Creation Failed:", error);
     throw new ApiError(500, error.message || "Something went wrong while registering USER!");
   }
@@ -153,7 +163,7 @@ const logOut = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: (process.env.NODE_ENV = "production")
+    secure: (process.env.NODE_ENV === "production")
   };
 
   return res
@@ -182,7 +192,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 
   if (!verifyOTP(phone, otp)) throw new ApiError(400, "Invalid OTP");
 
-  const user = await User.findOne({ phone });
+  const user = await User.findOne({ phoneNumber:phone });
   user.password = newPassword;
   await user.save();
 
@@ -209,18 +219,22 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 })
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
-  const { fullname, email } = req.body;
+  const { firstname, lastname, email } = req.body;
 
-  if (!fullname || !email) {
-    throw new ApiError(404, "Fullname and email are required");
+  if (!firstname || !lastname || !email) {
+    throw new ApiError(400, "Firstname, lastname and email are required");
   }
 
-  const user = await User.findByIdAndUpdate(req.user?._id, {
-    $set: {
-      fullname,
-      email: email.toLowerCase(),
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        fullname: { firstname, lastname },
+        email: email.toLowerCase(),
+      },
     },
-  }).select("-password -refreshToken");
+    { new: true }
+  ).select("-password -refreshToken");
 
   return res
     .status(200)

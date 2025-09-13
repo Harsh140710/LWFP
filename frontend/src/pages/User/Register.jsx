@@ -27,7 +27,7 @@ const Register = () => {
   const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
-  const { setUserData } = useContext(UserDataContext);
+  const { user, setUser } = useContext(UserDataContext);
 
   // ✅ Validation
   const validate = () => {
@@ -101,24 +101,34 @@ const Register = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        const { user, refreshToken } = response.data.data;
+        const { user, accessToken, refreshToken } = response.data.data;
 
-        setUserData(user);
-        localStorage.setItem("token", refreshToken);
+        setUser(user);
+        // ✅ store access token for authentication
+        localStorage.setItem("token", accessToken);
+
+        // ✅ optionally store refresh token too
+        localStorage.setItem("refreshToken", refreshToken);
 
         toast.success(`Welcome, ${user?.fullname?.firstname || "User"}!`);
-        navigate("/products");
+        navigate("/user/profile");
       }
     } catch (err) {
+      console.error("Register error:", err.response?.data || err.message);
       if (err.response?.status === 409) {
         toast.error("Username or email already exists. Please try another.");
       } else if (err.response?.status === 400) {
         toast.error(
           err.response.data?.message || "Please fill all required fields."
         );
+      } else if (err.response?.status === 401) {
+        toast.error("Password is too short!");
       } else {
         toast.error("Something went wrong. Please try again later.");
       }
+    } finally {
+      // ✅ Always reset loading state
+      setLoading(false);
     }
   };
 
