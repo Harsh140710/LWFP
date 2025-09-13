@@ -17,6 +17,8 @@ import Products from "@/components/Products";
 import EditProfile from "./pages/User/EditProfile";
 import { Toaster } from "sonner";
 import BackgroundVideo from "@/components/BackgroundVideo";
+import ProductsPage from "./pages/Product/ProductsPage";
+import ProductDetail from "./pages/Product/ProductDetail";
 
 const App = () => {
   return (
@@ -68,6 +70,8 @@ const App = () => {
           }
         >
           <Route index element={<Products />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id" element={<ProductDetail />} />
         </Route>
 
         {/* Cart */}
