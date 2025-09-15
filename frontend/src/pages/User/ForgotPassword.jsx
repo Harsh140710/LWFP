@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/v1/users/otp/email/verify`,
-        { email, code:otp, purpose: "forgot" } // ✅ add purpose
+        { email, code:otp, purpose: "forgot" } // add purpose
       );
       toast.success(res.data.message || "OTP verified");
       setStep(3);
@@ -58,7 +58,7 @@ const ForgotPassword = () => {
 
         {step === 1 && (
           <>
-            <Label className="font-semibold text-lg dark:text-white">
+            <Label className="font-semibold text-lg dark:text-white mt-10">
               Enter your Email
             </Label>
             <Input
@@ -66,11 +66,11 @@ const ForgotPassword = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-2 mb-4"
+              className="mt-5 mb-4"
             />
             <button
               onClick={sendOtp}
-              className="w-full bg-green-500 hover:bg-green-700 text-white py-2 rounded-lg"
+              className="w-full bg-green-500 hover:bg-green-700 text-white py-2 mt-3 rounded-lg"
             >
               Send OTP
             </button>

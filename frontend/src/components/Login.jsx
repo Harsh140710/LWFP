@@ -145,10 +145,10 @@ const Login = () => {
           )}
 
           <div className="flex items-center justify-between mt-2">
-            <label className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300">
+            <label className="flex items-center space-x-2 text-sm dark:text-gray-300 accent-green-600 focus:ring-2 focus:ring-green-500">
               <input
                 type="checkbox"
-                className="h-4 w-4 text-green-600 border-gray-300 rounded"
+                className="h-4 w-4 text-green-600 border-gray-300 rounded bg-white"
                 onChange={(e) => {
                   if (e.target.checked) {
                     localStorage.setItem("rememberMe", email);

@@ -34,7 +34,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-green-700 dark:bg-[#0B0B0D] shadow-md">
+    <header className="fixed top-0 left-0 w-full z-50 bg-green-700 dark:bg-black shadow-md">
       {/* Main Header Row */}
       <div className="grid grid-cols-3 items-center px-4 sm:px-6 py-4">
         {/* Left - Menu */}

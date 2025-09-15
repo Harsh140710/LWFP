@@ -65,17 +65,21 @@ const App = () => {
 
         {/* Product Routes */}
         <Route
-          path="/product"
+          path="/products"
           element={
             <UserProtectedWrapper>
-              <ProductLayout />
+              <ProductsPage />
             </UserProtectedWrapper>
           }
-        >
-          <Route index element={<Products />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="products/:id" element={<ProductDetail />} />
-        </Route>
+        />
+        <Route
+          path="/products/:id"
+          element={
+            <UserProtectedWrapper>
+              <ProductDetail />
+            </UserProtectedWrapper>
+          }
+        />
 
         {/* Cart */}
         <Route path="/cart" element={<Cart />} />

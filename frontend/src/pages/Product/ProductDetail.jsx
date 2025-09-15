@@ -1,17 +1,30 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import axios from "axios";
 import { toast } from "sonner";
-
-const dummyProducts = {
-  101: { name: "Smartphone", price: 12999, image: "https://www.bing.com/images/search?view=detailV2&ccid=hlhC0L07&id=55D44E6551353FD649F8742A51AE9406AAA4B669&thid=OIP.hlhC0L07E6Zfiek0L_kcAAHaFj&mediaurl=https%3a%2f%2fwallpaperaccess.com%2ffull%2f3046105.jpg&exph=2456&expw=3277&q=watch+img&FORM=IRPRST&ck=FFC5889763D07562E468C3CDA3698C88&selectedIndex=2&itb=0", desc: "Latest Android phone with AMOLED display." },
-  102: { name: "Laptop", price: 45999, image: "https://www.bing.com/images/search?view=detailV2&ccid=hlhC0L07&id=55D44E6551353FD649F8742A51AE9406AAA4B669&thid=OIP.hlhC0L07E6Zfiek0L_kcAAHaFj&mediaurl=https%3a%2f%2fwallpaperaccess.com%2ffull%2f3046105.jpg&exph=2456&expw=3277&q=watch+img&FORM=IRPRST&ck=FFC5889763D07562E468C3CDA3698C88&selectedIndex=2&itb=0", desc: "Powerful laptop for work and gaming." },
-  201: { name: "T-Shirt", price: 499, image: "https://www.bing.com/images/search?view=detailV2&ccid=hlhC0L07&id=55D44E6551353FD649F8742A51AE9406AAA4B669&thid=OIP.hlhC0L07E6Zfiek0L_kcAAHaFj&mediaurl=https%3a%2f%2fwallpaperaccess.com%2ffull%2f3046105.jpg&exph=2456&expw=3277&q=watch+img&FORM=IRPRST&ck=FFC5889763D07562E468C3CDA3698C88&selectedIndex=2&itb=0", desc: "Comfortable cotton T-shirt in multiple colors." },
-  202: { name: "Shoes", price: 1499, image: "https://www.bing.com/images/search?view=detailV2&ccid=hlhC0L07&id=55D44E6551353FD649F8742A51AE9406AAA4B669&thid=OIP.hlhC0L07E6Zfiek0L_kcAAHaFj&mediaurl=https%3a%2f%2fwallpaperaccess.com%2ffull%2f3046105.jpg&exph=2456&expw=3277&q=watch+img&FORM=IRPRST&ck=FFC5889763D07562E468C3CDA3698C88&selectedIndex=2&itb=0", desc: "Stylish sneakers for casual wear." },
-};
+import Header from "@/components/Header";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const product = dummyProducts[id];
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/v1/product/${id}`
+        );
+        setProduct(res.data?.data);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        toast.error("Product not found");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
 
   const addToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -20,29 +33,64 @@ const ProductDetail = () => {
     toast.success(`${product.name} added to cart`);
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-20vh)]">
+        <p className="font-bold">Loading product...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-20vh)]">
+        <p>Product not found.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="pt-20 max-w-4xl mx-auto px-6 py-10">
-      {product ? (
-        <div className="flex flex-col md:flex-row gap-8">
-          <img src={product.image} alt={product.name} className="w-full md:w-1/2 rounded-lg shadow-lg" />
+    <>
+      <Header />
+      <div className="pt-20 h-screen w-full mx-auto px-6 py-10 dark:bg-black">
+        <div className="flex flex-col md:flex-row gap-10 bg-white shadow-lg rounded-xl p-6 dark:bg-black">
+          {/* Product Image */}
           <div className="flex-1">
-            <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-            <p className="text-lg mb-4">{product.desc}</p>
-            <p className="text-2xl font-semibold text-green-600 mb-6">₹{product.price}</p>
-            <div className="flex gap-4">
-              <button onClick={addToCart} className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold">
+            <img
+              src={product.images?.[0]?.url || "/placeholder.jpg"}
+              alt={product.name}
+              className="w-full rounded-lg shadow-md object-cover h-[250px] bg-cover cursor-pointer"
+            />
+          </div>
+
+          {/* Product Info */}
+          <div className="flex-1 flex flex-col justify-between">
+            <div>
+              <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+              <p className="text-lg dark:text-white mb-4">
+                {product.description || "No description available."}
+              </p>
+              <p className="text-2xl font-semibold text-green-600 mb-6">
+                ₹{product.price}
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={addToCart}
+                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold cursor-pointer"
+              >
                 Add to Cart
               </button>
-              <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-semibold">
+              <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-semibold cursor-pointer">
                 Buy Now
               </button>
             </div>
           </div>
         </div>
-      ) : (
-        <p className="flex items-center justify-center h-[calc(100vh-20vh)] w-full overflow-y-hidden">Product not found.</p>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
 

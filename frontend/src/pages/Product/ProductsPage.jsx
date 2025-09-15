@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import toast from "react-hot-toast";
+import axios from "axios";
+import Header from "@/components/Header";
 
 const ProductsPage = () => {
   const [categories, setCategories] = useState([]);
@@ -10,19 +12,21 @@ const ProductsPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/products`); // change URL if hosted
-        const data = await res.json();
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/api/v1/product`
+        );
+        const data = res.data?.data; // ✅ Extract actual product array
 
-        // Group by category
+        // Group by category (be careful: backend populates category as object {name, slug})
         const grouped = data.reduce((acc, product) => {
-          if (!acc[product.category]) {
-            acc[product.category] = [];
+          const categoryName = product.category?.name || "Uncategorized";
+          if (!acc[categoryName]) {
+            acc[categoryName] = [];
           }
-          acc[product.category].push(product);
+          acc[categoryName].push(product);
           return acc;
         }, {});
 
-        // Convert into array format like before
         const formatted = Object.keys(grouped).map((cat, i) => ({
           id: i + 1,
           name: cat,
@@ -32,6 +36,7 @@ const ProductsPage = () => {
         setCategories(formatted);
       } catch (err) {
         console.log("Error fetching products:", err);
+        toast.error("Failed to load products");
       }
     };
 
@@ -39,57 +44,75 @@ const ProductsPage = () => {
   }, []);
 
   return (
-    <div className="pt-20">
-      {/* Carousel */}
-      <div className="w-full max-w-7xl mx-auto px-4">
-        <Carousel
-          autoPlay
-          infiniteLoop
-          showThumbs={false}
-          showStatus={false}
-          className="rounded-xl overflow-hidden"
-        >
-          <div>
-            <img src="/Carousel-1.jpeg" alt="Banner 1"
-              className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover" />
-          </div>
-          <div>
-            <img src="/Carousel-1.png" alt="Banner 2"
-              className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover" />
-          </div>
-          <div>
-            <img src="/Carousel-3.png" alt="Banner 3"
-              className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover" />
-          </div>
-        </Carousel>
-      </div>
-
-      {/* Categories */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        {categories.map((cat) => (
-          <div key={cat.id} className="mb-12">
-            <h2 className="text-2xl font-bold mb-6">{cat.name}</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {cat.products.map((prod) => (
-                <Link
-                  key={prod._id}
-                  to={`/product/products/${prod._id}`}
-                  className="border rounded-xl p-4 hover:shadow-xl transition duration-300 bg-white flex flex-col"
-                >
-                  <img
-                    src={prod.image}
-                    alt={prod.name}
-                    className="w-full h-40 md:h-48 lg:h-56 object-cover rounded-md mb-3"
-                  />
-                  <h3 className="font-semibold text-lg mb-1">{prod.name}</h3>
-                  <p className="text-green-600 font-bold text-base">₹{prod.price}</p>
-                </Link>
-              ))}
+    <>
+      <Header />
+      <div className="pt-20 dark:bg-black dark:text-white">
+        {/* Carousel */}
+        <div className="w-full max-w-7xl mx-auto px-4">
+          <Carousel
+            autoPlay
+            infiniteLoop
+            showThumbs={false}
+            showStatus={false}
+            className="rounded-xl overflow-hidden"
+          >
+            <div>
+              <img
+                src="/Carousel-1.jpeg"
+                alt="Banner 1"
+                className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover"
+              />
             </div>
-          </div>
-        ))}
+            <div>
+              <img
+                src="/Carousel-1.png"
+                alt="Banner 2"
+                className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover"
+              />
+            </div>
+            <div>
+              <img
+                src="/Carousel-3.png"
+                alt="Banner 3"
+                className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover"
+              />
+            </div>
+          </Carousel>
+        </div>
+
+        {/* Categories */}
+        <div className="max-w-7xl mx-auto px-6 py-10">
+          {categories.map((cat) => (
+            <div key={cat.id} className="mb-12">
+              <h2 className="text-2xl font-bold mb-6 uppercase underline">
+                {cat.name}
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                {cat.products.map((prod) => (
+                  <Link
+                    key={prod._id}
+                    to={`/products/${prod._id}`}
+                    className="border rounded-xl p-4 hover:shadow-xl transition duration-300 bg-white flex flex-col"
+                  >
+                    <img
+                      src={prod.images?.[0]?.url || "/placeholder.jpg"}
+                      alt={prod.name}
+                      className="w-full h-40 md:h-48 lg:h-56 object-cover rounded-md mb-3"
+                    />
+                    <h3 className="font-semibold text-lg mb-1">{prod.name}</h3>
+                    <p className="text-green-600 font-bold text-base">
+                      ₹{prod.price}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* <Outlet /> */}
       </div>
-    </div>
+    </>
   );
 };
 

@@ -54,7 +54,7 @@ const Home = () => {
 
       <FloatingWatch />
       {/* Hero Section */}
-      <div className="min-h-screen w-full lg:p-20 bg-[#F9FAFB] dark:bg-[#0B0B0D] flex flex-col lg:flex-row items-center justify-center gap-10">
+      <div className="min-h-screen w-full lg:p-20 bg-[#F9FAFB] dark:bg-black flex flex-col lg:flex-row items-center justify-center gap-10">
         {/* Mobile Watch */}
         <motion.div
           className="w-full lg:hidden flex justify-center order-1"
@@ -125,7 +125,7 @@ const Home = () => {
       </div>
 
       {/* Featured Collection */}
-      <div className="py-12 relative pt-28 z-10 bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+      <div className="py-12 relative pt-28 z-10 bg-[#F9FAFB] dark:bg-black">
         <h2 className="text-center font-bold text-black dark:text-white lg:text-3xl md:text-2xl text-xl py-6 -mt-20 mb-20 underline">
           Featured Collection
         </h2>
@@ -210,7 +210,7 @@ const Home = () => {
 
       {/* Brand Values */}
       {/*  Brand Values with Infinite Scroll (Single Row, Responsive) */}
-      <section className="py-16 px-6  relative z-10 bg-[#F9FAFB] dark:bg-[#0B0B0D] text-center overflow-hidden">
+      <section className="py-16 px-6  relative z-10 bg-[#F9FAFB] dark:bg-black text-center overflow-hidden">
         <h2 className="text-3xl font-bold mb-20 text-[#111827] dark:text-white">
           Why Choose Us
         </h2>

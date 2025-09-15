@@ -2,6 +2,7 @@ import ScrollLine from '@/animation/ScrollLine'
 import Header from '@/components/Header'
 import React from 'react'
 import { Outlet } from 'react-router-dom'
+import ProductsPage from './ProductsPage'
 
 const ProductLayout = () => {
   return (
@@ -10,6 +11,7 @@ const ProductLayout = () => {
       <ScrollLine />
       {/* Render whatever child route is active */}
       <div>
+        <ProductsPage />
         <Outlet />
       </div>
     </div>

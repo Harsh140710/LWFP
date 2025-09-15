@@ -21,7 +21,7 @@ const ServicesRing = () => {
   }, []);
 
   return (
-    <section className="py-20 bg-[#F9FAFB] dark:bg-[#0B0B0D] text-center overflow-hidden">
+    <section className="py-20 bg-[#F9FAFB] dark:bg-black text-center overflow-hidden">
       <h2 className="text-3xl font-bold mb-16 text-[#111827] dark:text-white">
         Our Services
       </h2>
@@ -51,8 +51,8 @@ const ServicesRing = () => {
               <motion.div
                 key={i}
                 className="absolute flex items-center justify-center
-                           rounded-full bg-green-500 dark:bg-[#111] dark:hover:bg-[#B48E57] shadow-md
-                           hover:bg-[#B48E57] hover:text-white
+                           rounded-full bg-green-500 dark:bg-[#111] dark:hover:bg-green-600 shadow-md
+                           hover:bg-green-600 hover:text-white
                            transition-all duration-300"
                 style={{
                   width: config.bubble,
