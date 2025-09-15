@@ -7,23 +7,28 @@ import { User } from "../models/user.models.js";
 
 const sendOtpEmailController = asyncHandler(async (req, res) => {
   const { email, purpose } = req.body;
-  if (!email || !purpose) throw new ApiError(400, "email and purpose are required");
+  if (!email) throw new ApiError(400, "Email is required");
 
-  const existedUser = await User.findOne({email});
+  const existedUser = await User.findOne({ email });
 
-  if (existedUser) {
-      throw new ApiError(409, "User Is Already exist !");
+  if (purpose === "register" && existedUser) {
+    throw new ApiError(409, "User already exists!");
+  }
+
+  if (purpose === "forgot" && !existedUser) {
+    throw new ApiError(404, "User not found!");
   }
 
   await sendOtpEmail({ email, purpose });
   return res.status(200).json(new ApiResponse(200, null, "OTP sent"));
 });
 
-const verifyOtpEmailController = asyncHandler(async (req, res) => {
-  const { email, purpose, code, username, password } = req.body;
 
-  if (!email || !purpose || !code) {
-    throw new ApiError(400, "email, purpose, code are required");
+const verifyOtpEmailController = asyncHandler(async (req, res) => {
+  const { email, code, purpose, username, password } = req.body; // ✅ include purpose
+
+  if (!email || !code) {
+    throw new ApiError(400, "Email and code are required");
   }
 
   // verify OTP first
@@ -37,19 +42,7 @@ const verifyOtpEmailController = asyncHandler(async (req, res) => {
     });
 
     if (existedUser) {
-      if (existedUser) {
-        throw new ApiError(400, "User already registered with this email");
-      }
-
-      // Update existing unverified user
-      existedUser.username = username?.toLowerCase() || existedUser.username;
-      existedUser.password = password || existedUser.password;
-      existedUser.createdAt = new Date();
-      await existedUser.save();
-
-      return res
-        .status(200)
-        .json(new ApiResponse(200, existedUser, "User email verified & updated successfully"));
+      throw new ApiError(400, "User already registered with this email");
     }
 
     // Create new user if not exist
@@ -57,9 +50,8 @@ const verifyOtpEmailController = asyncHandler(async (req, res) => {
       username: username.toLowerCase(),
       email,
       password,
-      fullname,
-      phoneNumber,
-      createdAt
+      fullname: fullname || "",     // default empty if not provided
+      phoneNumber: phoneNumber || ""
     });
 
 
@@ -68,9 +60,19 @@ const verifyOtpEmailController = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, newUser, "User registered successfully"));
   }
 
-  // if purpose is login or forgot password
-  return res.status(200).json(new ApiResponse(200, null, "OTP verified successfully"));
+  if (purpose === "forgot") {
+    // ✅ OTP verified for forgot password
+    return res
+      .status(200)
+      .json(new ApiResponse(200, null, "OTP verified successfully for forgot password"));
+  }
+
+  // if purpose is login
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "OTP verified successfully"));
 });
+
 
 
 export { sendOtpEmailController, verifyOtpEmailController };

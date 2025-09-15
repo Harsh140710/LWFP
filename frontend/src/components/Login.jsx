@@ -144,11 +144,36 @@ const Login = () => {
             <p className="text-red-500 text-sm">{errors.password}</p>
           )}
 
+          <div className="flex items-center justify-between mt-2">
+            <label className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300">
+              <input
+                type="checkbox"
+                className="h-4 w-4 text-green-600 border-gray-300 rounded"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    localStorage.setItem("rememberMe", email);
+                  } else {
+                    localStorage.removeItem("rememberMe");
+                  }
+                }}
+              />
+              <span>Remember me</span>
+            </label>
+
+            <button
+              type="button"
+              onClick={() => navigate("/user/forgot-password")}
+              className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+            >
+              Forgot Password?
+            </button>
+          </div>
+
           {/* Submit */}
           <button
             type="submit"
             className="w-full bg-green-500 mt-4 hover:bg-green-700
-                       font-semibold py-2 rounded-lg transition-all dark:bg-green-500 dark:hover:bg-green-700 dark:text-white"
+                       font-semibold py-2 rounded-lg transition-all dark:bg-green-500 dark:hover:bg-green-700 text-white "
           >
             Submit
           </button>

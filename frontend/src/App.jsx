@@ -19,6 +19,7 @@ import { Toaster } from "sonner";
 import BackgroundVideo from "@/components/BackgroundVideo";
 import ProductsPage from "./pages/Product/ProductsPage";
 import ProductDetail from "./pages/Product/ProductDetail";
+import ForgotPassword from "./pages/User/ForgotPassword";
 
 const App = () => {
   return (
@@ -47,6 +48,8 @@ const App = () => {
           <Route path="email-register" element={<EmailLogin />} />
           <Route path="email-register/otp-send" element={<OTPVerification />} />
           <Route path="edit" element={<EditProfile />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+
           <Route
             path="logout"
             element={

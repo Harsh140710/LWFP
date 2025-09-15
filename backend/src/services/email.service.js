@@ -41,7 +41,7 @@ const sendOtpEmail = async ({ email, purpose }) => {
   // });
 
   await transporter.sendMail({
-  from: `"Luxora" <${process.env.EMAIL_USER}>`,
+  from: `"Timeless Elegance" <${process.env.EMAIL_USER}>`,
   to: email,
   subject: "Your Luxora OTP Verification Code",
   html: `

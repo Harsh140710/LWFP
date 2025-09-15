@@ -40,7 +40,7 @@ const ProductDetail = () => {
           </div>
         </div>
       ) : (
-        <p>Product not found.</p>
+        <p className="flex items-center justify-center h-[calc(100vh-20vh)] w-full overflow-y-hidden">Product not found.</p>
       )}
     </div>
   );

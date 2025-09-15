@@ -1,40 +1,88 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-
-const categories = [
-  { id: 1, name: "Electronics", products: [
-    { id: 101, name: "Smartphone", price: 12999, image: "/images/phone.jpg", desc: "Latest Android phone with AMOLED display." },
-    { id: 102, name: "Laptop", price: 45999, image: "/images/laptop.jpg", desc: "Powerful laptop for work and gaming." },
-  ]},
-  { id: 2, name: "Fashion", products: [
-    { id: 201, name: "T-Shirt", price: 499, image: "/images/tshirt.jpg", desc: "Comfortable cotton T-shirt in multiple colors." },
-    { id: 202, name: "Shoes", price: 1499, image: "/images/shoes.jpg", desc: "Stylish sneakers for casual wear." },
-  ]},
-];
+import toast from "react-hot-toast";
 
 const ProductsPage = () => {
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/products`); // change URL if hosted
+        const data = await res.json();
+
+        // Group by category
+        const grouped = data.reduce((acc, product) => {
+          if (!acc[product.category]) {
+            acc[product.category] = [];
+          }
+          acc[product.category].push(product);
+          return acc;
+        }, {});
+
+        // Convert into array format like before
+        const formatted = Object.keys(grouped).map((cat, i) => ({
+          id: i + 1,
+          name: cat,
+          products: grouped[cat],
+        }));
+
+        setCategories(formatted);
+      } catch (err) {
+        console.log("Error fetching products:", err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
-    <div className="pt-20"> {/* padding for fixed header */}
+    <div className="pt-20">
       {/* Carousel */}
-      <Carousel autoPlay infiniteLoop showThumbs={false} showStatus={false}>
-        <div><img src="/OIP-removebg-preview.png" alt="Banner 1" /></div>
-        <div><img src="/OIP-removebg-preview.png" alt="Banner 2" /></div>
-        <div><img src="/OIP-removebg-preview.png" alt="Banner 3" /></div>
-      </Carousel>
+      <div className="w-full max-w-7xl mx-auto px-4">
+        <Carousel
+          autoPlay
+          infiniteLoop
+          showThumbs={false}
+          showStatus={false}
+          className="rounded-xl overflow-hidden"
+        >
+          <div>
+            <img src="/Carousel-1.jpeg" alt="Banner 1"
+              className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover" />
+          </div>
+          <div>
+            <img src="/Carousel-1.png" alt="Banner 2"
+              className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover" />
+          </div>
+          <div>
+            <img src="/Carousel-3.png" alt="Banner 3"
+              className="h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full object-cover" />
+          </div>
+        </Carousel>
+      </div>
 
       {/* Categories */}
       <div className="max-w-7xl mx-auto px-6 py-10">
-        {categories.map(cat => (
+        {categories.map((cat) => (
           <div key={cat.id} className="mb-12">
-            <h2 className="text-2xl font-bold mb-4">{cat.name}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {cat.products.map(prod => (
-                <Link key={prod.id} to={`/products/${prod.id}`} className="border rounded-lg p-4 hover:shadow-lg">
-                  <img src={prod.image} alt={prod.name} className="w-full h-40 object-cover rounded-md mb-2" />
-                  <h3 className="font-semibold">{prod.name}</h3>
-                  <p className="text-green-600 font-bold">₹{prod.price}</p>
+            <h2 className="text-2xl font-bold mb-6">{cat.name}</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {cat.products.map((prod) => (
+                <Link
+                  key={prod._id}
+                  to={`/product/products/${prod._id}`}
+                  className="border rounded-xl p-4 hover:shadow-xl transition duration-300 bg-white flex flex-col"
+                >
+                  <img
+                    src={prod.image}
+                    alt={prod.name}
+                    className="w-full h-40 md:h-48 lg:h-56 object-cover rounded-md mb-3"
+                  />
+                  <h3 className="font-semibold text-lg mb-1">{prod.name}</h3>
+                  <p className="text-green-600 font-bold text-base">₹{prod.price}</p>
                 </Link>
               ))}
             </div>

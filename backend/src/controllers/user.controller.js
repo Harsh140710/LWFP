@@ -14,14 +14,14 @@ const generateAccessAndRefreshToken = async (userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
 
-  console.log("Using secrets:", process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_SECRET);
-  console.log("Expiries:", process.env.ACCESS_TOKEN_EXPIRY, process.env.REFRESH_TOKEN_EXPIRY);
+  // console.log("Using secrets:", process.env.ACCESS_TOKEN_SECRET, process.env.REFRESH_TOKEN_SECRET);
+  // console.log("Expiries:", process.env.ACCESS_TOKEN_EXPIRY, process.env.REFRESH_TOKEN_EXPIRY);
 
   const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
 
-  console.log("AccessToken:", accessToken);
-  console.log("RefreshToken:", refreshToken);
+  // console.log("AccessToken:", accessToken);
+  // console.log("RefreshToken:", refreshToken);
 
   user.refreshToken = refreshToken;
   await user.save({ validateBeforeSave: false });
@@ -176,23 +176,23 @@ const logOut = asyncHandler(async (req, res) => {
 })
 
 const forgotPassword = asyncHandler(async (req, res) => {
-  const { phone } = req.body;
+  const { email } = req.body;
 
-  const user = await User.findOne({ phone });
+  const user = await User.findOne({ email:email });
   if (!user) throw new ApiError(404, "User not found");
 
-  const otp = generateOTP(phone);
-  await sendOTP(phone, otp);
+  const otp = generateOTP(email);
+  await sendOTP(email, otp);
 
   return res.status(200).json(new ApiResponse(200, null, "OTP sent for password reset"));
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
-  const { phone, otp, newPassword } = req.body;
+  const { email, otp, newPassword } = req.body;
 
-  if (!verifyOTP(phone, otp)) throw new ApiError(400, "Invalid OTP");
+  if (!verifyOTP(email, otp)) throw new ApiError(400, "Invalid OTP");
 
-  const user = await User.findOne({ phoneNumber:phone });
+  const user = await User.findOne({ email:email });
   user.password = newPassword;
   await user.save();
 
