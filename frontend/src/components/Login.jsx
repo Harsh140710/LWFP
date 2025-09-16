@@ -63,7 +63,7 @@ const Login = () => {
 
         toast.success(`Welcome back, ${user?.fullname.firstname || "User"}!`);
 
-        const redirectTo = location.state?.from || "/product";
+        const redirectTo = location.state?.from || "/products";
         navigate(redirectTo, { replace: true });
       }
     } catch (err) {

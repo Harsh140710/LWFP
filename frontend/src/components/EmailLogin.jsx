@@ -21,7 +21,7 @@ const EmailLogin = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-68px)] lg:h-[calc(100vh-74px)] flex items-center justify-center bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+    <div className="min-h-screen lg:min-h-screen flex items-center justify-center bg-[#F9FAFB] dark:bg-[#0B0B0D]">
       <motion.div
       key="register-form"
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
@@ -33,7 +33,7 @@ const EmailLogin = () => {
           damping: 22,
           duration: 0.5,
         }}
-      className="w-[90%] sm:w-[350px] md:w-[350px] lg:w-[450px] bg-[#F9FAFB] dark:bg-[#0B0B0D] rounded-2xl p-8 shadow-lg dark:shadow-none">
+      className="w-[90%] sm:w-[350px] md:w-[350px] lg:w-[450px] bg-[#F9FAFB] dark:bg-black rounded-2xl p-8 shadow-lg dark:shadow-none">
         <h2 className="font-bold sm:text-3xl md:text-4xl lg:text-4xl text-2xl text-center mb-16 text-[#111827] dark:text-[#F9FAFB]">
           Register with Email
         </h2>
@@ -57,8 +57,8 @@ const EmailLogin = () => {
           <button
             to={"/user/email-register/otp-send"}
             type="submit"
-            className="w-full bg-[#B48E57] mt-4 hover:bg-[#A37E4D] text-[#FFFFFF]
-                       font-semibold py-2 rounded-lg transition-all dark:bg-[#B48E57] dark:hover:bg-[#A37E4D]"
+            className="w-full bg-green-500 mt-4 hover:bg-green-600 text-[#FFFFFF]
+                       font-semibold py-2 rounded-lg transition-all "
           >
             Submit
           </button>

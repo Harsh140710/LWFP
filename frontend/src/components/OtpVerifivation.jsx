@@ -22,7 +22,7 @@ const OTPVerification = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-68px)] lg:h-[calc(100vh-74px)] flex-col items-center justify-center bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+    <div className="flex min-h-screen lg:min-h-screen flex-col items-center justify-center bg-[#F9FAFB] dark:bg-black">
       <motion.div
       key="register-form"
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
@@ -34,11 +34,11 @@ const OTPVerification = () => {
           damping: 22,
           duration: 0.5,
         }}
-      className=" p-10 rounded-2xl flex items-center justify-center flex-col shadow-lg dark:shadow-none bg-[#FFFFFF] dark:bg-[#0B0b0D]">
-        <h1 className="text-2xl font-bold text-center mb-5 text-gray-800 dark:text-gray-100">
+      className=" p-10 rounded-2xl flex items-center justify-center flex-col shadow-lg dark:shadow-none bg-[#FFFFFF] dark:bg-[#111]">
+        <h1 className="text-2xl font-bold text-center mb-5 text-black dark:text-gray-100">
           OTP Verification
         </h1>
-        <p className="m-10 font-semibold text-center">Enter the 6-digit OTP send on your Email <br /><b className="font-serif text-lg">{email}</b></p>
+        <p className="m-10 font-semibold text-center">Enter the 6-digit OTP send on your Email <br /><b className="font-poppins text-lg mt-5">{email}</b></p>
 
         <InputOTP
           maxLength={6}
@@ -63,8 +63,8 @@ const OTPVerification = () => {
 
         <button
           onClick={handleVerify}
-          className="w-full bg-[#B48E57] mt-8 hover:bg-[#A37E4D] text-[#FFFFFF]
-                       font-semibold py-2 rounded-lg transition-all dark:bg-[#B48E57] dark:hover:bg-[#A37E4D]"
+          className="w-full bg-green-500 mt-8 hover:bg-green-600 text-[#FFFFFF]
+                       font-semibold py-2 rounded-lg transition-all   "
         >
           Verify OTP
         </button>

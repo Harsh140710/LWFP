@@ -94,7 +94,7 @@ const Home = () => {
 
           <div className="mt-3 flex flex-row gap-3 w-full justify-center lg:justify-start">
             <Link
-              to="/product"
+              to="/products"
               className="bg-green-500 text-white uppercase px-4 py-2 rounded-xl font-bold min-w-[140px] flex items-center justify-center"
             >
               Shop Now
