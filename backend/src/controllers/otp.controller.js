@@ -1,9 +1,9 @@
-// controllers/otpEmail.controller.js
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { sendOtpEmail, verifyOtpEmail } from "../services/email.service.js";
 import { User } from "../models/user.models.js";
+import jwt from "jsonwebtoken";
 
 const sendOtpEmailController = asyncHandler(async (req, res) => {
   const { email, purpose } = req.body;
@@ -23,56 +23,33 @@ const sendOtpEmailController = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, "OTP sent"));
 });
 
-
 const verifyOtpEmailController = asyncHandler(async (req, res) => {
-  const { email, code, purpose, username, password } = req.body; // ✅ include purpose
+  const { email, code, purpose } = req.body;
 
   if (!email || !code) {
     throw new ApiError(400, "Email and code are required");
   }
 
-  // verify OTP first
   const result = await verifyOtpEmail({ email, purpose, code });
   if (!result.ok) throw new ApiError(400, result.reason || "OTP verification failed");
 
+  // Don't create a user here, just verify OTP
+  let user = null;
   if (purpose === "register") {
-    // Check if user already exists
-    const existedUser = await User.findOne({
-      $or: [{ username }, { email }],
-    });
-
-    if (existedUser) {
-      throw new ApiError(400, "User already registered with this email");
-    }
-
-    // Create new user if not exist
-    const newUser = await User.create({
-      username: username.toLowerCase(),
-      email,
-      password,
-      fullname: fullname || "",     // default empty if not provided
-      phoneNumber: phoneNumber || ""
-    });
-
-
-    return res
-      .status(201)
-      .json(new ApiResponse(200, newUser, "User registered successfully"));
+    user = await User.findOne({ email }); // optional, might not exist yet
+  } else if (purpose === "forgot") {
+    user = await User.findOne({ email });
   }
 
-  if (purpose === "forgot") {
-    // ✅ OTP verified for forgot password
-    return res
-      .status(200)
-      .json(new ApiResponse(200, null, "OTP verified successfully for forgot password"));
-  }
+  // generate JWT only if user exists (for login/forgot), otherwise just send OTP verified
+  const token = user
+    ? jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "7d" })
+    : null;
 
-  // if purpose is login
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "OTP verified successfully"));
+  return res.status(200).json(
+    new ApiResponse(200, { user, token }, "OTP verified successfully")
+  );
 });
-
 
 
 export { sendOtpEmailController, verifyOtpEmailController };

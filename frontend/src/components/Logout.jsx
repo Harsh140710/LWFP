@@ -7,7 +7,7 @@ import { UserContext, UserDataContext } from "@/context/UserContext";
 import { useContext } from "react";
 
 const Logout = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const navigate = useNavigate();
 
   const {user, setUser} = useContext(UserDataContext)
@@ -21,11 +21,12 @@ const Logout = () => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
+            withCredentials: true,
           }
         );
 
         if (response.status === 200 || response.status === 201) {
-          localStorage.removeItem("token");
+          localStorage.removeItem("accessToken");
           
           setUser(null)
           toast.success("Logged out successfully");

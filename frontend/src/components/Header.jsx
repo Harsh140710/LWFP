@@ -23,7 +23,7 @@ const Header = () => {
   const items = [
     { title: "Home", url: "/home", icons: Home },
     { title: "About Us", url: "/about-us", icons: Book },
-    { title: "Products", url: "/product", icons: Watch },
+    { title: "Products", url: "/products", icons: Watch },
     { title: "Log In", url: "/user/login", icons: LogIn },
   ];
 
@@ -149,7 +149,7 @@ const Header = () => {
                 className="card card-compact dropdown-content z-50 mt-3 w-52 shadow"
               >
                 <div className="card-body">
-                  <span className="text-lg font-bold text-black dark:text-white">8 Items</span>
+                  <span className="text-lg font-bold text-white dark:text-white">8 Items</span>
                   <span className="text-info">Subtotal: $999</span>
                   <div className="card-actions">
                     <Link

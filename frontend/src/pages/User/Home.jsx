@@ -8,6 +8,7 @@ import { containerVariant, itemVariant } from "@/animation/ScrollVarient";
 import ServicesRing from "@/animation/ServicesRing";
 import FloatingWatch from "@/animation/FloatingWatch";
 import Footer from "../../components/Footer";
+import BackgroundVideo from "@/components/BackgroundVideo";
 
 // Animation with blur + left/right
 const fadeInVariants = (direction = "left") => ({
@@ -51,7 +52,7 @@ const Home = () => {
   return (
     <div>
       <Header />
-
+      <BackgroundVideo />
       <FloatingWatch />
       {/* Hero Section */}
       <div className="min-h-screen w-full lg:p-20 bg-[#F9FAFB] dark:bg-black flex flex-col lg:flex-row items-center justify-center gap-10">

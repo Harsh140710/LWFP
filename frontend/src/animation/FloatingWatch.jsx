@@ -97,7 +97,7 @@ export default function FloatingWatch() {
     [1, 1, 0.85, 0.8]
   );
 
-  const opacity = useTransform(scrollYProgress, [0, 0.85, 1], [1, 1, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 1], [1, 1, 0]);
 
   // 👇 Apply based on breakpoint
   const x =
@@ -115,8 +115,8 @@ export default function FloatingWatch() {
     <motion.div
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
+        top: -50,
+        left: -10,
         x,
         y,
         scale,

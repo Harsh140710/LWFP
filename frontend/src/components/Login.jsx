@@ -40,7 +40,7 @@ const Login = () => {
     }
 
     setErrors(newErrors);
-    return !newErrors.email && !newErrors.password; // ✅ valid if no errors
+    return !newErrors.email && !newErrors.password; // valid if no errors
   };
 
   const handelSubmit = async (e) => {
@@ -52,13 +52,14 @@ const Login = () => {
       const logInUser = { email, password };
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/v1/users/login`,
-        logInUser
+        logInUser,
+        {withCredentials: true}
       );
 
       if (response.status === 200 || response.status === 201) {
         const { user, accessToken, refreshToken } = response.data.data;
         setUser(user);
-        localStorage.setItem("token", accessToken);
+        localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
         toast.success(`Welcome back, ${user?.fullname.firstname || "User"}!`);

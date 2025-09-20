@@ -289,7 +289,7 @@ const Register = () => {
           {/* Continue with Email */}
           <div className="relative w-full flex items-center justify-center">
             <Link
-              to={"/user/email-register"}
+              to={"/user/email-login"}
               className="w-full text-center bg-green-500 hover:bg-green-700 text-white font-semibold py-2 rounded-lg transition-all"
             >
               Continue with Email?

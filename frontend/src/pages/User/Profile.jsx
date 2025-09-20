@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { UserDataContext } from "@/context/UserContext";
-import Logout from "@/components/Logout";
 import { toast } from "sonner";
 
 const Profile = () => {
@@ -17,10 +16,12 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
+          // correct backend route
           `${import.meta.env.VITE_BASE_URL}/api/v1/users/profile`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              // consistent key name
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           }
         );
@@ -28,7 +29,6 @@ const Profile = () => {
         if (response.status === 200) {
           const data = response.data.data;
 
-          // ✅ Avatar is already full Cloudinary URL, no need to prepend base URL
           const updatedUser = {
             ...data,
             avatar: data.avatar || "/default_Avatar.jpg",
@@ -41,7 +41,9 @@ const Profile = () => {
         console.error("Profile fetch failed:", error);
 
         if (error.response?.status === 401) {
-          localStorage.removeItem("token");
+          // remove correct token
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
           navigate("/user/login", { state: { from: "/user/profile" } });
         }
       }
@@ -50,7 +52,7 @@ const Profile = () => {
     fetchProfile();
   }, [navigate, setUser]);
 
-  // ✅ Avatar upload
+  // Avatar upload
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -66,21 +68,19 @@ const Profile = () => {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            // "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
-          withCredentials: true,
         }
       );
 
       if (res.data.success) {
-        const newAvatar = res.data.data.avatar; // ✅ already Cloudinary URL
+        const newAvatar = res.data.data.avatar;
 
         setUserData((prev) => ({ ...prev, avatar: newAvatar }));
         setUser((prev) => ({ ...prev, avatar: newAvatar }));
       }
     } catch (err) {
-      alert("Failed to upload avatar");
+      toast.error("Failed to upload avatar");
       console.error("Upload error:", err);
     } finally {
       setUploading(false);
@@ -98,8 +98,8 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen lg:mt-10 flex items-center justify-center bg-gray-100 dark:bg-[#0B0B0D] px-4 py-8">
-      <Card className="w-full max-w-lg p-6 shadow-lg rounded-2xl bg-white dark:bg-[#1A1A1D]">
+    <div className="min-h-screen lg:mt-10 flex items-center justify-center bg-gray-100 dark:bg-black px-4 py-8">
+      <Card className="w-full max-w-lg p-6 shadow-lg rounded-2xl bg-white dark:bg-[#111]">
         {/* Avatar */}
         <div className="flex flex-col items-center gap-4">
           <label className="relative cursor-pointer group">
@@ -119,7 +119,7 @@ const Profile = () => {
             </span>
           </label>
 
-          <h1 className="text-2xl md:text-3xl font-bold text-[#B48E57]">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
             {userData?.fullname?.firstname} {userData?.fullname?.lastname}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -154,10 +154,12 @@ const Profile = () => {
           <Button
             className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             onClick={() => {
-              localStorage.removeItem("token");
-              setUser(null)
+              // ✅ clear correct tokens
+              localStorage.removeItem("accessToken");
+              localStorage.removeItem("refreshToken");
+              setUser(null);
               navigate("/user/login");
-              toast.success("Logged Out Successfully")
+              toast.success("Logged Out Successfully");
             }}
           >
             Logout

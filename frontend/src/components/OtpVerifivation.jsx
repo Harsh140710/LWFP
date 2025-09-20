@@ -1,70 +1,72 @@
 import React, { useState } from "react";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-  InputOTPSeparator,
 } from "@/components/ui/input-otp";
 import useAuthStore from "@/store/useAuthStore";
+import axios from "axios";
+import {toast} from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const OTPVerification = () => {
   const [otp, setOtp] = useState("");
-  const email = useAuthStore((state) => state.email)
-  const [userData, setuserData] = useState({})
-  const handleVerify = (e) => {
-    e.preventDefault()
+  const email = useAuthStore((state) => state.email);
+  const navigate = useNavigate();
 
-    setuserData({
-      email:email,
-      otp:otp
-    })
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/v1/users/otp/email/verify`,
+        { email, code: otp, purpose: "register" } // ONLY these fields
+      );
+
+      if (res.data.success) {
+        toast.success("OTP Verified");
+        // Navigate to registration page
+        navigate("/user/email-register", { state: { email } });
+      } else {
+        toast.error(res.data.message || "Invalid OTP");
+      }
+    } catch (err) {
+      // console.error("Error:", err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "Server error");
+    }
   };
 
   return (
-    <div className="flex min-h-screen lg:min-h-screen flex-col items-center justify-center bg-[#F9FAFB] dark:bg-black">
+    <div className="flex min-h-screen items-center justify-center bg-[#F9FAFB] dark:bg-black">
       <motion.div
-      key="register-form"
-        initial={{ opacity: 0, y: 40, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -40, scale: 0.98 }}
-        transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 22,
-          duration: 0.5,
-        }}
-      className=" p-10 rounded-2xl flex items-center justify-center flex-col shadow-lg dark:shadow-none bg-[#FFFFFF] dark:bg-[#111]">
-        <h1 className="text-2xl font-bold text-center mb-5 text-black dark:text-gray-100">
+        key="register-form"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="p-10 rounded-2xl flex flex-col items-center justify-center shadow-lg bg-[#FFFFFF] dark:bg-[#111]"
+      >
+        <h1 className="text-2xl font-bold mb-5 text-black dark:text-gray-100">
           OTP Verification
         </h1>
-        <p className="m-10 font-semibold text-center">Enter the 6-digit OTP send on your Email <br /><b className="font-poppins text-lg mt-5">{email}</b></p>
+        <p className="mb-8 font-semibold text-center">
+          Enter the 6-digit OTP sent to your Email <br />
+          <b>{email}</b>
+        </p>
 
-        <InputOTP
-          maxLength={6}
-          value={otp}
-          onChange={setOtp} // this updates the state
-        >
-          <InputOTPGroup className="gap-3 shadow-2xl">
-            <InputOTPSlot index={0} className="rounded-md border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 text-xl font-semibold"/>
-            <InputOTPSlot index={1} className="rounded-md border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 text-xl font-semibold"/>
-            <InputOTPSlot index={2} className="rounded-md border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 text-xl font-semibold"/>
-            <InputOTPSlot index={3} className="rounded-md border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 text-xl font-semibold"/>
-            <InputOTPSlot index={4} className="rounded-md border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 text-xl font-semibold"/>
-            <InputOTPSlot index={5} className="rounded-md border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 text-xl font-semibold"/>
+        <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+          <InputOTPGroup className="gap-3">
+            {[...Array(6)].map((_, index) => (
+              <InputOTPSlot
+                key={index}
+                index={index}
+                className="rounded-md border p-2 text-center text-xl"
+              />
+            ))}
           </InputOTPGroup>
         </InputOTP>
 
         <button
           onClick={handleVerify}
-          className="w-full bg-green-500 mt-8 hover:bg-green-600 text-[#FFFFFF]
-                       font-semibold py-2 rounded-lg transition-all   "
+          className="w-full bg-green-500 mt-8 hover:bg-green-600 text-white font-semibold py-2 rounded-lg"
         >
           Verify OTP
         </button>
