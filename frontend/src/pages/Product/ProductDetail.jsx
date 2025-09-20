@@ -13,7 +13,7 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/v1/product/${id}`
+          `${import.meta.env.VITE_BASE_URL}/api/v1/products/${id}`
         );
         setProduct(res.data?.data);
       } catch (err) {
@@ -66,12 +66,12 @@ const ProductDetail = () => {
           {/* Product Info */}
           <div className="flex-1 flex flex-col justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+              <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
               <p className="text-lg dark:text-white mb-4">
                 {product.description || "No description available."}
               </p>
               <p className="text-2xl font-semibold text-green-600 mb-6">
-                ₹{product.price}
+                ${product.price}
               </p>
             </div>
 

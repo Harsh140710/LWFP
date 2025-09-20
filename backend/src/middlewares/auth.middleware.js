@@ -16,10 +16,9 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
 
   try {
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-    const user = await User.findById(decodedToken?._id).select(
-      "-password -refreshToken"
-    );
+    console.log("Decoded Token:", decodedToken); // add this
+    const user = await User.findById(decodedToken._id).select("-password -refreshToken");
+    console.log("User from DB:", user); // add this
 
     if (!user) {
       throw new ApiError(401, "Unauthorized");
@@ -34,11 +33,13 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
 });
 
 const isAdmin = (req, res, next) => {
-  if (req.user?.role !== 'admin') {
-    return new ApiError(403, "Invalid credatials");
+  if (!req.user || req.user.role !== 'admin') {
+    return next(new ApiError(403, "Admin access required"));
   }
   next();
 };
+
+
 
 export {
     isAdmin,

@@ -5,6 +5,8 @@ import axios from "axios";
 import { toast } from "sonner";
 import { UserDataContext } from "@/context/UserContext";
 import Header from "@/components/Header";
+import api from "@/utils/api";
+import { useEffect } from "react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
@@ -16,11 +18,11 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/v1/users/login`,
-        { email, password },
-        { withCredentials: true }
-      );
+      // 1. Login request
+      const response = await api.post("/api/v1/users/login", {
+        email,
+        password,
+      });
 
       const { user, accessToken, refreshToken } = response.data.data;
 
@@ -29,17 +31,40 @@ const AdminLogin = () => {
         return;
       }
 
-      setUser(user);
+      // 2. Save tokens
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
+      // 3. Save user in context
+      setUser(user);
+
       toast.success("Welcome Admin!");
+
       const redirectTo = location.state?.from || "/admin/dashboard";
       navigate(redirectTo, { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
     }
   };
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const { data } = await api.get("/api/v1/users/profile", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+        setUser(data.data); // save in context
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (localStorage.getItem("accessToken")) {
+      fetchCurrentUser();
+    }
+  }, []);
 
   return (
     <>

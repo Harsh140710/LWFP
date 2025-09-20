@@ -14,10 +14,10 @@ const AdminProtectedWrapper = ({ children }) => {
     }
   }, [user]);
 
-  if (!user || user.role !== "admin") {
-    // Redirect to admin login if not logged in or not admin
-    return <Navigate to="/user/login" state={{ from: location }} replace />;
-  }
+//   if (!user || user.role !== "admin") {
+//     // Redirect to admin login if not logged in or not admin
+//     return <Navigate to="/user/login" state={{ from: location }} replace />;
+//   }
 
   return children;
 };

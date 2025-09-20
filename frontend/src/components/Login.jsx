@@ -45,29 +45,33 @@ const Login = () => {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validate()) return; // stop submit if invalid
+    if (!validate()) return;
 
     try {
       const logInUser = { email, password };
+
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/v1/users/login`,
-        logInUser,
-        {withCredentials: true}
+        logInUser
       );
 
       if (response.status === 200 || response.status === 201) {
         const { user, accessToken, refreshToken } = response.data.data;
-        setUser(user);
+
+        // 1️⃣ Save tokens
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
-        toast.success(`Welcome back, ${user?.fullname.firstname || "User"}!`);
+        // 2️⃣ Update context
+        setUser(user);
 
-        const redirectTo = location.state?.from || "/products";
-        navigate(redirectTo, { replace: true });
+        toast.success(`Welcome back, ${user?.fullname?.firstname || "User"}!`);
+
+        // 3️⃣ Navigate
+        navigate("/products", { replace: true });
       }
     } catch (err) {
+      console.error(err);
       toast.error(err.response?.data?.message || "Something went wrong");
     }
   };

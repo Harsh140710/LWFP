@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import toast from "react-hot-toast";
@@ -13,16 +15,14 @@ const ProductsPage = () => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/api/v1/product`
+          `${import.meta.env.VITE_BASE_URL}/api/v1/products`
         );
-        const data = res.data?.data; // ✅ Extract actual product array
+        const data = res.data?.data || [];
 
-        // Group by category (be careful: backend populates category as object {name, slug})
+        // Group products by category
         const grouped = data.reduce((acc, product) => {
           const categoryName = product.category?.name || "Uncategorized";
-          if (!acc[categoryName]) {
-            acc[categoryName] = [];
-          }
+          if (!acc[categoryName]) acc[categoryName] = [];
           acc[categoryName].push(product);
           return acc;
         }, {});
@@ -99,9 +99,17 @@ const ProductsPage = () => {
                       alt={prod.name}
                       className="w-full h-40 md:h-48 lg:h-56 object-cover rounded-md mb-3"
                     />
-                    <h3 className="font-semibold text-lg mb-1">{prod.name}</h3>
+                    {/* Product Title */}
+                    <h3 className="font-semibold text-lg mb-1">{prod.title}</h3>
+                    {/* Brand */}
+                    {prod.brand && (
+                      <p className="text-gray-500 text-sm mb-1 font-bold uppercase">
+                        {prod.brand}
+                      </p>
+                    )}
+                    {/* Price */}
                     <p className="text-green-600 font-bold text-base">
-                      ₹{prod.price}
+                      ${prod.price}
                     </p>
                   </Link>
                 ))}
@@ -109,8 +117,6 @@ const ProductsPage = () => {
             </div>
           ))}
         </div>
-
-        {/* <Outlet /> */}
       </div>
     </>
   );

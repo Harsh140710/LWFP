@@ -39,8 +39,8 @@ import reviewRoutes from './routes/review.routes.js'
 import cartRoutes from './routes/cart.routes.js'
 
 app.use("/api/v1/users", userRouter)
-app.use("/api/v1/product", productRoutes)
-app.use("/api/v1/categories", categoryRoutes)
+app.use("/api/v1/products", productRoutes)
+app.use("/api/v1/category", categoryRoutes)
 app.use("/api/v1/orders", orderRoutes)
 app.use("/api/v1/reviews", reviewRoutes)
 app.use("/api/v1/cart", cartRoutes)

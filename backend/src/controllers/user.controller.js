@@ -10,6 +10,7 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 
 
+// generate refresh and access tokens
 const generateAccessAndRefreshToken = async (userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error("User not found");
@@ -29,6 +30,7 @@ const generateAccessAndRefreshToken = async (userId) => {
   return { accessToken, refreshToken };
 };
 
+// register user
 const registerUser = asyncHandler(async (req, res) => {
   const { firstname, lastname, email, username, password, phoneNumber } = req.body;
 
@@ -102,6 +104,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+// user/ admin login
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -150,6 +153,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+// user logout
 const logOut = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
@@ -175,6 +179,7 @@ const logOut = asyncHandler(async (req, res) => {
 
 })
 
+// forgot user account password
 const forgotPassword = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
@@ -187,6 +192,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, "OTP sent for password reset"));
 });
 
+// reset user account password
 const resetPassword = asyncHandler(async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -199,6 +205,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, "Password reset successful"));
 });
 
+// get current user for profile
 const getCurrentUser = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   if (!userId) {
@@ -218,6 +225,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Current user fetched successfully"));
 })
 
+// update user account details
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { firstname, lastname, email } = req.body;
 
@@ -241,6 +249,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Account Details Updated Successfully"));
 });
 
+// change user Avatar
 const changeAvatar = asyncHandler(async(req, res) => {
   const avatarLocalPath = req.file?.path;
 
@@ -269,6 +278,7 @@ const changeAvatar = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, user, "Avatar is Updated Successfully"));
 })
 
+// refresh Access Token
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
     req.cookies?.refreshToken || req.body.refreshToken;
@@ -322,6 +332,32 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
+// get all the users
+const getAllUsers = asyncHandler(async (req, res) => {
+  if (req.user?.role !== "admin") {
+    throw new ApiError(403, "Admin access required");
+  }
+
+  const users = await User.find().select("-password -refreshToken");
+  return res.status(200).json(new ApiResponse(200, users, "All users fetched successfully"));
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  // Prevent admin from deleting themselves
+  if (req.user._id.toString() === id) {
+    throw new ApiError(400, "Admin cannot delete themselves!");
+  }
+
+  const user = await User.findByIdAndDelete(id);
+  if (!user) throw new ApiError(404, "User not found");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, `User ${user.username} deleted successfully`));
+});
+
 export {
     generateAccessAndRefreshToken,
     registerUser,
@@ -333,4 +369,6 @@ export {
     getCurrentUser,
     updateAccountDetails,
     changeAvatar,
+    getAllUsers,
+    deleteUser
 }

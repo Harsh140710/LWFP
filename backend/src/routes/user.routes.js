@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { registerUser,refreshAccessToken,loginUser,forgotPassword, resetPassword,getCurrentUser,updateAccountDetails,changeAvatar, logOut } from "../controllers/user.controller.js";
+import { registerUser,refreshAccessToken,loginUser,forgotPassword, resetPassword,getCurrentUser,updateAccountDetails,changeAvatar, logOut, getAllUsers, deleteUser } from "../controllers/user.controller.js";
 import { verifyJWT, isAdmin } from "../middlewares/auth.middleware.js";
 import { sendOtpEmailController, verifyOtpEmailController } from '../controllers/otp.controller.js'
 
@@ -30,5 +30,9 @@ router.route("/updateAccount").patch(verifyJWT, updateAccountDetails)
 router.route("/changeAvatar").patch(verifyJWT, upload.single("avatar"), changeAvatar)
 router.post("/otp/email/send", sendOtpEmailController);
 router.post("/otp/email/verify", verifyOtpEmailController);
+
+// only admins can fetch/delete all users
+router.route("/").get(verifyJWT, isAdmin, getAllUsers);
+router.delete("/:id", verifyJWT, isAdmin, deleteUser);
 
 export default router;

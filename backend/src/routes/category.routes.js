@@ -13,7 +13,7 @@ const router = Router();
 
 // unsecured routes
 router.route("/").get(getAllCategories);
-
+    
 // Get a single category by ID
 router.route("/:id").get(getCategoryById);
 
@@ -21,7 +21,7 @@ router.route("/:id").get(getCategoryById);
 
 // Create a new category
 // Expects a single file named 'image' for the category icon/banner
-router.route("/").post(verifyJWT,isAdmin,upload.single("image"),createCategory);
+router.route("/create").post(verifyJWT,isAdmin,upload.single("image"),createCategory);
 
 // Update a category by ID
 // Allows updating fields and potentially changing the category image
