@@ -84,7 +84,7 @@ const EmailRegister = () => {
           damping: 22,
           duration: 0.5,
         }}
-        className="w-[90%] sm:w-[350px] md:w-[400px] lg:w-[450px] mt-25 bg-[#F9FAFB] dark:bg-[#111] rounded-2xl p-8 shadow-lg dark:shadow-none"
+        className="w-[90%] sm:w-[350px] md:w-[400px] lg:w-[450px] mt-25 bg-[#F9FAFB] dark:bg-black border rounded-2xl p-8 shadow-lg dark:shadow-none"
       >
         <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center mb-8 text-[#111827] dark:text-[#F9FAFB]">
           Complete Registration

@@ -89,7 +89,7 @@ const Profile = () => {
 
   if (!userData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-[#0B0B0D]">
+      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-black">
         <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">
           Loading profile...
         </p>
@@ -99,7 +99,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen lg:mt-10 flex items-center justify-center bg-gray-100 dark:bg-black px-4 py-8">
-      <Card className="w-full max-w-lg p-6 shadow-lg rounded-2xl bg-white dark:bg-[#111]">
+      <Card className="w-full max-w-lg p-6 shadow-lg rounded-2xl bg-white dark:bg-black border">
         {/* Avatar */}
         <div className="flex flex-col items-center gap-4">
           <label className="relative cursor-pointer group">
@@ -146,7 +146,7 @@ const Profile = () => {
         {/* Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <Button
-            className="flex-1 bg-[#B48E57] hover:bg-[#9F7A46] text-white"
+            className="flex-1 bg-green-500 hover:bg-green-600 text-white"
             onClick={() => navigate("/user/edit")}
           >
             Edit Profile
@@ -154,7 +154,7 @@ const Profile = () => {
           <Button
             className="flex-1 bg-red-600 hover:bg-red-700 text-white"
             onClick={() => {
-              // ✅ clear correct tokens
+              // clear correct tokens
               localStorage.removeItem("accessToken");
               localStorage.removeItem("refreshToken");
               setUser(null);

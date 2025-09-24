@@ -169,10 +169,10 @@ const Header = () => {
             <div
               tabIndex={0}
               role="button"
-              className="btn btn-ghost btn-circle avatar hover:bg-[#B48E57] hover:border hover:border-green-500 transition-colors"
+              className="btn btn-ghost btn-circle avatar hover:bg-green-500 hover:border hover:border-green-500 transition-colors"
             >
               <div className="w-9 h-9 rounded-full overflow-hidden">
-                {/* ✅ Avatar from backend context */}
+                {/* Avatar from backend context */}
                 <img
                   alt="Profile"
                   src={user?.avatar || "/default_Avatar.jpg"}
@@ -187,7 +187,7 @@ const Header = () => {
               <li>
                 <Link
                   to={"/user/profile"}
-                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-green-500 dark:hover:bg-[#B48E57] transition-colors"
+                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-green-500 dark:hover:bg-green-500 transition-colors"
                 >
                   Profile
                 </Link>
@@ -195,7 +195,7 @@ const Header = () => {
               <li>
                 <Link
                   to={"/user/logout"}
-                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-red-500 dark:hover:bg-[#B48E57] transition-colors"
+                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-red-500 dark:hover:bg-red-500 transition-colors"
                 >
                   Log Out
                 </Link>

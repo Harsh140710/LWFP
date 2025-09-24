@@ -29,7 +29,7 @@ const Register = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserDataContext);
 
-  // ✅ Validation
+  // Validation
   const validate = () => {
     const newErrors = {};
 
@@ -104,10 +104,10 @@ const Register = () => {
         const { user, accessToken, refreshToken } = response.data.data;
 
         setUser(user);
-        // ✅ store access token for authentication
+        // store access token for authentication
         localStorage.setItem("token", accessToken);
 
-        // ✅ optionally store refresh token too
+        // optionally store refresh token too
         localStorage.setItem("refreshToken", refreshToken);
 
         toast.success(`Welcome, ${user?.fullname?.firstname || "User"}!`);
@@ -127,13 +127,13 @@ const Register = () => {
         toast.error("Something went wrong. Please try again later.");
       }
     } finally {
-      // ✅ Always reset loading state
+      // Always reset loading state
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex lg:mt-10 items-center justify-center min-h-screen px-6 py-10 bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+    <div className="flex lg:mt-10 items-center justify-center min-h-screen px-6 py-10 bg-[#F9FAFB] dark:bg-black">
       <motion.div
         key="register-form"
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
@@ -145,7 +145,7 @@ const Register = () => {
           damping: 22,
           duration: 0.5,
         }}
-        className="w-full max-w-lg bg-transparent p-8 rounded-xl"
+        className="w-full max-w-lg bg-transparent p-8 rounded-xl border mt-10"
       >
         <h2 className="font-bold text-3xl mb-6 text-[#111827] dark:text-[#F9FAFB] text-center">
           Register

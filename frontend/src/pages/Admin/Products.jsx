@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -21,10 +23,13 @@ import api from "@/utils/api";
 export default function Products() {
   const [openProduct, setOpenProduct] = useState(false);
   const [openCategory, setOpenCategory] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editProduct, setEditProduct] = useState(null);
+
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
 
-  // Product form state
   const [productForm, setProductForm] = useState({
     title: "",
     description: "",
@@ -35,13 +40,11 @@ export default function Products() {
     images: [],
   });
 
-  // Category form state
   const [categoryForm, setCategoryForm] = useState({
     name: "",
     slug: "",
   });
 
-  // Fetch categories
   const fetchCategories = async () => {
     try {
       const { data } = await api.get("/api/v1/category", {
@@ -56,7 +59,6 @@ export default function Products() {
     }
   };
 
-  // Fetch products
   const fetchProducts = async () => {
     try {
       const { data } = await api.get("/api/v1/products", {
@@ -76,9 +78,17 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  // Handle add category
+  const filteredProducts = products.filter((p) =>
+    p.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   const handleAddCategory = async (e) => {
     e.preventDefault();
+    if (!categoryForm.name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
+
     try {
       await api.post("/api/v1/category/create", categoryForm, {
         headers: {
@@ -94,9 +104,12 @@ export default function Products() {
     }
   };
 
-  // Handle add product
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    if (!productForm.title.trim()) return toast.error("Title is required");
+    if (!productForm.price || productForm.price <= 0)
+      return toast.error("Price must be greater than 0");
+    if (!productForm.category) return toast.error("Category is required");
 
     try {
       const formData = new FormData();
@@ -107,7 +120,6 @@ export default function Products() {
       formData.append("stock", productForm.stock);
       formData.append("category", productForm.category);
 
-      // Multiple images
       productForm.images.forEach((img) => {
         formData.append("images", img);
       });
@@ -136,44 +148,100 @@ export default function Products() {
     }
   };
 
-  // Handle Delete Product
   const handleDeleteProduct = async (id) => {
     try {
-      await api.delete(`/api/v1/products/${id}`, {
+      await api.delete(`/api/v1/products/delete/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
       toast.success("Product deleted successfully");
-      fetchProducts(); // refresh the table
+      fetchProducts();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to delete product");
     }
   };
 
+  const openUpdateDialog = (product) => {
+    setEditProduct(product);
+    setProductForm({
+      title: product.title,
+      description: product.description,
+      brand: product.brand,
+      price: product.price,
+      stock: product.stock,
+      category: product.category?._id || "",
+      images: [],
+    });
+    setOpenEdit(true);
+  };
+
+  const handleUpdateProduct = async (e) => {
+    e.preventDefault();
+    if (!productForm.title.trim()) return toast.error("Title is required");
+    if (!productForm.price || productForm.price <= 0)
+      return toast.error("Price must be greater than 0");
+    if (!productForm.category) return toast.error("Category is required");
+
+    try {
+      const formData = new FormData();
+      formData.append("title", productForm.title);
+      formData.append("description", productForm.description);
+      formData.append("brand", productForm.brand);
+      formData.append("price", productForm.price);
+      formData.append("stock", productForm.stock);
+      formData.append("category", productForm.category);
+
+      productForm.images.forEach((img) => {
+        formData.append("images", img);
+      });
+
+      await api.patch(`/api/v1/products/update/${editProduct._id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+
+      toast.success("Product updated successfully");
+      setOpenEdit(false);
+      setEditProduct(null);
+      fetchProducts();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update product");
+    }
+  };
+
   return (
-    <div className="p-4 md:p-6 space-y-6 dark:bg-black h-screen rounded-2xl">
-        <h1 className="font-bold text-xl">Products</h1>
+    <div className="p-4 md:p-6 space-y-6 dark:bg-black min-h-screen rounded-2xl">
+      <h1 className="font-bold text-xl">Products</h1>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-3">
-        <Input placeholder="Search products..." className="w-full md:w-1/3" />
-        <div className="flex gap-2 w-full md:w-auto">
+        <Input
+          placeholder="Search products..."
+          className="w-full md:w-1/3"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="flex gap-2 flex-wrap">
           {/* Add Category */}
           <Dialog open={openCategory} onOpenChange={setOpenCategory}>
             <DialogTrigger asChild>
-              <Button className="w-full md:w-auto">Add Category</Button>
+              <Button>Add Category</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[400px]">
               <DialogHeader>
                 <DialogTitle>Add New Category</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAddCategory} className="space-y-4 mt-4">
+              <form onSubmit={handleAddCategory} className="space-y-4">
                 <Input
                   placeholder="Category Name"
                   value={categoryForm.name}
                   onChange={(e) =>
                     setCategoryForm({ ...categoryForm, name: e.target.value })
                   }
+                  required
                 />
                 <Input
                   placeholder="Slug"
@@ -181,10 +249,12 @@ export default function Products() {
                   onChange={(e) =>
                     setCategoryForm({ ...categoryForm, slug: e.target.value })
                   }
+                  required
                 />
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
+                    type="button"
                     onClick={() => setOpenCategory(false)}
                   >
                     Cancel
@@ -198,19 +268,20 @@ export default function Products() {
           {/* Add Product */}
           <Dialog open={openProduct} onOpenChange={setOpenProduct}>
             <DialogTrigger asChild>
-              <Button className="w-full md:w-auto">Add Product</Button>
+              <Button>Add Product</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle>Add New Product</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleAddProduct} className="space-y-4 mt-4">
+              <form onSubmit={handleAddProduct} className="space-y-4">
                 <Input
                   placeholder="Title"
                   value={productForm.title}
                   onChange={(e) =>
                     setProductForm({ ...productForm, title: e.target.value })
                   }
+                  required
                 />
                 <Input
                   placeholder="Description"
@@ -221,6 +292,7 @@ export default function Products() {
                       description: e.target.value,
                     })
                   }
+                  required
                 />
                 <Input
                   placeholder="Brand"
@@ -236,6 +308,7 @@ export default function Products() {
                   onChange={(e) =>
                     setProductForm({ ...productForm, price: e.target.value })
                   }
+                  required
                 />
                 <Input
                   type="number"
@@ -244,11 +317,11 @@ export default function Products() {
                   onChange={(e) =>
                     setProductForm({ ...productForm, stock: e.target.value })
                   }
+                  required
                 />
 
                 {/* Category Select */}
                 <Select
-                  className="w-full"
                   value={productForm.category}
                   onValueChange={(val) =>
                     setProductForm({ ...productForm, category: val })
@@ -258,21 +331,15 @@ export default function Products() {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.length > 0 ? (
-                      categories.map((cat) => (
-                        <SelectItem key={cat._id} value={cat._id}>
-                          {cat.name}
-                        </SelectItem>
-                      ))
-                    ) : (
-                      <div className="p-2 text-gray-500 text-sm">
-                        No categories available
-                      </div>
-                    )}
+                    {categories.map((cat) => (
+                      <SelectItem key={cat._id} value={cat._id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
 
-                {/* Multiple Images */}
+                {/* Images */}
                 <Input
                   type="file"
                   multiple
@@ -287,6 +354,7 @@ export default function Products() {
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
+                    type="button"
                     onClick={() => setOpenProduct(false)}
                   >
                     Cancel
@@ -300,42 +368,42 @@ export default function Products() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-white dark:bg-black rounded-lg shadow p-4 overflow-x-auto">
-        <table className="w-full min-w-[600px]">
+      <div className="overflow-x-auto bg-white dark:bg-black rounded-lg shadow p-4">
+        <table className="w-full min-w-[600px] text-sm md:text-base">
           <thead>
             <tr className="border-b">
+              <th className="p-2 text-left">Image</th>
               <th className="p-2 text-left">Title</th>
               <th className="p-2 text-left">Brand</th>
               <th className="p-2 text-left">Price</th>
               <th className="p-2 text-left">Stock</th>
               <th className="p-2 text-left">Category</th>
-              <th className="p-2 text-left">Images</th>
+              <th className="p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
+            {filteredProducts.map((p) => (
               <tr key={p._id} className="border-b">
+                <td className="p-2">
+                  <img
+                    src={p.images?.[0]?.url || "/placeholder.jpg"}
+                    alt={p.title}
+                    className="w-12 h-12 rounded object-cover"
+                  />
+                </td>
                 <td className="p-2">{p.title}</td>
                 <td className="p-2">{p.brand}</td>
                 <td className="p-2">${p.price}</td>
                 <td className="p-2">{p.stock}</td>
                 <td className="p-2">{p.category?.name || "-"}</td>
                 <td className="p-2 flex gap-2">
-                  {p.images?.slice(0, 2).map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img.url || img}
-                      alt="product"
-                      className="w-10 h-10 rounded object-cover"
-                    />
-                  ))}
-                  {p.images?.length > 2 && (
-                    <span className="text-xs text-gray-500">
-                      +{p.images.length - 2} more
-                    </span>
-                  )}
-                </td>
-                <td>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openUpdateDialog(p)}
+                  >
+                    Edit
+                  </Button>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -349,6 +417,98 @@ export default function Products() {
           </tbody>
         </table>
       </div>
+
+      {/* Edit Product Dialog */}
+      <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdateProduct} className="space-y-4">
+            <Input
+              placeholder="Title"
+              value={productForm.title}
+              onChange={(e) =>
+                setProductForm({ ...productForm, title: e.target.value })
+              }
+              required
+            />
+            <Input
+              placeholder="Description"
+              value={productForm.description}
+              onChange={(e) =>
+                setProductForm({ ...productForm, description: e.target.value })
+              }
+              required
+            />
+            <Input
+              placeholder="Brand"
+              value={productForm.brand}
+              onChange={(e) =>
+                setProductForm({ ...productForm, brand: e.target.value })
+              }
+            />
+            <Input
+              type="number"
+              placeholder="Price"
+              value={productForm.price}
+              onChange={(e) =>
+                setProductForm({ ...productForm, price: e.target.value })
+              }
+              required
+            />
+            <Input
+              type="number"
+              placeholder="Stock"
+              value={productForm.stock}
+              onChange={(e) =>
+                setProductForm({ ...productForm, stock: e.target.value })
+              }
+              required
+            />
+
+            <Select
+              value={productForm.category}
+              onValueChange={(val) =>
+                setProductForm({ ...productForm, category: val })
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Input
+              type="file"
+              multiple
+              onChange={(e) =>
+                setProductForm({
+                  ...productForm,
+                  images: Array.from(e.target.files),
+                })
+              }
+            />
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => setOpenEdit(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Update</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

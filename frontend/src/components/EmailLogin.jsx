@@ -39,7 +39,7 @@ const EmailLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB] dark:bg-[#0B0B0D]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F9FAFB] dark:bg-black">
       <motion.div
         key="register-form"
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
@@ -51,7 +51,7 @@ const EmailLogin = () => {
           damping: 22,
           duration: 0.5,
         }}
-        className="w-[90%] sm:w-[350px] md:w-[350px] lg:w-[450px] bg-[#F9FAFB] dark:bg-black rounded-2xl p-8 shadow-lg dark:shadow-none"
+        className="w-[90%] sm:w-[350px] md:w-[350px] lg:w-[450px] bg-[#F9FAFB] dark:bg-black rounded-2xl p-8 shadow-lg dark:shadow-none border"
       >
         <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-4xl text-center mb-16 text-[#111827] dark:text-[#F9FAFB]">
           Register with Email

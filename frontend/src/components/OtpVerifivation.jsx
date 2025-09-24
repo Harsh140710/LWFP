@@ -42,7 +42,7 @@ const OTPVerification = () => {
         key="register-form"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="p-10 rounded-2xl flex flex-col items-center justify-center shadow-lg bg-[#FFFFFF] dark:bg-[#111]"
+        className="p-10 rounded-2xl flex flex-col items-center justify-center shadow-lg bg-[#FFFFFF] dark:bg-black border"
       >
         <h1 className="text-2xl font-bold mb-5 text-black dark:text-gray-100">
           OTP Verification

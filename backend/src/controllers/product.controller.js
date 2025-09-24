@@ -235,7 +235,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid product ID format.");
     }
 
-    const product = await Product.findById(id);
+    const product = await Product.findById({_id: id});
 
     if (!product) {
         throw new ApiError(404, "Product not found.");

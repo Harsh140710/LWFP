@@ -35,7 +35,7 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-20vh)]">
+      <div className="flex items-center justify-center min-h-screen dark:bg-black">
         <p className="font-bold">Loading product...</p>
       </div>
     );
@@ -43,7 +43,7 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-20vh)]">
+      <div className="flex items-center justify-center min-h-screen">
         <p>Product not found.</p>
       </div>
     );
@@ -52,8 +52,8 @@ const ProductDetail = () => {
   return (
     <>
       <Header />
-      <div className="pt-20 h-screen w-full mx-auto px-6 py-10 dark:bg-black">
-        <div className="flex flex-col md:flex-row gap-10 bg-white shadow-lg rounded-xl p-6 dark:bg-black">
+      <div className="pt-20 min-h-screen w-full mx-auto px-6 py-10 dark:bg-black">
+        <div className="flex flex-col md:flex-row gap-10 bg-white shadow-lg rounded-xl p-6 dark:bg-black border">
           {/* Product Image */}
           <div className="flex-1">
             <img
@@ -79,11 +79,11 @@ const ProductDetail = () => {
             <div className="flex gap-4 mt-6">
               <button
                 onClick={addToCart}
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold cursor-pointer"
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold cursor-pointer"
               >
                 Add to Cart
               </button>
-              <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-semibold cursor-pointer">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold cursor-pointer">
                 Buy Now
               </button>
             </div>

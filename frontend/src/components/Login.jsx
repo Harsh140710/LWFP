@@ -23,7 +23,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🔹 Real-time validation
+  // Real-time validation
   const validate = () => {
     const newErrors = { email: "", password: "" };
 
@@ -58,16 +58,16 @@ const Login = () => {
       if (response.status === 200 || response.status === 201) {
         const { user, accessToken, refreshToken } = response.data.data;
 
-        // 1️⃣ Save tokens
+        // Save tokens
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
-        // 2️⃣ Update context
+        // Update context
         setUser(user);
 
         toast.success(`Welcome back, ${user?.fullname?.firstname || "User"}!`);
 
-        // 3️⃣ Navigate
+        // Navigate
         navigate("/products", { replace: true });
       }
     } catch (err) {
@@ -80,7 +80,7 @@ const Login = () => {
     <div
       className="flex flex-col lg:flex-row items-center justify-center
              min-h-screen pt-[68px] md:pt-[74px]
-             bg-[#F9FAFB] dark:bg-[#0B0B0D] px-6"
+             bg-[#F9FAFB] dark:bg-black px-6"
     >
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.98 }}
@@ -91,7 +91,7 @@ const Login = () => {
           damping: 22,
           duration: 0.5,
         }}
-        className="w-[90%] sm:w-[350px] md:w-[350px] lg:w-[400px] lg:ml-20 bg-[#F9FAFB] dark:bg-[#0B0B0D]"
+        className="w-[90%] sm:w-[320px] md:w-[350px] lg:w-[450px] lg:ml-25 bg-[#F9FAFB] dark:bg-black border px-10 py-5 rounded-3xl"
       >
         <h2 className="font-bold sm:text-3xl md:text-4xl text-2xl mb-8 text-[#111827] dark:text-[#F9FAFB] text-center">
           Login
@@ -99,7 +99,7 @@ const Login = () => {
 
         <form onSubmit={handelSubmit} className="flex flex-col gap-4">
           {/* Email */}
-          <Label className="font-semibold text-lg text-black dark:text-white">
+          <Label className="font-semibold text-sm sm:text-lg md:text-lg text-black dark:text-white">
             Enter your Email
           </Label>
           <Input
@@ -120,7 +120,7 @@ const Login = () => {
           )}
 
           {/* Password */}
-          <Label className="font-semibold text-lg mt-2 text-black dark:text-white">
+          <Label className="font-semibold text-sm sm:text-lg md:text-lg mt-2 text-black dark:text-white">
             Enter your Password
           </Label>
           <div className="relative w-full">
@@ -150,7 +150,7 @@ const Login = () => {
           )}
 
           <div className="flex items-center justify-between mt-2">
-            <label className="flex items-center space-x-2 text-sm dark:text-gray-300 accent-green-600 focus:ring-2 focus:ring-green-500">
+            <label className="flex items-center space-x-2 text-sm dark:text-gray-300  focus:ring-2 focus:ring-green-500 accent-transparent">
               <input
                 type="checkbox"
                 className="h-4 w-4 text-green-600 border-gray-300 rounded bg-white"
