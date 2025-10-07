@@ -20,6 +20,7 @@ import EmailRegister from "../pages/User/EmailRegister";
 import BackgroundVideo from "@/components/BackgroundVideo";
 import { CartProvider } from "@/context/CartContext";
 import CartPage from "@/pages/User/Cart";
+import Success from "@/components/Success";
 
 const UserRoutes = () => {
   return (
@@ -81,6 +82,8 @@ const UserRoutes = () => {
 
         {/* Cart */}
         <Route path="/cart" element={<UserProtectedWrapper><CartPage /></UserProtectedWrapper>} />
+
+        <Route path="/success" element={<Success />} />
       </Routes>
     </>
   );
