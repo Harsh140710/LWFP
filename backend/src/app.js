@@ -4,7 +4,12 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import helmet from 'helmet';
+import Stripe from "stripe";
+import dotenv from "dotenv";
 
+dotenv.config({
+    path: "./.env"
+})
 const app = express();
 
 app.use(
@@ -14,7 +19,7 @@ app.use(
     })
 )
 
-app.use(express.json({limit: "16kb"}))
+app.use(express.json())
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))
 app.use(cookieParser())
@@ -38,6 +43,7 @@ import orderRoutes from './routes/order.routes.js'
 import reviewRoutes from './routes/review.routes.js'
 import cartRoutes from './routes/cart.routes.js'
 import adminRoutes from "./routes/admin.routes.js";
+import paymentRouter from "./services/payment.service.js"
 
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/products", productRoutes)
@@ -47,6 +53,8 @@ app.use("/api/v1/reviews", reviewRoutes)
 app.use("/api/v1/cart", cartRoutes)
 
 app.use("/api/v1/admin", adminRoutes)
+app.use("/api/v1/payment", paymentRouter);
+
 
 app.use(errorHandler)
 

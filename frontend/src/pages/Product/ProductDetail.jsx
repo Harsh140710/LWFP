@@ -32,7 +32,9 @@ export default function ProductDetail() {
         // Fetch similar products by category
         if (res.data.data.category?._id) {
           const similarRes = await axios.get(
-            `${import.meta.env.VITE_BASE_URL}/api/v1/products?category=${res.data.data.category._id}`
+            `${import.meta.env.VITE_BASE_URL}/api/v1/products?category=${
+              res.data.data.category._id
+            }`
           );
           setSimilarProducts(similarRes.data.data.filter((p) => p._id !== id));
         }
@@ -44,32 +46,19 @@ export default function ProductDetail() {
     fetchProduct();
   }, [id]);
 
-  const handleBuyNow = async () => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/v1/payment/create-checkout-session`,
-        {
-          products: [
-            {
-              productId: product._id,
-              title: product.title,
-              price: product.price,
-              quantity,
-            },
-          ],
-        },
-        { withCredentials: true }
-      );
-
-      if (res.data.url) {
-        window.location.href = res.data.url; // Redirect to Stripe
-      } else {
-        toast.error("Failed to start checkout");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Payment initialization failed");
-    }
+  const handleBuyNow = () => {
+    navigate("/orders", {
+      state: {
+        products: [
+          {
+            productId: product._id,
+            title: product.title,
+            price: product.price,
+            quantity,
+          },
+        ],
+      },
+    });
   };
 
   if (!product) {
@@ -95,7 +84,10 @@ export default function ProductDetail() {
               className="rounded-lg shadow-lg dark:shadow-none"
             >
               {product.images?.map((img, idx) => (
-                <div key={idx} className="bg-white dark:bg-black p-2 rounded-lg">
+                <div
+                  key={idx}
+                  className="bg-white dark:bg-black p-2 rounded-lg"
+                >
                   <img
                     src={img.url}
                     alt={product.title}

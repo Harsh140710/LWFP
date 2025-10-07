@@ -1,12 +1,16 @@
 import Stripe from "stripe";
 import express from "express";
 
-const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const router = express.Router();
 
 router.post("/create-checkout-session", async (req, res) => {
   try {
     const { products } = req.body;
+
+    if (!products || products.length === 0) {
+      return res.status(400).json({ message: "No products provided" });
+    }
 
     const lineItems = products.map((item) => ({
       price_data: {
@@ -17,18 +21,20 @@ router.post("/create-checkout-session", async (req, res) => {
       quantity: item.quantity,
     }));
 
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items: lineItems,
-      success_url: `${process.env.CLIENT_URL}/success`,
-      cancel_url: `${process.env.CLIENT_URL}/cancel`,
+      success_url: `${clientUrl}/success`,
+      cancel_url: `${clientUrl}/cancel`,
     });
 
     res.json({ url: session.url });
   } catch (error) {
     console.error("Stripe error:", error);
-    res.status(500).json({ message: "Payment session failed" });
+    res.status(500).json({ message: "Payment session failed", error: error.message });
   }
 });
 

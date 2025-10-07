@@ -21,6 +21,7 @@ import BackgroundVideo from "@/components/BackgroundVideo";
 import { CartProvider } from "@/context/CartContext";
 import CartPage from "@/pages/User/Cart";
 import Success from "@/components/Success";
+import Order from "@/pages/User/Order";
 
 const UserRoutes = () => {
   return (
@@ -82,6 +83,9 @@ const UserRoutes = () => {
 
         {/* Cart */}
         <Route path="/cart" element={<UserProtectedWrapper><CartPage /></UserProtectedWrapper>} />
+
+        {/* Order */}
+        <Route path="/orders" element={<UserProtectedWrapper><Order /></UserProtectedWrapper>}/>
 
         <Route path="/success" element={<Success />} />
       </Routes>
