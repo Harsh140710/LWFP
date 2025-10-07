@@ -1,24 +1,21 @@
-import express from 'express';
-import { verifyJWT, isAdmin } from '../middlewares/auth.middleware.js';
+// routes/order.routes.js
+import express from "express";
 import {
-  addOrderItems,
+  createOrder,
   getOrderById,
-  updateOrderToPaid,
-  updateOrderToDelivered,
-  getMyOrders,
   getAllOrders,
-} from '../controllers/order.controller.js';
+  updateOrderStatus,
+} from "../controllers/order.controller.js";
+import { verifyJWT, isAdmin } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Protected routes
-router.route('/addOrderItems').post(verifyJWT, addOrderItems);
-router.route('/myorders').get(verifyJWT, getMyOrders);
-router.route('/:id').get(verifyJWT, getOrderById);
-router.route('/:id/pay').put(verifyJWT, updateOrderToPaid);
+// Users
+router.post("/addOrderItems", verifyJWT, createOrder);
+router.get("/:id", verifyJWT, getOrderById);
 
-// Admin-only
-router.route('/:id/deliver').put(verifyJWT, isAdmin, updateOrderToDelivered);
-router.route('/all').get(verifyJWT, isAdmin, getAllOrders);
+// Admin
+router.get("/", verifyJWT, isAdmin, getAllOrders);
+router.put("/:id/status", verifyJWT, isAdmin, updateOrderStatus);
 
 export default router;

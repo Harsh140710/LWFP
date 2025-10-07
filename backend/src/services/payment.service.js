@@ -1,40 +1,27 @@
-import Stripe from "stripe";
 import express from "express";
+import Stripe from "stripe";
+import dotenv from "dotenv";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+dotenv.config();
 const router = express.Router();
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-router.post("/create-checkout-session", async (req, res) => {
+// POST /api/v1/payment/create-payment-intent
+router.post("/create-payment-intent", async (req, res) => {
   try {
-    const { products } = req.body;
+    const { amount } = req.body; // amount in smallest currency unit (e.g., cents)
+    if (!amount) return res.status(400).json({ message: "Amount is required" });
 
-    if (!products || products.length === 0) {
-      return res.status(400).json({ message: "No products provided" });
-    }
-
-    const lineItems = products.map((item) => ({
-      price_data: {
-        currency: "inr",
-        product_data: { name: item.title },
-        unit_amount: Math.round(item.price * 100),
-      },
-      quantity: item.quantity,
-    }));
-
-    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
-
-    const session = await stripe.checkout.sessions.create({
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: "inr", // change if needed
       payment_method_types: ["card"],
-      mode: "payment",
-      line_items: lineItems,
-      success_url: `${clientUrl}/success`,
-      cancel_url: `${clientUrl}/cancel`,
     });
 
-    res.json({ url: session.url });
+    res.status(200).json({ clientSecret: paymentIntent.client_secret });
   } catch (error) {
     console.error("Stripe error:", error);
-    res.status(500).json({ message: "Payment session failed", error: error.message });
+    res.status(500).json({ message: "PaymentIntent creation failed", error });
   }
 });
 
