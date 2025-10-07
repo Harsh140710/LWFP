@@ -6,8 +6,9 @@ import AdminDashboard from "@/pages/Admin/AdminDashboard";
 import Users from "@/pages/Admin/Users";
 import Products from "@/pages/Admin/Products";
 import Orders from "@/pages/Admin/Orders";
-import Analytics from "@/pages/Admin/Analytics";
 import AdminProtectedWrapper from "@/pages/Admin/AdminProtectedWrapper";
+import Payment from "@/pages/Admin/Payment"
+import Feedback from "@/pages/Admin/Feedback"
 
 const AdminRoutes = () => {
   return (
@@ -26,7 +27,8 @@ const AdminRoutes = () => {
         <Route path="users" element={<Users />} />
         <Route path="products" element={<Products />} />
         <Route path="orders" element={<Orders />} />
-        <Route path="analytics" element={<Analytics />} />
+        <Route path="payments" element={<Payment />} />
+        <Route path="feedbacks" element={<Feedback />} />
       </Route>
     </Routes>
   );

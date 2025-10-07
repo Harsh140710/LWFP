@@ -29,6 +29,7 @@ const orderSchema = new Schema(
         paymentMethod: {
             type: String,
             required: true,
+            enum: ["online", "cod", "PayPal", "card"], // online or Cash on Delivery
         },
         paymentResult: {
             id: { type: String },
@@ -66,6 +67,12 @@ const orderSchema = new Schema(
         },
         deliveredAt: {
             type: Date,
+        },
+        status: {
+            type: String,
+            required: true,
+            default: "pending", // default order status
+            enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
         },
     },
     {

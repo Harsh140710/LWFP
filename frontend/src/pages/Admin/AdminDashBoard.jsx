@@ -1,133 +1,155 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import axios from "axios";
 import {
   LineChart,
   Line,
   XAxis,
   YAxis,
   Tooltip,
+  CartesianGrid,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
 } from "recharts";
-import axios from "axios";
-import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+
+const SummaryCard = ({ title, value }) => (
+  <div className="rounded-2xl p-6 shadow-md dark:shadow-none bg-white dark:bg-black border transition-all">
+    <div className="flex justify-between items-center">
+      <span className="text-sm font-medium text-black dark:text-white">
+        {title}
+      </span>
+    </div>
+    <div className="text-2xl font-bold text-black dark:text-white mt-2">
+      {value}
+    </div>
+  </div>
+);
+
+const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a4de6c", "#d0ed57"];
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    users: 0,
-    products: 0,
-    orders: 0,
-    revenue: 0,
-    categories: 0,
-  });
-
-  const [chartData] = useState([
-    { name: "Jan", users: 50, sales: 400 },
-    { name: "Feb", users: 80, sales: 300 },
-    { name: "Mar", users: 65, sales: 200 },
-    { name: "Apr", users: 90, sales: 278 },
-    { name: "May", users: 75, sales: 189 },
-    { name: "Jun", users: 100, sales: 239 },
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("accessToken");
-        if (!token) throw new Error("No access token found");
-
-        const headers = { Authorization: `Bearer ${token}` };
-
-        // Fetch all data concurrently
-        const [resUsers, resProducts, resCategories, resOrders] =
-          await Promise.all([
-            axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users`, {
-              headers,
-            }),
-            axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/products`),
-            axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/category`), // endpoint corrected
-            axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/orders/all`, {
-              headers,
-            }),
-          ]);
-
-        // Update state
-        setStats({
-          users: resUsers.data?.data?.length || 0,
-          products: resProducts.data?.data?.length || 0,
-          categories: resCategories.data?.data?.length || 0,
-          orders: resOrders.data?.data?.length || 0,
-          revenue: resOrders.data?.data?.reduce(
-            (acc, order) => acc + parseFloat(order.totalPrice || 0),
-            0
-          ),
-        });
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-        toast.error(
-          err.response?.data?.message || "Failed to fetch dashboard data"
+        setLoading(true);
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_URL || ""}/api/v1/admin/stats`,
+          { withCredentials: true }
         );
+        setStats(res.data.data);
+      } catch (err) {
+        console.error("Admin stats fetch error", err);
+        setError("Failed to load stats. Showing demo data.");
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchStats();
   }, []);
 
+  const monthlyChartData = (stats?.monthlySales || []).map((m) => ({
+    name: `${m.year}-${String(m.month).padStart(2, "0")}`,
+    revenue: m.revenue,
+  }));
+
+  const pieData = (stats?.categoryDistribution || []).map((d) => ({
+    name: d.category,
+    value: d.count,
+  }));
+
   return (
-    <main className="flex-1 p-6 dark:bg-black dark:text-white">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
-        <Card className="bg-green-100 dark:bg-green-700">
-          <CardHeader>Users</CardHeader>
-          <CardContent>{stats.users}</CardContent>
-        </Card>
-        <Card className="bg-blue-100 dark:bg-blue-700">
-          <CardHeader>Products</CardHeader>
-          <CardContent>{stats.products}</CardContent>
-        </Card>
-        <Card className="bg-purple-100 dark:bg-purple-700">
-          <CardHeader>Orders</CardHeader>
-          <CardContent>{stats.orders}</CardContent>
-        </Card>
-        <Card className="bg-yellow-100 dark:bg-yellow-700">
-          <CardHeader>Revenue</CardHeader>
-          <CardContent>${stats.revenue.toLocaleString()}</CardContent>
-        </Card>
-        <Card className="bg-pink-100 dark:bg-pink-700">
-          <CardHeader>Categories</CardHeader>
-          <CardContent>{stats.categories}</CardContent>
-        </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="p-6 space-y-8 bg-gray-50 dark:bg-black min-h-screen"
+    >
+
+      {error && (
+        <div className="p-4 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-lg shadow-md">
+          {error}
+        </div>
+      )}
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <SummaryCard title="Total Users" value={stats?.totalUsers || "—"} />
+        <SummaryCard title="Total Products" value={stats?.totalProducts || "—"} />
+        <SummaryCard title="Total Orders" value={stats?.totalOrders || "—"} />
+        <SummaryCard
+          title="Total Revenue"
+          value={
+            stats?.totalRevenue
+              ? `₹${Number(stats.totalRevenue).toLocaleString()}`
+              : "—"
+          }
+        />
       </div>
 
-      {/* Chart */}
-      <Card className="bg-white dark:bg-black">
-        <CardHeader>Monthly Users & Sales</CardHeader>
-        <CardContent>
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Monthly Revenue Chart */}
+        <div className="bg-white dark:bg-black border rounded-2xl p-6 shadow-md dark:shadow-none">
+          <h3 className="text-xl font-semibold mb-4 text-black dark:text-white">
+            Revenue (Monthly)
+          </h3>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
+            <LineChart data={monthlyChartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#ccc" />
               <XAxis dataKey="name" stroke="#8884d8" />
               <YAxis stroke="#8884d8" />
               <Tooltip />
               <Line
                 type="monotone"
-                dataKey="users"
-                stroke="#4ade80"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="sales"
-                stroke="#60a5fa"
-                strokeWidth={2}
+                dataKey="revenue"
+                stroke="#8884d8"
+                strokeWidth={3}
               />
             </LineChart>
           </ResponsiveContainer>
-        </CardContent>
-      </Card>
+        </div>
 
-      <Outlet />
-    </main>
+        {/* Category Distribution Chart */}
+        <div className="bg-white dark:bg-black border rounded-2xl p-6 shadow-md dark:shadow-none">
+          <h3 className="text-xl font-semibold mb-4 text-black dark:text-white">
+            Products by Category
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={90}
+                fill="#8884d8"
+                label
+              >
+                {pieData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+        Timeless Elegance Admin Dashboard © {new Date().getFullYear()}
+      </div>
+    </motion.div>
   );
 }

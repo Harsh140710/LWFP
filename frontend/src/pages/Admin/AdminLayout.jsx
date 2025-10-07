@@ -19,7 +19,9 @@ const navLinks = [
   { name: "Users", path: "/admin/users" },
   { name: "Products", path: "/admin/products" },
   { name: "Orders", path: "/admin/orders" },
-  { name: "Analytics", path: "/admin/analytics" },
+  { name: "Payments", path: "/admin/payments" },
+  { name: "Feedbacks", path: "/admin/feedbacks" },
+
 ];
 
 export default function AdminLayout() {

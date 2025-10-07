@@ -37,6 +37,7 @@ import categoryRoutes from './routes/category.routes.js'
 import orderRoutes from './routes/order.routes.js'
 import reviewRoutes from './routes/review.routes.js'
 import cartRoutes from './routes/cart.routes.js'
+import adminRoutes from "./routes/admin.routes.js";
 
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/products", productRoutes)
@@ -45,6 +46,7 @@ app.use("/api/v1/orders", orderRoutes)
 app.use("/api/v1/reviews", reviewRoutes)
 app.use("/api/v1/cart", cartRoutes)
 
+app.use("/api/v1/admin", adminRoutes)
 
 app.use(errorHandler)
 

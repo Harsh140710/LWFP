@@ -14,7 +14,7 @@ const productSchema = new Schema(
             type: String,
             required: [true, 'Product description is required'],
             trim: true,
-            maxLength: [100, 'Product description cannot exceed 100 characters'],
+            maxLength: [10000, 'Product description cannot exceed 10000 characters'],
             text: true, // enable full-text search
         },
 

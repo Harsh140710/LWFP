@@ -68,29 +68,28 @@ const getOrderById = asyncHandler(async (req, res) => {
 const updateOrderToPaid = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
 
-    
-    if (order) {
-        // Check if order is already paid to prevent double payment attempts causing issues
-        if (order.isPaid) {
-            throw new ApiError(400, 'Order already paid');
-        }
-
-        order.isPaid = true;
-        order.paidAt = Date.now();
-        // These details would come from your actual payment gateway response
-        order.paymentResult = {
-            id: req.body.id,
-            status: req.body.status,
-            update_time: req.body.update_time,
-            email_address: req.body.email_address,
-        };
-
-        const updatedOrder = await order.save();
-        res.status(200).json(new ApiResponse(200, updatedOrder, 'Order marked as paid'));
-    } else {
+    if (!order) {
         throw new ApiError(404, 'Order not found');
     }
+
+    if (order.isPaid) {
+        throw new ApiError(400, 'Order already paid');
+    }
+
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.status = "processing"; // auto-update status
+    order.paymentResult = {
+        id: req.body.id,
+        status: req.body.status,
+        update_time: req.body.update_time,
+        email_address: req.body.email_address,
+    };
+
+    const updatedOrder = await order.save();
+    res.status(200).json(new ApiResponse(200, updatedOrder, 'Order marked as paid and status updated'));
 });
+
 
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
@@ -103,6 +102,7 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
 
         order.isDelivered = true;
         order.deliveredAt = Date.now();
+        
 
         const updatedOrder = await order.save();
         res.status(200).json(new ApiResponse(200, updatedOrder, 'Order marked as delivered'));
