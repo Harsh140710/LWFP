@@ -11,13 +11,15 @@ import EmailLogin from "@/components/EmailLogin";
 import AboutUs from "@/components/AboutUs";
 import OTPVerification from "@/components/OtpVerifivation";
 import UserProtectedWrapper from "@/pages/User/UserProtectedWrapper";
-import Cart from "@/components/Cart";
+import Cart from "@/pages/User/Cart";
 import ProductsPage from "../pages/Product/ProductsPage";
 import ProductDetail from "../pages/Product/ProductDetail";
 import EditProfile from "../pages/User/EditProfile";
 import ForgotPassword from "../pages/User/ForgotPassword";
 import EmailRegister from "../pages/User/EmailRegister";
 import BackgroundVideo from "@/components/BackgroundVideo";
+import { CartProvider } from "@/context/CartContext";
+import CartPage from "@/pages/User/Cart";
 
 const UserRoutes = () => {
   return (
@@ -78,7 +80,7 @@ const UserRoutes = () => {
         />
 
         {/* Cart */}
-        <Route path="/cart" element={<Cart />} />
+        <Route path="/cart" element={<UserProtectedWrapper><CartPage /></UserProtectedWrapper>} />
       </Routes>
     </>
   );

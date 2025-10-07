@@ -3,14 +3,17 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
-import {UserContext} from "./context/UserContext";
+import { UserContext } from "./context/UserContext";
+import { CartProvider } from "./context/CartContext";
 
 createRoot(document.getElementById("root")).render(
   // <StrictMode>
-    <UserContext>
+  <UserContext>
+    <CartProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </UserContext>
+    </CartProvider>
+  </UserContext>
   // </StrictMode>
 );

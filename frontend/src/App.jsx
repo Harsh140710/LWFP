@@ -6,7 +6,7 @@ import BackgroundVideo from "@/components/BackgroundVideo";
 import AboutUs from "@/components/AboutUs";
 import ProductsPage from "./pages/Product/ProductsPage";
 import ProductDetail from "./pages/Product/ProductDetail";
-import Cart from "@/components/Cart";
+import Cart from "@/pages/User/Cart";
 import { Toaster } from "sonner";
 
 // Import separated routes
