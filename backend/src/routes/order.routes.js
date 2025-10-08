@@ -17,6 +17,6 @@ router.get("/my-orders", verifyJWT ,getUserOrders);
 router.get("/:id", verifyJWT, getOrderById);
 // Admin
 router.get("/", verifyJWT, isAdmin, getAllOrders);
-router.put("/:id/status", verifyJWT, isAdmin, updateOrderStatus);
+router.put("/:id/status", verifyJWT, updateOrderStatus);
 
 export default router;

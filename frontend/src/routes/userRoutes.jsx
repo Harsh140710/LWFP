@@ -22,6 +22,10 @@ import { CartProvider } from "@/context/CartContext";
 import OrderHistory from "@/pages/User/OrderHistory";
 import HelpCenter from "@/components/HelpCenter";
 import Payment from "@/pages/User/Payment";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const UserRoutes = () => {
   return (
@@ -93,10 +97,12 @@ const UserRoutes = () => {
 
         {/* Order */}
         <Route
-          path="/orders"
+          path="/order/payment"
           element={
             <UserProtectedWrapper>
-              <Payment />
+              <Elements stripe={stripePromise}>
+                <Payment />
+              </Elements>
             </UserProtectedWrapper>
           }
         />
