@@ -19,13 +19,12 @@ import ForgotPassword from "../pages/User/ForgotPassword";
 import EmailRegister from "../pages/User/EmailRegister";
 import BackgroundVideo from "@/components/BackgroundVideo";
 import { CartProvider } from "@/context/CartContext";
+import CartPage from "@/pages/User/Cart";
+import Success from "@/components/Success";
+import Order from "@/pages/User/Payment";
 import OrderHistory from "@/pages/User/OrderHistory";
 import HelpCenter from "@/components/HelpCenter";
 import Payment from "@/pages/User/Payment";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const UserRoutes = () => {
   return (
@@ -90,19 +89,17 @@ const UserRoutes = () => {
           path="/cart"
           element={
             <UserProtectedWrapper>
-              <Cart />
+              <CartPage />
             </UserProtectedWrapper>
           }
         />
 
         {/* Order */}
         <Route
-          path="/order/payment"
+          path="/payment"
           element={
             <UserProtectedWrapper>
-              <Elements stripe={stripePromise}>
-                <Payment />
-              </Elements>
+              <Payment />
             </UserProtectedWrapper>
           }
         />

@@ -47,15 +47,14 @@ export default function ProductDetail() {
   }, [id]);
 
   const handleBuyNow = () => {
-    navigate("/order/payment", {
+    navigate("/payment", {
       state: {
         products: [
           {
             productId: product._id,
             title: product.title,
             price: product.price,
-            quantity: quantity || 1,
-            images: product.images,
+            quantity,
           },
         ],
       },
@@ -63,11 +62,7 @@ export default function ProductDetail() {
   };
 
   if (!product) {
-    return (
-      <p className="text-center flex items-center justify-center w-full h-screen dark:bg-black">
-        Loading product details...
-      </p>
-    );
+    return <p className="text-center flex items-center justify-center w-full h-screen dark:bg-black">Loading product details...</p>;
   }
 
   const description = product.description || "No description available.";

@@ -107,7 +107,7 @@ export default function OrderHistory() {
           {orders.map((order) => (
             <div
               key={order._id}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow p-4"
+              className="bg-white dark:bg-black border-2 rounded-lg shadow p-4"
             >
               {/* Order Header */}
               <div className="flex justify-between mb-2 flex-wrap">
