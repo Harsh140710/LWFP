@@ -19,9 +19,9 @@ import ForgotPassword from "../pages/User/ForgotPassword";
 import EmailRegister from "../pages/User/EmailRegister";
 import BackgroundVideo from "@/components/BackgroundVideo";
 import { CartProvider } from "@/context/CartContext";
-import CartPage from "@/pages/User/Cart";
-import Success from "@/components/Success";
-import Order from "@/pages/User/Order";
+import OrderHistory from "@/pages/User/OrderHistory";
+import HelpCenter from "@/components/HelpCenter";
+import Payment from "@/pages/User/Payment";
 
 const UserRoutes = () => {
   return (
@@ -82,12 +82,44 @@ const UserRoutes = () => {
         />
 
         {/* Cart */}
-        <Route path="/cart" element={<UserProtectedWrapper><CartPage /></UserProtectedWrapper>} />
+        <Route
+          path="/cart"
+          element={
+            <UserProtectedWrapper>
+              <Cart />
+            </UserProtectedWrapper>
+          }
+        />
 
         {/* Order */}
-        <Route path="/orders" element={<UserProtectedWrapper><Order /></UserProtectedWrapper>}/>
+        <Route
+          path="/orders"
+          element={
+            <UserProtectedWrapper>
+              <Payment />
+            </UserProtectedWrapper>
+          }
+        />
 
-        <Route path="/success" element={<Success />} />
+        {/* Order History */}
+        <Route
+          path="/orders/history"
+          element={
+            <UserProtectedWrapper>
+              <OrderHistory />
+            </UserProtectedWrapper>
+          }
+        />
+
+        {/* help center */}
+        <Route
+          path="/help"
+          element={
+            <UserProtectedWrapper>
+              <HelpCenter />
+            </UserProtectedWrapper>
+          }
+        />
       </Routes>
     </>
   );

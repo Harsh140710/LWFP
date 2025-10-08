@@ -4,8 +4,8 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import helmet from 'helmet';
-import Stripe from "stripe";
 import dotenv from "dotenv";
+
 
 dotenv.config({
     path: "./.env"
@@ -26,6 +26,7 @@ app.use(cookieParser())
 app.use("/uploads", express.static("uploads"));
 
 app.use(helmet())
+
 
 // Load the Swagger/OpenAPI spec file
 const swaggerDocument = YAML.load('src/docs/swagger.yaml');

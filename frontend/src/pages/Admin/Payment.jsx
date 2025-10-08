@@ -1,8 +1,11 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { io } from "socket.io-client";
 
-export default function Payment () {
+export default function Payment() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,18 +27,27 @@ export default function Payment () {
 
   useEffect(() => {
     fetchPayments();
+
+    const socket = io(import.meta.env.VITE_BASE_URL || "http://localhost:8000");
+
+    socket.on("orderUpdated", (data) => {
+      console.log("Order Updated:", data);
+      // Refresh list automatically
+      fetchPayments();
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   const markAsPaid = async (orderId) => {
     try {
       await axios.patch(
-        `${import.meta.env.VITE_BASE_URL || ""}/api/v1/admin/orders/${orderId}/mark-paid`,
-        {
-          id: orderId,
-          status: "COMPLETED",
-          update_time: new Date().toISOString(),
-          email_address: "admin@timeless.com",
-        },
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/v1/admin/orders/${orderId}/mark-paid`,
+        {},
         { withCredentials: true }
       );
       fetchPayments();
@@ -85,14 +97,22 @@ export default function Payment () {
                   key={payment._id}
                   className="border-b border-gray-300 dark:border-gray-700"
                 >
-                  <td className="p-4 text-black dark:text-white">{payment._id}</td>
+                  <td className="p-4 text-black dark:text-white">
+                    {payment._id}
+                  </td>
                   <td className="p-4 text-black dark:text-white">
                     {payment.user
-                      ? `${payment.user.name} (${payment.user.email})`
+                      ? `${payment.user.name || payment.user.fullname} (${
+                          payment.user.email
+                        })`
                       : "User Not Exist"}
                   </td>
                   <td className="p-4 text-black dark:text-white">
-                    {payment.paymentMethod === "online" ? "Online" : "Cash on Delivery"}
+                    {payment.paymentMethod === "card" && payment.isPaid
+                      ? "Card"
+                      : payment.paymentMethod === "card"
+                      ? "Card"
+                      : "Cash on Delivery"}
                   </td>
                   <td className="p-4 text-black dark:text-white">
                     ₹{Number(payment.totalPrice).toFixed(2)}
@@ -109,7 +129,9 @@ export default function Payment () {
                       ? new Date(payment.paidAt).toLocaleString()
                       : "-"}
                   </td>
-                  <td className="p-4 text-black dark:text-white">{payment.status}</td>
+                  <td className="p-4 text-black dark:text-white">
+                    {payment.status}
+                  </td>
                   <td className="p-4">
                     {!payment.isPaid && payment.paymentMethod === "cod" && (
                       <button

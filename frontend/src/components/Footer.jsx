@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {/* Logo & About */}
         <div className="flex flex-col gap-3">
-          <img src="/logo-2-removebg-preview.png" alt="Logo" className="w-12 h-auto" />
+          <img src="/logo-2-removebg-preview.png" alt="Logo" className="w-12 h-auto dark:invert" />
           <h2 className="text-xl font-bold text-white">Timeless Elegance</h2>
           <p className="text-black dark:text-gray-400">
             Redefining luxury, one timeless moment at a time. Explore our curated

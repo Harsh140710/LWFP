@@ -243,8 +243,8 @@ const OrderForm = ({
         </div>
 
         {paymentMethod === "card" && (
-          <div className="p-3 border rounded mt-3">
-            <CardElement />
+          <div className="border rounded mt-3">
+            <CardElement className="text-gray-50 dark:bg-[#eee] p-5 rounded"/>
           </div>
         )}
 
@@ -262,7 +262,7 @@ const OrderForm = ({
   );
 };
 
-const Order = () => {
+const Payment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initialProducts = location.state?.products || [];
@@ -316,7 +316,7 @@ const Order = () => {
               {products.map((p, idx) => (
                 <div key={p._id || idx} className="flex items-center gap-3">
                   <img
-                    src={p.images?.[0]?.url || "/placeholder.jpg"}
+                    src={p.image?.[0]?.url || "/placeholder.jpg"}
                     alt={p.title}
                     className="w-16 h-16 object-cover rounded"
                   />
@@ -439,4 +439,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default Payment;

@@ -62,7 +62,7 @@ export const getAdminStats = async (req, res) => {
     ]);
 
     const categoryDistribution = categoryAgg.map((c) => ({
-      category: c._id || "Uncategorized",
+      category: c.name || "Uncategorized",
       count: c.count,
     }));
 
@@ -86,7 +86,6 @@ export const getAdminStats = async (req, res) => {
     });
   }
 };
-
 
 export const getAllOrders = async (req, res) => {
   try {
@@ -142,16 +141,35 @@ export const updateOrderStatus = async (req, res) => {
 
 
 export const getAdminPayments = asyncHandler(async (req, res) => {
+  // Auto-update COD orders older than 10 days
+  const tenDaysAgo = new Date();
+  tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+  await Order.updateMany(
+    {
+      paymentMethod: "cod",
+      isPaid: false,
+      createdAt: { $lte: tenDaysAgo },
+    },
+    {
+      $set: {
+        isPaid: true,
+        paidAt: new Date(),
+      },
+    }
+  );
+
+  // Fetch payments after auto-update
   const payments = await Order.find()
-    .populate("user", "name email") // Always populate name & email
-    .sort({ createdAt: -1 }); // Latest first
+    .populate("user", "name email")
+    .sort({ createdAt: -1 });
 
   const formattedPayments = payments.map((order) => ({
     _id: order._id,
     user: order.user
       ? { name: order.user.name, email: order.user.email }
       : null,
-    paymentMethod: order.paymentMethod || "cod", // Default COD
+    paymentMethod: order.paymentMethod || "cod",
     totalPrice: order.totalPrice,
     isPaid: order.isPaid,
     paidAt: order.paidAt,
@@ -159,8 +177,44 @@ export const getAdminPayments = asyncHandler(async (req, res) => {
     createdAt: order.createdAt,
   }));
 
-  res.status(200).json(new ApiResponse(200, formattedPayments, "Payments fetched successfully"));
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, formattedPayments, "Payments fetched successfully")
+    );
 });
+
+export const markOrderAsPaid = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    // Mark as paid
+    order.isPaid = true;
+    order.paidAt = new Date();
+
+    await order.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Order marked as paid successfully",
+      data: order,
+    });
+  } catch (error) {
+    console.error("Mark as paid error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to mark order as paid",
+    });
+  }
+};
+
 
 export const getAllReviews = async (req, res) => {
   try {

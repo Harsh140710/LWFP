@@ -62,7 +62,7 @@ export default function ProductDetail() {
   };
 
   if (!product) {
-    return <p className="text-center mt-20">Loading product details...</p>;
+    return <p className="text-center flex items-center justify-center w-full h-screen dark:bg-black">Loading product details...</p>;
   }
 
   const description = product.description || "No description available.";

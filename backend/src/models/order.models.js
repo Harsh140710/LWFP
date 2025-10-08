@@ -27,10 +27,13 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["pending", "processing", "shipped", "completed", "cancelled"],
+      enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
       default: "pending",
     },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // optional: link order to user
+
+    isPaid: { type: Boolean, default: false },
+    paidAt: { type: Date },
   },
   { timestamps: true }
 );

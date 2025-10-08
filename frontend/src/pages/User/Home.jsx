@@ -332,7 +332,7 @@ const Home = () => {
         <h2 className="text-3xl font-bold mb-4">Own Your Timeless Luxury</h2>
         <p className="mb-6">Discover exclusive watches crafted for elegance.</p>
         <Link
-          to="/product"
+          to="/products"
           className="bg-green-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg"
         >
           Shop Now
