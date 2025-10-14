@@ -8,14 +8,25 @@ import "./cronJobs.js";
 
 dotenv.config({ path: "./.env" });
 
-app.use(
-    cors({
-        origin: process.env.CORS_ORIGIN,
-        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true,
-    })
-)
+const allowedOrigins = [
+  'https://timeless-elegance-frontend.onrender.com',
+  'http://localhost:5173' // Include localhost for local development
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions))
 
 // Create HTTP server
 const server = http.createServer(app);
