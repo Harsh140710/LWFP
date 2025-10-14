@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { UserDataContext } from "@/context/userContext";
+import { UserDataContext } from "@/context/UserContext";
 import axios from "axios";
 import { toast } from "sonner";
 
