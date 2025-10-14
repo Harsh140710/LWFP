@@ -371,7 +371,7 @@ export default function OrderHistory() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Write your feedback..."
-              className="w-full p-2 border rounded dark:bg-black border-2 dark:text-white"
+              className="w-full p-2 rounded dark:bg-black border-2 dark:text-white"
               rows="3"
             />
 
