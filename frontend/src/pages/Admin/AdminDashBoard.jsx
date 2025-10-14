@@ -30,7 +30,7 @@ const SummaryCard = ({ title, value }) => (
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#a4de6c", "#d0ed57"];
 
-export default function AdminDashboard() {
+export default function AdminDashBoard() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);

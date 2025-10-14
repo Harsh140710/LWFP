@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AdminLayout from "@/pages/Admin/AdminLayout";
 import AdminLogin from "@/pages/Admin/AdminLogin";
-import AdminDashboard from "@/pages/Admin/AdminDashboard";
+import AdminDashBoard from "@/pages/Admin/AdminDashBoard";
 import Users from "@/pages/Admin/Users";
 import Products from "@/pages/Admin/Products";
 import Orders from "@/pages/Admin/Orders";
@@ -23,7 +23,7 @@ const AdminRoutes = () => {
         }
       >
         <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashBoard />} />
         <Route path="users" element={<Users />} />
         <Route path="products" element={<Products />} />
         <Route path="orders" element={<Orders />} />
