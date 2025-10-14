@@ -34,7 +34,13 @@ const server = http.createServer(app);
 // Setup socket.io for real-time updates
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN, // not "*"
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Socket.IO CORS blocked"));
+      }
+    },
     credentials: true,
   },
 });
