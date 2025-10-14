@@ -3,13 +3,33 @@ import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import dotenv from "dotenv";
-
+import cors from 'cors';
 
 dotenv.config({
     path: "./.env"
 })
 const app = express();
 
+const allowedOrigins = [
+  'https://timeless-elegance-frontend.onrender.com',
+  'http://localhost:5173'
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))
