@@ -2,11 +2,20 @@ import dotenv from "dotenv";
 import { app } from "./app.js";
 import connectDB from "./db/index.js";
 import { Server } from "socket.io";
+import cors from 'cors'
 import http from "http";
 import "./cronJobs.js";
 
 dotenv.config({ path: "./.env" });
 
+app.use(
+    cors({
+        origin: process.env.CORS_ORIGIN,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true,
+    })
+)
 // Create HTTP server
 const server = http.createServer(app);
 
