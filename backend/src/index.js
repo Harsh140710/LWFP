@@ -14,9 +14,11 @@ const server = http.createServer(app);
 // Setup socket.io for real-time updates
 const io = new Server(server, {
   cors: {
-    origin: "*", // or your frontend URL
-  },
+    origin: process.env.CORS_ORIGIN, // must match frontend
+    credentials: true
+  }
 });
+
 
 // Attach io instance to app (so controllers can access via req.app.get("io"))
 app.set("io", io);
