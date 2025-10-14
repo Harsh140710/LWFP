@@ -1,5 +1,4 @@
 import express from 'express'
-import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
@@ -11,8 +10,6 @@ dotenv.config({
 })
 const app = express();
 
-
-app.options("*", cors());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 app.use(express.static("public"))

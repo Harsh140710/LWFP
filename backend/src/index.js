@@ -16,13 +16,15 @@ app.use(
         credentials: true,
     })
 )
+
 // Create HTTP server
 const server = http.createServer(app);
 
 // Setup socket.io for real-time updates
 const io = new Server(server, {
   cors: {
-    origin: "*", // or your frontend URL
+    origin: process.env.CORS_ORIGIN, // not "*"
+    credentials: true,
   },
 });
 
