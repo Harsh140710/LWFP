@@ -12,13 +12,7 @@ const app = express();
 
 // src/index.js or wherever you configure CORS
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin === process.env.CORS_ORIGIN || origin === 'http://localhost:5173') {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'));
-    }
-  },
+  origin: ['https://timeless-elegancee-frontend.onrender.com', 'http://localhost:5173'],
   credentials: true,
 }));
 
