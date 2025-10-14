@@ -6,6 +6,9 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
   darkmode:"class",
+  build: {
+    outDir: 'dist', // make sure this is 'dist'
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
