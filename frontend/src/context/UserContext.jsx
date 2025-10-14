@@ -8,7 +8,6 @@ export const UserDataContext = createContext();
 export const UserContext = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Fetch user when app loads (if JWT exists in cookies/localstorage)
   useEffect(() => {
     const fetchUser = async () => {
       try {
