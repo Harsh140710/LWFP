@@ -95,9 +95,18 @@ const deleteReview = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, null, 'Review deleted successfully'));
 });
 
+const getUserReviews = asyncHandler(async (req, res) => {
+  const user = req.user._id;
+  const reviews = await Review.find({ user }).populate("product", "name title");
+  res
+    .status(200)
+    .json(new ApiResponse(200, reviews, "User reviews fetched successfully"));
+});
+
 
 export {
     createProductReview,
     getProductReviews,
     deleteReview,
+    getUserReviews
 };

@@ -3,7 +3,6 @@ import cors from 'cors'
 import cookieParser from 'cookie-parser';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import helmet from 'helmet';
 import dotenv from "dotenv";
 
 
@@ -25,7 +24,6 @@ app.use(express.static("public"))
 app.use(cookieParser())
 app.use("/uploads", express.static("uploads"));
 
-app.use(helmet())
 
 
 // Load the Swagger/OpenAPI spec file
