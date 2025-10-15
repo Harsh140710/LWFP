@@ -23,7 +23,7 @@ export default function Users() {
     const fetchUsers = async () => {
       try {
         // No need to read token from localStorage, cookies are used automatically
-        const res = await api.get("/api/v1/users");
+        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users`, {withCredentials: true});
         setUsers(res.data.data || []);
       } catch (err) {
         toast.error(err.response?.data?.message || "Failed to fetch users");
@@ -36,7 +36,7 @@ export default function Users() {
 
   const handleDelete = async (id, name) => {
     try {
-      await api.delete(`/api/v1/users/${id}`);
+      await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${id}`, {withCredentials: true});
       setUsers(users.filter((user) => user._id !== id));
       toast.success(`Deleted ${name}`);
     } catch (err) {
