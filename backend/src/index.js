@@ -23,6 +23,13 @@ const io = new Server(server, {
 });
 
 
+app.use((req, res, next) => {
+  console.log("🔍 Incoming origin:", req.headers.origin);
+  console.log("✅ Allowed origin:", process.env.CORS_ORIGIN);
+  next();
+});
+
+
 
 // Attach io instance to app (so controllers can access via req.app.get("io"))
 app.set("io", io);
