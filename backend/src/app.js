@@ -10,17 +10,26 @@ dotenv.config({
 })
 const app = express();
 
-// src/index.js or wherever you configure CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://timeless-elegancee-frontend.onrender.com",
+];
+
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin === process.env.CORS_ORIGIN || origin === 'http://localhost:5173') {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile or Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed'));
+      console.log("Blocked by CORS:", origin); // helpful log
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
 }));
+
 
 
 app.use(express.json())
