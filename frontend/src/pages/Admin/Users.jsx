@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
-import axios from "axios";
 import api from "@/utils/api";
 
 export default function Users() {
@@ -20,30 +19,28 @@ export default function Users() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        // No need to read token from localStorage, cookies are used automatically
-        const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/v1/users`, {withCredentials: true});
-        setUsers(res.data.data || []);
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to fetch users");
-        console.error(err.response?.data || err);
-      }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleDelete = async (id, name) => {
+  const fetchUsers = async () => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/v1/users/${id}`, {withCredentials: true});
-      setUsers(users.filter((user) => user._id !== id));
-      toast.success(`Deleted ${name}`);
+      const res = await api.get("/api/v1/users");
+      setUsers(res.data.data || []);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete user");
+      toast.error(err.response?.data?.message || "Failed to fetch users");
+      console.error(err.response?.data || err);
     }
   };
 
+  fetchUsers();
+}, []);
+
+const handleDelete = async (id, name) => {
+  try {
+    await api.delete(`/api/v1/users/${id}`);
+    setUsers(users.filter((user) => user._id !== id));
+    toast.success(`Deleted ${name}`);
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to delete user");
+  }
+};
   // Filter users based on search
   const filteredUsers = users.filter(
     (user) =>
