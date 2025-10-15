@@ -16,15 +16,11 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile or Postman)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
+  origin: (origin, callback) => {
+    if (!origin || origin === process.env.CORS_ORIGIN || origin === 'http://localhost:5173') {
       callback(null, true);
     } else {
-      console.log("Blocked by CORS:", origin); // helpful log
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error('CORS not allowed'));
     }
   },
   credentials: true,
