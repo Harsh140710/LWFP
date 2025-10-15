@@ -19,28 +19,31 @@ export default function Users() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-  const fetchUsers = async () => {
+    const fetchUsers = async () => {
+      try {
+        const res = await api.get("/api/v1/users");
+        setUsers(res.data.data || []);
+        
+              console.log("Decoded Token:", decodedToken);
+              console.log("User from DB:", users);
+      } catch (err) {
+        toast.error(err.response?.data?.message || "Failed to fetch users");
+        console.error(err.response?.data || err);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleDelete = async (id, name) => {
     try {
-      const res = await api.get("/api/v1/users");
-      setUsers(res.data.data || []);
+      await api.delete(`/api/v1/users/${id}`);
+      setUsers(users.filter((user) => user._id !== id));
+      toast.success(`Deleted ${name}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to fetch users");
-      console.error(err.response?.data || err);
+      toast.error(err.response?.data?.message || "Failed to delete user");
     }
   };
-
-  fetchUsers();
-}, []);
-
-const handleDelete = async (id, name) => {
-  try {
-    await api.delete(`/api/v1/users/${id}`);
-    setUsers(users.filter((user) => user._id !== id));
-    toast.success(`Deleted ${name}`);
-  } catch (err) {
-    toast.error(err.response?.data?.message || "Failed to delete user");
-  }
-};
   // Filter users based on search
   const filteredUsers = users.filter(
     (user) =>
