@@ -5,67 +5,62 @@ import YAML from 'yamljs';
 import dotenv from "dotenv";
 import cors from 'cors';
 
-dotenv.config({
-    path: "./.env"
-})
+dotenv.config({ path: "./.env" });
 const app = express();
 
+// ✅ Use both origins — deployed and local
 const allowedOrigins = [
   "http://localhost:5173",
   "https://timeless-elegancee-frontend.onrender.com",
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin === process.env.CORS_ORIGIN || origin === 'http://localhost:5173') {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'));
-    }
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // allow mobile apps / curl / postman (no origin)
+      if (!origin) return callback(null, true);
 
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log("❌ Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true, limit: "16kb" }))
-app.use(express.static("public"))
-app.use(cookieParser())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.static("public"));
+app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
-
-
-// Load the Swagger/OpenAPI spec file
+// Swagger setup
 const swaggerDocument = YAML.load('src/docs/swagger.yaml');
-
-// Serve Swagger UI at a specific endpoint
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-
-// Import your error handler and user router
+// Routes
 import { errorHandler } from './middlewares/error.middleware.js';
-import userRouter from './routes/user.routes.js'
-import productRoutes from './routes/product.routes.js'
-import categoryRoutes from './routes/category.routes.js'
-import orderRoutes from './routes/order.routes.js'
-import reviewRoutes from './routes/review.routes.js'
-import cartRoutes from './routes/cart.routes.js'
+import userRouter from './routes/user.routes.js';
+import productRoutes from './routes/product.routes.js';
+import categoryRoutes from './routes/category.routes.js';
+import orderRoutes from './routes/order.routes.js';
+import reviewRoutes from './routes/review.routes.js';
+import cartRoutes from './routes/cart.routes.js';
 import adminRoutes from "./routes/admin.routes.js";
-import paymentRouter from "./services/payment.service.js"
+import paymentRouter from "./services/payment.service.js";
 
-app.use("/api/v1/users", userRouter)
-app.use("/api/v1/products", productRoutes)
-app.use("/api/v1/category", categoryRoutes)
-app.use("/api/v1/orders", orderRoutes)
-app.use("/api/v1/reviews", reviewRoutes)
-app.use("/api/v1/cart", cartRoutes)
-
-app.use("/api/v1/admin", adminRoutes)
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/products", productRoutes);
+app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/orders", orderRoutes);
+app.use("/api/v1/reviews", reviewRoutes);
+app.use("/api/v1/cart", cartRoutes);
+app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/payment", paymentRouter);
 
+app.use(errorHandler);
 
-app.use(errorHandler)
-
-
-export {app}
+export { app };

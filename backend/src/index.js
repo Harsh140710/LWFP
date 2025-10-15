@@ -14,10 +14,14 @@ const server = http.createServer(app);
 // Setup socket.io for real-time updates
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN, // must match frontend
+    origin: [
+      "http://localhost:5173",
+      "https://timeless-elegancee-frontend.onrender.com"
+    ],
     credentials: true
   }
 });
+
 
 
 // Attach io instance to app (so controllers can access via req.app.get("io"))
