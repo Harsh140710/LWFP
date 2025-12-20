@@ -101,15 +101,15 @@ const Home = () => {
               Shop Now
             </Link>
 
-            <button
-              type="button"
+            <Link
+              to="/products/68e4b164be03a5ce5aacc3e8"
               className="relative border-2 border-[#DAA520] px-4 py-2 rounded-xl min-w-[140px] flex items-center justify-center hover:cursor-pointer"
             >
               <span className="pr-2 text-[#FEFEFE] font-bold">
                 Explore Collection
               </span>
               <MoveRight className="size-[1.2rem] text-[#DAA520]" />
-            </button>
+            </Link>
           </div>
         </motion.div>
 
@@ -192,7 +192,13 @@ const Home = () => {
               transition-all duration-500 ease-in-out"
               >
                 <p className="text-[#FEFEFE] font-semibold mb-10">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem nemo quo ipsa repellat, officia earum reiciendis fugiat ipsum? Eaque, tempora asperiores velit magni fugit labore quo sunt reiciendis vitae dignissimos similique pariatur, ipsam exercitationem dolores nulla perferendis laudantium ipsa facere repudiandae ratione numquam amet consectetur eius adipisci! Quisquam, reprehenderit asperiores.
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Quidem nemo quo ipsa repellat, officia earum reiciendis fugiat
+                  ipsum? Eaque, tempora asperiores velit magni fugit labore quo
+                  sunt reiciendis vitae dignissimos similique pariatur, ipsam
+                  exercitationem dolores nulla perferendis laudantium ipsa
+                  facere repudiandae ratione numquam amet consectetur eius
+                  adipisci! Quisquam, reprehenderit asperiores.
                 </p>
                 <Link
                   to={"/products"}

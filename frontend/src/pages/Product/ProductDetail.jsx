@@ -129,7 +129,7 @@ export default function ProductDetail() {
             {/* Buttons */}
             <div className="flex gap-4">
               <Button
-                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                className="bg-[#DAA520] hover:bg-[#B8860B] text-white font-bold py-2 px-4 rounded"
                 onClick={() => {
                   addToCart(product, quantity);
                   toast.success("Added to cart!");
@@ -139,7 +139,7 @@ export default function ProductDetail() {
               </Button>
 
               <Button
-                className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                className="bg-[#d69f14] hover:bg-[#d69c09] text-white font-bold py-2 px-4 rounded"
                 onClick={handleBuyNow}
               >
                 Buy Now

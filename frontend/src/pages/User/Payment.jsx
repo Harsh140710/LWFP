@@ -243,7 +243,7 @@ const OrderForm = ({
           <button
             type="submit"
             disabled={loading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white py-3 px-6 rounded w-full md:w-auto cursor-pointer"
+            className="bg-[#DAA520] hover:bg-[#B8860B] text-white py-3 px-6 rounded w-full md:w-auto cursor-pointer"
           >
             {loading ? "Processing..." : "Place Order"}
           </button>
