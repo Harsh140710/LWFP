@@ -30,7 +30,7 @@ const Footer = () => {
           <h3 className="font-semibold text-black dark:text-white mb-2">Contact</h3>
           <p className="text-black dark:text-white">Email: <a href="mailto:info@timelesselegance.com" className="hover:text-[#DAA520] text-black dark:text-white">luxora293@gmail.com</a></p>
           <p className="text-black dark:text-white">Phone: <a href="tel:+91 9601666086" className="hover:text-[#DAA520] text-black dark:text-white">+91 9601666086</a></p>
-          <p className="text-black dark:text-white">Address: 123 Luxury St, Geneva, Switzerland</p>
+          <p className="text-black dark:text-white">Address: Ahmedabad, Gujarat, 380001</p>
         </div>
 
         {/* Social Media */}

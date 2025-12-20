@@ -34,7 +34,7 @@ const ServicesRing = () => {
         transition={{ duration: 1.2, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
       >
-        {/* ✅ Infinite rotation wrapper */}
+        {/* Infinite rotation wrapper */}
         <motion.div
           className="absolute inset-0"
           animate={{ rotate: 360 }}
@@ -52,21 +52,21 @@ const ServicesRing = () => {
                 key={i}
                 className="absolute flex items-center justify-center
                            rounded-full bg-[#DAA520] dark:bg-[#111] dark:hover:bg-[#DAA520] shadow-md
-                           hover:bg-[#DAA520] hover:text-white
+                           hover:bg-[#DAA520] text-white
                            transition-all duration-300"
                 style={{
                   width: config.bubble,
                   height: config.bubble,
                   top: y,
                   left: x,
-                  transform: "translate(-50%, -50%)", // ✅ perfect centering
+                  transform: "translate(-50%, -50%)", // perfect centering
                 }}
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.2, duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                {/* ✅ Counter-rotate text so it stays upright */}
+                {/* Counter-rotate text so it stays upright */}
                 <motion.span
                   className="text-xs sm:text-sm lg:text-base font-semibold text-center"
                   animate={{ rotate: -360 }}

@@ -86,7 +86,7 @@ const AboutUs = () => {
           transition={{ duration: 0.8 }}
           className="mb-20 grid md:grid-cols-2 gap-12"
         >
-          <div className="bg-[#E3F6F5] dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-lg">
+          <div className="bg-[#f5fcd0] dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-lg">
             <h3 className="text-3xl font-semibold mb-4 text-[#DAA520] dark:text-yellow-500">
               Our Vision
             </h3>
@@ -96,8 +96,8 @@ const AboutUs = () => {
               treasured for generations.
             </p>
           </div>
-          <div className="bg-[#E3F6F5] dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-lg">
-            <h3 className="text-3xl font-semibold mb-4 text-[#DAA520] dark:text-[#A5D6A7]">
+          <div className="bg-[#f5fcd0] dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-lg">
+            <h3 className="text-3xl font-semibold mb-4 text-[#DAA520] dark:text-[#c9da6e]">
               Our Mission
             </h3>
             <p className="text-gray-900 dark:text-white text-lg leading-relaxed">
@@ -120,23 +120,23 @@ const AboutUs = () => {
             Our Core Values
           </h2>
           <div className="grid md:grid-cols-3 gap-12">
-            <div className="bg-[#F0FFF0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
+            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
+              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#cde05e]">
                 Integrity
               </h3>
               <p className="text-gray-900 dark:text-white">
                 Transparency and honesty guide every decision we make.
               </p>
             </div>
-            <div className="bg-[#F0FFF0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
+            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
+              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#cacc56]">
                 Excellence
               </h3>
               <p className="text-gray-900 dark:text-white">
                 We pursue perfection in design, quality, and service.
               </p>
             </div>
-            <div className="bg-[#F0FFF0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
+            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
               <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
                 Innovation
               </h3>
@@ -144,7 +144,7 @@ const AboutUs = () => {
                 We merge tradition with modern technology and design.
               </p>
             </div>
-            <div className="bg-[#F0FFF0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
+            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
               <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
                 Customer Focus
               </h3>
@@ -152,7 +152,7 @@ const AboutUs = () => {
                 Customer satisfaction is at the heart of everything we do.
               </p>
             </div>
-            <div className="bg-[#F0FFF0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
+            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
               <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
                 Sustainability
               </h3>
@@ -160,7 +160,7 @@ const AboutUs = () => {
                 We source responsibly and prioritize eco-friendly practices.
               </p>
             </div>
-            <div className="bg-[#F0FFF0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
+            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
               <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
                 Passion
               </h3>
@@ -252,7 +252,7 @@ const AboutUs = () => {
             ].map((review, i) => (
               <div
                 key={i}
-                className="bg-[#E3F6F5] dark:bg-[#1E1E1E] p-6 rounded-xl shadow-md"
+                className="bg-[#f5fcd0] dark:bg-[#1E1E1E] p-6 rounded-xl shadow-md"
               >
                 <p className="text-lg italic mb-4 text-gray-900 dark:text-white">
                   "{review.text}"
@@ -279,25 +279,25 @@ const AboutUs = () => {
           <div className="space-y-8">
             {[
               {
-                year: "2010",
+                year: "2021",
                 milestone:
                   "Founded with a small team of passionate watchmakers.",
               },
               {
-                year: "2013",
+                year: "2022",
                 milestone: "Launched our first limited-edition collection.",
               },
               {
-                year: "2016",
+                year: "2023",
                 milestone: "Expanded internationally, reaching Europe & Asia.",
               },
               {
-                year: "2020",
+                year: "2024",
                 milestone:
                   "Introduced sustainable materials and eco-friendly practices.",
               },
               {
-                year: "2023",
+                year: "2025",
                 milestone: "Recognized as a premium luxury brand worldwide.",
               },
             ].map((event, i) => (
