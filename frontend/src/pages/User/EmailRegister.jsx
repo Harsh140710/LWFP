@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,142 +18,144 @@ const EmailRegister = () => {
     username: "",
     password: "",
     phoneNumber: "",
-    fullname: { firstname: "", lastname: "" },
+    firstname: "",
+    lastname: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes("fullname")) {
-      const key = name.split(".")[1];
-      setForm((prev) => ({
-        ...prev,
-        fullname: { ...prev.fullname, [key]: value },
-      }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (form.password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
+      return toast.error("SECURITY PROTOCOL", {
+        description: "Password must be at least 6 characters.",
+      });
     }
 
     if (!/^[6-9]\d{9}$/.test(form.phoneNumber)) {
-      toast.error("Phone number must be 10 digits (Indian format)");
-      return;
-    }
-
-    if (!form.username || !form.fullname.firstname) {
-      toast.error("Username and First Name are required");
-      return;
+      return toast.error("INVALID CONTACT", {
+        description: "Please enter a valid 10-digit Indian phone number.",
+      });
     }
 
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/v1/users/register`,
         {
+          ...form,
           username: form.username.trim(),
-          password: form.password,
-          phoneNumber: form.phoneNumber.trim(),
           email: email.trim(),
-          firstname: form.fullname.firstname.trim(), // <-- top-level
-          lastname: form.fullname.lastname?.trim() || "", // <-- top-level
         }
       );
 
-      toast.success("User created successfully");
+      toast.success("ACCESS GRANTED", {
+        description: "Your luxury profile has been created successfully.",
+      });
       navigate("/user/login");
     } catch (err) {
-    //   console.error(err.response?.data);
-      toast.error(err.response?.data?.message || "Server error");
+      toast.error("REGISTRATION FAILED", {
+        description: err.response?.data?.message || "An error occurred with the vault.",
+      });
     }
   };
 
+  const inputStyle = "bg-transparent border-white/10 text-white focus:border-[#A37E2C] transition-all rounded-none placeholder:text-gray-600 uppercase text-[10px] tracking-widest py-6";
+  const labelStyle = "text-[10px] uppercase tracking-[0.3em] text-[#A37E2C] font-bold mb-1";
+
   return (
-    <div className="min-h-screen pb-10 flex items-center justify-center bg-[#F9FAFB] dark:bg-black">
+    <div className="min-h-screen flex items-center justify-center bg-[#050505] px-6 py-20 selection:bg-[#A37E2C] selection:text-black">
       <motion.div
-        key="register-form"
-        initial={{ opacity: 0, y: 40, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -40, scale: 0.98 }}
-        transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 22,
-          duration: 0.5,
-        }}
-        className="w-[90%] sm:w-[350px] md:w-[400px] lg:w-[450px] mt-25 bg-[#F9FAFB] dark:bg-black border rounded-2xl p-8 shadow-lg dark:shadow-none"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md bg-[#0A0A0A] border border-white/5 p-10 shadow-2xl"
       >
-        <h2 className="font-bold text-2xl sm:text-3xl md:text-4xl text-center mb-8 text-[#111827] dark:text-[#F9FAFB]">
-          Complete Registration
-        </h2>
+        <div className="text-center mb-10 space-y-2">
+          <h2 className="font-serif italic text-4xl text-white">The Final Step</h2>
+          <p className="text-[9px] uppercase tracking-[0.4em] text-gray-500 font-medium">
+            Completing Profile for <span className="text-white">{email}</span>
+          </p>
+        </div>
 
-        <p className="text-center font-semibold mb-6">
-          Register your account with <b>{email}</b>
-        </p>
+        <form className="flex flex-col gap-6" onSubmit={handleRegister}>
+          <div className="space-y-4">
+            <div>
+              <Label className={labelStyle}>Username</Label>
+              <Input
+                name="username"
+                placeholder="UNIQUE IDENTIFIER"
+                className={inputStyle}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <form className="flex flex-col gap-4" onSubmit={handleRegister}>
-          <Label>Username</Label>
-          <Input
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            required
-          />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className={labelStyle}>First Name</Label>
+                <Input
+                  name="firstname"
+                  placeholder="GIVEN NAME"
+                  className={inputStyle}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div>
+                <Label className={labelStyle}>Last Name</Label>
+                <Input
+                  name="lastname"
+                  placeholder="SURNAME"
+                  className={inputStyle}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
 
-          <Label>Password</Label>
-          <Input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
+            <div>
+              <Label className={labelStyle}>Phone Number</Label>
+              <Input
+                name="phoneNumber"
+                placeholder="+91 XXXXX XXXXX"
+                className={inputStyle}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          <Label>Phone Number</Label>
-          <Input
-            type="text"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            onChange={handleChange}
-            required
-          />
-
-          <Label>First Name</Label>
-          <Input
-            type="text"
-            name="fullname.firstname"
-            placeholder="First Name"
-            onChange={handleChange}
-            required
-          />
-
-          <Label>Last Name</Label>
-          <Input
-            type="text"
-            name="fullname.lastname"
-            placeholder="Last Name"
-            onChange={handleChange}
-          />
+            <div>
+              <Label className={labelStyle}>Password</Label>
+              <Input
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                className={inputStyle}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
 
           <button
             type="submit"
-            className="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded-lg transition-all"
+            className="w-full bg-[#A37E2C] hover:bg-white text-black font-bold py-4 text-[10px] tracking-[0.5em] uppercase transition-all duration-700"
           >
-            Register
+            Create Legacy
           </button>
 
-          <Separator />
+          <div className="relative py-4">
+            <Separator className="bg-white/5" />
+          </div>
 
-          <p className="text-center text-sm text-gray-500">
-            Already have an account?{" "}
+          <p className="text-center text-[10px] tracking-widest text-gray-500 uppercase">
+            Part of the elite?{" "}
             <span
               onClick={() => navigate("/user/login")}
-              className="text-blue-600 font-semibold cursor-pointer"
+              className="text-[#A37E2C] font-black cursor-pointer hover:text-white transition-colors"
             >
               Log In
             </span>

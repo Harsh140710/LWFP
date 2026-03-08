@@ -70,17 +70,13 @@ const UserRoutes = () => {
         <Route
           path="/products"
           element={
-            <UserProtectedWrapper>
-              <ProductsPage />
-            </UserProtectedWrapper>
+            <ProductsPage />
           }
         />
         <Route
           path="/products/:id"
           element={
-            <UserProtectedWrapper>
-              <ProductDetail />
-            </UserProtectedWrapper>
+            <ProductDetail />
           }
         />
 

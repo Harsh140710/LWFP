@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Package, Trash2, Star, X, CheckCircle2, Clock, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner"; // Switched to sonner to match previous pages
 
 export default function OrderHistory() {
   const [orders, setOrders] = useState([]);
@@ -27,17 +28,11 @@ export default function OrderHistory() {
       if (!token) throw new Error("No access token found");
 
       const res = await axios.get(`${BASE_URL}/api/v1/orders/my-orders`, {
-        withCredentials: true,
         headers: { Authorization: `Bearer ${token}` },
       });
 
       const ordersData = res.data.data || [];
-
-      // Fetch each product's review by current user
-      const tokenHeader = {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      };
+      const tokenHeader = { headers: { Authorization: `Bearer ${token}` } };
 
       const updatedOrders = await Promise.all(
         ordersData.map(async (order) => {
@@ -64,7 +59,7 @@ export default function OrderHistory() {
     } catch (err) {
       console.error(err);
       setLoading(false);
-      setError("Failed to load orders.");
+      setError("Failed to load your collection history.");
     }
   };
 
@@ -72,72 +67,41 @@ export default function OrderHistory() {
     fetchOrders();
   }, []);
 
-  const statusSteps = ["pending", "processing", "delivered"];
-
   const handleCancelOrder = async (orderId) => {
     try {
       const token = localStorage.getItem("accessToken");
-      if (!token) throw new Error("No access token");
-
       await axios.put(
         `${BASE_URL}/api/v1/orders/${orderId}/status`,
         { status: "cancelled" },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setOrders((prev) =>
-        prev.map((o) =>
-          o._id === orderId ? { ...o, status: "cancelled" } : o
-        )
+        prev.map((o) => (o._id === orderId ? { ...o, status: "cancelled" } : o))
       );
-      toast.success("Order cancelled successfully!");
+      toast.success("Order has been cancelled.");
     } catch (err) {
-      console.error(err);
-      toast.error(
-        err.response?.data?.message || "Failed to cancel order. Try again."
-      );
+      toast.error(err.response?.data?.message || "Cancellation failed.");
     }
-  };
-
-  const getStepClass = (order, step) => {
-    if (order.status === "cancelled") {
-      return step === "pending" ? "step-primary" : "step-error";
-    }
-
-    return statusSteps.indexOf(step) <= statusSteps.indexOf(order.status)
-      ? "step-primary"
-      : "";
   };
 
   const handleSubmitFeedback = async () => {
     if (!rating) return toast.error("Please select a rating");
-
     try {
       const token = localStorage.getItem("accessToken");
       await axios.post(
         `${BASE_URL}/api/v1/reviews/${feedbackModal.product._id}`,
-        {
-          productId: feedbackModal.product._id,
-          rating,
-          comment,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
+        { productId: feedbackModal.product._id, rating, comment },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      toast.success("Thanks for your feedback!");
+      toast.success("Feedback recorded in our registry.");
       setFeedbackModal({ open: false, product: null });
       setRating(0);
       setComment("");
-      fetchOrders(); // refresh to show review
+      fetchOrders();
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Failed to submit feedback");
+      toast.error("Failed to submit review.");
     }
   };
 
@@ -146,248 +110,208 @@ export default function OrderHistory() {
       const token = localStorage.getItem("accessToken");
       await axios.delete(`${BASE_URL}/api/v1/reviews/${reviewId}`, {
         headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
       });
-      toast.success("Review deleted successfully!");
+      toast.success("Review removed.");
       fetchOrders();
     } catch (err) {
-      console.error(err);
       toast.error("Failed to delete review");
     }
   };
 
+  // THE LUXURY LOADER
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-[#050505]">
+        <div className="w-12 h-12 border-t-2 border-[#A37E2C] rounded-full animate-spin mb-4"></div>
+        <p className="text-[10px] tracking-[0.5em] uppercase text-[#A37E2C] animate-pulse">
+          Accessing Registry
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="min-h-screen bg-[#050505] text-white flex flex-col">
       <Header />
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="p-4 sm:p-6 min-h-screen bg-gray-50 dark:bg-black"
-      >
-        <h2 className="text-3xl font-semibold mb-6 text-black dark:text-white">
-          My Orders
-        </h2>
 
-        {loading && (
-          <div className="text-center text-black dark:text-white">
-            Loading...
-          </div>
-        )}
+      <main className="flex-1 max-w-5xl mx-auto w-full px-6 pt-32 pb-20">
+        <div className="mb-12">
+          <h2 className="text-[10px] tracking-[0.6em] uppercase font-bold text-[#A37E2C] mb-2">History</h2>
+          <h1 className="text-4xl md:text-5xl font-serif italic">Your Collection</h1>
+        </div>
+
         {error && (
-          <div className="p-4 bg-red-100 text-red-700 rounded">{error}</div>
-        )}
-        {!loading && orders.length === 0 && (
-          <div className="text-center text-black dark:text-white">
-            You have no orders yet.
+          <div className="p-4 border border-red-900/50 bg-red-950/10 text-red-500 text-[11px] tracking-widest uppercase text-center mb-8">
+            {error}
           </div>
         )}
 
-        <div className="space-y-6">
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="bg-white dark:bg-black border-2 rounded-lg shadow p-4"
-            >
-              {/* Header */}
-              <div className="flex justify-between mb-2 flex-wrap">
-                <span className="font-semibold text-black dark:text-white">
-                  Order ID: {order._id}
-                </span>
-                <span
-                  className={`font-semibold text-sm px-2 py-1 rounded text-white ${
-                    order.status === "pending"
-                      ? "bg-yellow-500"
-                      : order.status === "processing"
-                      ? "bg-blue-500"
-                      : order.status === "delivered"
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}
-                >
-                  {order.status}
-                </span>
-              </div>
-
-              <div className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                Ordered At: {new Date(order.createdAt).toLocaleString()}
-              </div>
-
-              {/* Items */}
-              <div className="space-y-2">
-                {order.orderItems.map((item) => (
-                  <div
-                    key={item._id}
-                    className="flex flex-col sm:flex-row sm:items-center border-b pb-2"
-                  >
-                    <div className="flex items-center flex-1">
-                      <img
-                        src={
-                          item.product.image ||
-                          item.product.images?.[0]?.url ||
-                          "/placeholder.png"
-                        }
-                        alt={item.product.name || item.product.title}
-                        className="w-16 h-16 object-cover rounded mr-4"
-                      />
-                      <div>
-                        <div className="font-semibold text-black dark:text-white">
-                          {item.product.name || item.product.title}
-                        </div>
-                        <div className="text-gray-600 dark:text-gray-300">
-                          Quantity: {item.quantity} | ₹{item.price.toFixed(2)}
-                        </div>
-                      </div>
-                    </div>
-
-                    {order.status === "delivered" && !item.userReview && (
-                      <Button
-                        size="sm"
-                        className="mt-2 sm:mt-0 sm:ml-2"
-                        onClick={() =>
-                          setFeedbackModal({
-                            open: true,
-                            product: item.product,
-                            orderId: order._id,
-                          })
-                        }
-                      >
-                        Give Feedback
-                      </Button>
-                    )}
+        {orders.length === 0 ? (
+          <div className="text-center py-20 border border-white/5 bg-white/[0.02]">
+            <Package className="mx-auto mb-4 text-gray-700" size={40} strokeWidth={1} />
+            <p className="text-gray-500 tracking-[0.2em] text-[11px] uppercase">No orders found in your archive.</p>
+          </div>
+        ) : (
+          <div className="space-y-12">
+            {orders.map((order) => (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                key={order._id}
+                className="group border border-white/10 bg-transparent overflow-hidden"
+              >
+                {/* Order Meta Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b border-white/5 bg-white/[0.02] gap-4">
+                  <div className="space-y-1">
+                    <p className="text-[9px] tracking-[0.3em] uppercase text-gray-500 font-bold">Reference Number</p>
+                    <p className="text-xs font-mono tracking-tighter text-white">{order._id}</p>
                   </div>
-                ))}
-              </div>
-
-              {/* Payment Info */}
-              <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
-                Payment Method:{" "}
-                {order.paymentMethod === "online"
-                  ? "Card/Online"
-                  : "Cash on Delivery"}
-              </div>
-              <div className="mt-1 text-sm text-gray-700 dark:text-gray-300">
-                Total: ₹{order.totalPrice.toFixed(2)}
-              </div>
-
-              {order.isPaid && (
-                <div className="mt-2 text-sm text-green-500">
-                  Paid At: {new Date(order.paidAt).toLocaleString()}
-                </div>
-              )}
-
-              {/* User Reviews (show below Paid At) */}
-              {order.orderItems.map(
-                (item) =>
-                  item.userReview && (
-                    <div
-                      key={item.userReview._id}
-                      className="mt-3 border-t pt-2 text-gray-800 dark:text-gray-200"
-                    >
-                      <h4 className="font-semibold mb-1">Your Review</h4>
-                      <div className="flex items-center gap-2">
-                        <span className="text-yellow-400 text-lg">
-                          {"★".repeat(item.userReview.rating)}
-                        </span>
-                        <p className="text-sm">{item.userReview.comment}</p>
-                      </div>
-                      <div className="flex justify-end mt-1">
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() =>
-                            handleDeleteReview(item.userReview._id)
-                          }
-                        >
-                          Delete Review
-                        </Button>
-                      </div>
+                  <div className="flex gap-8">
+                    <div className="text-right">
+                      <p className="text-[9px] tracking-[0.3em] uppercase text-gray-500 font-bold">Status</p>
+                      <p className={`text-[10px] uppercase tracking-widest font-black ${
+                        order.status === 'cancelled' ? 'text-red-500' : 'text-[#A37E2C]'
+                      }`}>
+                        {order.status}
+                      </p>
                     </div>
-                  )
-              )}
+                    <div className="text-right">
+                      <p className="text-[9px] tracking-[0.3em] uppercase text-gray-500 font-bold">Value</p>
+                      <p className="text-sm font-medium">₹{order.totalPrice.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Steps */}
-              {order.status !== "cancelled" ? (
-                <div className="mt-4 steps steps-vertical md:steps-horizontal">
-                  {statusSteps.map((step) => (
-                    <div
-                      key={step}
-                      className={`step ${getStepClass(order, step)}`}
-                    >
-                      {step.charAt(0).toUpperCase() + step.slice(1)}
+                {/* Items */}
+                <div className="p-6 space-y-6">
+                  {order.orderItems.map((item) => (
+                    <div key={item._id} className="flex flex-col sm:flex-row gap-6">
+                      <img
+                        src={item.product.image || item.product.images?.[0]?.url || "/placeholder.png"}
+                        alt={item.product.name}
+                        className="w-24 h-24 object-cover border border-white/5 grayscale group-hover:grayscale-0 transition-all duration-700"
+                      />
+                      <div className="flex-1 space-y-2">
+                        <h4 className="font-serif italic text-lg leading-tight">{item.product.name || item.product.title}</h4>
+                        <p className="text-[10px] tracking-widest text-gray-500 uppercase font-bold">
+                          Qty: {item.quantity}  •  Unit: ₹{item.price.toLocaleString()}
+                        </p>
+                        
+                        {/* Review Display */}
+                        {item.userReview && (
+                          <div className="mt-4 p-4 bg-white/[0.03] border-l border-[#A37E2C]">
+                            <div className="flex items-center gap-2 mb-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} size={10} className={i < item.userReview.rating ? "fill-[#A37E2C] text-[#A37E2C]" : "text-gray-800"} />
+                              ))}
+                            </div>
+                            <p className="text-[11px] italic text-gray-400">"{item.userReview.comment}"</p>
+                            <button 
+                              onClick={() => handleDeleteReview(item.userReview._id)}
+                              className="text-[8px] tracking-[0.2em] uppercase text-red-900 hover:text-red-500 mt-2 transition-colors flex items-center gap-1"
+                            >
+                              <Trash2 size={10} /> Remove Review
+                            </button>
+                          </div>
+                        )}
+                        
+                        {order.status === "delivered" && !item.userReview && (
+                          <button
+                            onClick={() => setFeedbackModal({ open: true, product: item.product, orderId: order._id })}
+                            className="text-[9px] tracking-[0.3em] uppercase border border-white/20 px-4 py-2 hover:bg-white hover:text-black transition-all"
+                          >
+                            Provide Feedback
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="mt-4">
-                  <span className="text-red-500 font-semibold text-lg">
-                    Cancelled
-                  </span>
+
+                {/* Footer / Actions */}
+                <div className="p-6 border-t border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex gap-6">
+                    <div className="flex items-center gap-2 text-[9px] tracking-widest uppercase text-gray-500">
+                      <Clock size={12} className="text-[#A37E2C]" />
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </div>
+                    {order.isPaid && (
+                      <div className="flex items-center gap-2 text-[9px] tracking-widest uppercase text-green-700">
+                        <CheckCircle2 size={12} /> Transaction Complete
+                      </div>
+                    )}
+                  </div>
+                  
+                  {order.status === "pending" && (
+                    <button
+                      onClick={() => handleCancelOrder(order._id)}
+                      className="text-[9px] tracking-[0.4em] uppercase text-red-800 hover:text-red-500 transition-colors font-bold"
+                    >
+                      Cancel Acquisition
+                    </button>
+                  )}
                 </div>
-              )}
-
-              {/* Cancel Order */}
-              {order.status === "pending" && (
-                <div className="mt-4">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleCancelOrder(order._id)}
-                  >
-                    Cancel Order
-                  </Button>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Feedback Modal (with blur background) */}
-      {feedbackModal.open && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white dark:bg-black border-2 rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4 text-black dark:text-white">
-              Feedback for{" "}
-              {feedbackModal.product.title || feedbackModal.product.name}
-            </h3>
-
-            {/* Rating */}
-            <div className="flex justify-center mb-4">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  onClick={() => setRating(star)}
-                  className={`cursor-pointer text-3xl ${
-                    star <= rating ? "text-yellow-400" : "text-gray-400"
-                  }`}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-
-            {/* Comment */}
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Write your feedback..."
-              className="w-full p-2 rounded dark:bg-black border-2 dark:text-white"
-              rows="3"
-            />
-
-            <div className="flex justify-end mt-4 gap-2">
-              <Button
-                variant="ghost"
-                className="border-2"
-                onClick={() => setFeedbackModal({ open: false, product: null })}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleSubmitFeedback}>Submit</Button>
-            </div>
+              </motion.div>
+            ))}
           </div>
-        </div>
-      )}
-    </>
+        )}
+      </main>
+
+      {/* LUXURY FEEDBACK MODAL */}
+      <AnimatePresence>
+        {feedbackModal.open && (
+          <div className="fixed inset-0 flex items-center justify-center z-[100] px-6">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/90 backdrop-blur-md"
+              onClick={() => setFeedbackModal({ open: false, product: null })}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-[#0A0A0A] border border-white/10 p-8"
+            >
+              <h3 className="text-xl font-serif italic mb-2 text-center">Appraisal</h3>
+              <p className="text-[9px] tracking-[0.3em] uppercase text-gray-500 text-center mb-8">
+                For {feedbackModal.product.name}
+              </p>
+
+              <div className="flex justify-center gap-3 mb-8">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    onClick={() => setRating(star)}
+                    size={28}
+                    className={`cursor-pointer transition-all ${star <= rating ? "fill-[#A37E2C] text-[#A37E2C] scale-110" : "text-gray-800 hover:text-gray-600"}`}
+                  />
+                ))}
+              </div>
+
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Describe your experience with this piece..."
+                className="w-full bg-transparent border border-white/10 p-4 text-xs tracking-wide focus:border-[#A37E2C] outline-none transition-colors min-h-[120px]"
+              />
+
+              <div className="flex flex-col gap-3 mt-8">
+                <button 
+                  onClick={handleSubmitFeedback}
+                  className="w-full bg-[#A37E2C] text-black text-[10px] tracking-[0.4em] font-black uppercase py-4 hover:bg-[#F3E5AB] transition-colors"
+                >
+                  Submit Review
+                </button>
+                <button 
+                  onClick={() => setFeedbackModal({ open: false, product: null })}
+                  className="w-full text-[9px] tracking-[0.3em] uppercase text-gray-500 py-2"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

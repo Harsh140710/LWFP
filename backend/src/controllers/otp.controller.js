@@ -6,21 +6,24 @@ import { User } from "../models/user.models.js";
 import jwt from "jsonwebtoken";
 
 const sendOtpEmailController = asyncHandler(async (req, res) => {
-  const { email, purpose } = req.body;
+  const { email } = req.body;
   if (!email) throw new ApiError(400, "Email is required");
 
   const existedUser = await User.findOne({ email });
 
-  if (purpose === "register" && existedUser) {
-    throw new ApiError(409, "User already exists!");
+  // If user exists, we don't need to send a "Register" OTP
+  // We can tell the frontend to redirect to Password Login
+  if (existedUser) {
+    return res.status(200).json(
+      new ApiResponse(200, { exists: true }, "User already registered. Please login with password.")
+    );
   }
 
-  if (purpose === "forgot" && !existedUser) {
-    throw new ApiError(404, "User not found!");
-  }
-
-  await sendOtpEmail({ email, purpose });
-  return res.status(200).json(new ApiResponse(200, null, "OTP sent"));
+  // If user doesn't exist, proceed with sending OTP for registration
+  await sendOtpEmail({ email, purpose: "register" });
+  return res.status(200).json(
+    new ApiResponse(200, { exists: false }, "Verification OTP sent to your inbox.")
+  );
 });
 
 const verifyOtpEmailController = asyncHandler(async (req, res) => {

@@ -172,3 +172,29 @@ html, body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styling for the Sonner Progress Bar */
+/* This targets the Sonner progress bar specifically */
+/* 1. Ensure the toast container allows the bar to show at the very bottom */
+[data-sonner-toast] {
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* 2. Style the progress bar line */
+[data-sonner-toast] [data-progress-bar] {
+  display: block !important;
+  background: #A37E2C !important; /* Your brand gold */
+  height: 4px !important;         /* Thicker for luxury feel */
+  opacity: 1 !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+
+/* Ensure the toast feels larger and more premium */
+.luxury-toast {
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+}

@@ -1,345 +1,196 @@
+"use client";
+
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Header from "./Header";
 import "@google/model-viewer";
 import Footer from "./Footer";
+import { Quote, History, Award, Users, Globe, Leaf, Heart, ChevronRight } from "lucide-react";
 
 const AboutUs = () => {
+  const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.8 }
+  };
+
   return (
-    <div className="bg-gray-50 dark:bg-[#0B0B0D] text-gray-900 dark:text-white">
+    <div className="bg-[#050505] text-white selection:bg-[#A37E2C] selection:text-black min-h-screen">
       <Header />
-      {/* Hero Section */}
-      <section className="relative bg-white dark:bg-black py-32 px-6 text-center">
-        <div className="relative">
-          <motion.div
-            style={{
-              position: "absolute",
-              top: "-35px", // adjust to lift it above the heading
-              left: "50%",
-              transform: "translateX(-50%)",
-              pointerEvents: "none",
-            }}
-          >
-            <model-viewer
-              src="/golden_watch.glb"
-              alt="Floating Watch"
-              auto-rotate
-              // camera-controls
-              camera-orbit="30deg 25deg auto"
-              disable-zoom
-              style={{ width: "280px", height: "280px" }}
-            />
-          </motion.div>
+
+      {/* Hero Section: The Grand Reveal */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center pt-24 overflow-hidden">
+        {/* Ambient Glow */}
+        <div className="absolute inset-0 z-0 opacity-20">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#A37E2C] rounded-full blur-[160px]" />
         </div>
-        <motion.h1
-          initial={{ opacity: 0, y: -80 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-          className="text-5xl md:text-6xl font-extrabold text-black dark:text-white mb-6 mt-60"
-        >
-          Timeless Elegance
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="text-lg md:text-xl max-w-3xl mx-auto dark:text-white"
-        >
-          Crafting timeless elegance with precision and passion. Our journey is
-          built on trust, craftsmanship, and dedication to creating
-          extraordinary watches and accessories.
-        </motion.p>
-      </section>
 
-      {/* Our Story */}
-      <section className="py-20 px-6 max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-16"
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="z-10 mb-10 relative"
         >
-          <h2 className="text-4xl font-bold text-black dark:text-white mb-6">
-            Our Story
-          </h2>
-          <p className="text-gray-900 dark:text-white leading-relaxed text-lg mb-4">
-            Founded in [Year], [Your Brand Name] began as a small workshop with
-            a vision: to create exquisite watches and accessories that combine
-            elegance with functionality. Every piece we craft reflects a
-            commitment to timeless design, precision, and artistry.
-          </p>
-          <p className="text-gray-900 dark:text-white leading-relaxed text-lg">
-            Over the years, we have evolved from a niche boutique to an
-            internationally recognized brand. With every creation, we honor
-            traditional craftsmanship while embracing modern innovation. Our
-            artisans meticulously design each watch to embody perfection and
-            reliability.
-          </p>
+          {/* @ts-ignore */}
+          <model-viewer
+            src="/golden_watch.glb"
+            alt="The Signature Chronograph"
+            auto-rotate
+            rotation-per-second="30deg"
+            camera-orbit="30deg 75deg auto"
+            disable-zoom
+            loading="eager"
+            ar-modes="webxr scene-viewer quick-look"
+            style={{ width: "380px", height: "380px" }}
+            className="drop-shadow-[0_0_50px_rgba(163,126,44,0.3)] pointer-events-none"
+          />
         </motion.div>
 
-        {/* Vision & Mission */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-20 grid md:grid-cols-2 gap-12"
-        >
-          <div className="bg-[#f5fcd0] dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-lg">
-            <h3 className="text-3xl font-semibold mb-4 text-[#DAA520] dark:text-yellow-500">
-              Our Vision
-            </h3>
-            <p className="text-gray-900 dark:text-white text-lg leading-relaxed">
-              To be the benchmark in luxury watches, merging classic
-              craftsmanship with modern design, and creating pieces that are
-              treasured for generations.
-            </p>
-          </div>
-          <div className="bg-[#f5fcd0] dark:bg-[#1E1E1E] p-8 rounded-2xl shadow-lg">
-            <h3 className="text-3xl font-semibold mb-4 text-[#DAA520] dark:text-[#c9da6e]">
-              Our Mission
-            </h3>
-            <p className="text-gray-900 dark:text-white text-lg leading-relaxed">
-              To design, craft, and deliver the finest watches and accessories
-              with a focus on quality, style, and sustainability, ensuring a
-              memorable experience for every customer.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Core Values */}
-        <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-20"
-        >
-          <h2 className="text-4xl font-bold text-black dark:text-white mb-10 text-center">
-            Our Core Values
-          </h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#cde05e]">
-                Integrity
-              </h3>
-              <p className="text-gray-900 dark:text-white">
-                Transparency and honesty guide every decision we make.
-              </p>
-            </div>
-            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#cacc56]">
-                Excellence
-              </h3>
-              <p className="text-gray-900 dark:text-white">
-                We pursue perfection in design, quality, and service.
-              </p>
-            </div>
-            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
-                Innovation
-              </h3>
-              <p className="text-gray-900 dark:text-white">
-                We merge tradition with modern technology and design.
-              </p>
-            </div>
-            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
-                Customer Focus
-              </h3>
-              <p className="text-gray-900 dark:text-white">
-                Customer satisfaction is at the heart of everything we do.
-              </p>
-            </div>
-            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
-                Sustainability
-              </h3>
-              <p className="text-gray-900 dark:text-white">
-                We source responsibly and prioritize eco-friendly practices.
-              </p>
-            </div>
-            <div className="bg-[#f5fcd0] dark:bg-[#111111] p-6 rounded-xl shadow-md text-center">
-              <h3 className="font-semibold text-2xl mb-2 text-[#DAA520] dark:text-[#A5D6A7]">
-                Passion
-              </h3>
-              <p className="text-gray-900 dark:text-white">
-                We are driven by our love for craft, design, and perfection.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Extended Team Section */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-20"
-        >
-          <h2 className="text-4xl font-bold text-black dark:text-white mb-10 text-center">
-            Meet Our Team
-          </h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            {[
-              "Harsh Suthar",
-              "Mohit Tundiya",
-              "Nihal Chavda",
-              "Sujata Mudaliyar",
-            ].map((name, i) => (
-              <div key={i} className="text-center">
-                <img
-                  src={`/team${i + 1}.jpg`}
-                  alt={name}
-                  className="w-48 h-48 rounded-full mx-auto mb-4 object-cover border-4 border-yellow-500 dark:border-[#A5D6A7]"
-                />
-                <h3 className="font-semibold text-xl mb-1">{name}</h3>
-                <p className="text-gray-900 dark:text-white">
-                  {i === 0
-                    ? "Founder & CEO"
-                    : i === 1
-                    ? "Head of Design"
-                    : i === 2
-                    ? "Product Designer"
-                    : i === 3
-                    ? "Opration Manager"
-                    : "Product Designer"}
-                </p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Testimonials Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-20 text-center"
-        >
-          <h2 className="text-4xl font-bold text-black dark:text-white mb-12">
-            What Our Customers Say
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Sophia Lee",
-                text: "The craftsmanship is impeccable, and the customer service is top-notch!",
-              },
-              {
-                name: "Michael Brown",
-                text: "I’ve never owned a watch this elegant. Truly a timeless piece.",
-              },
-              {
-                name: "Olivia Davis",
-                text: "Exceptional design and quality. I highly recommend them!",
-              },
-              {
-                name: "David Wilson",
-                text: "Amazing attention to detail. Every watch tells a story.",
-              },
-              {
-                name: "Emma Clark",
-                text: "Luxury meets perfection. Absolutely love it!",
-              },
-              {
-                name: "James Miller",
-                text: "Professional service and exquisite products.",
-              },
-            ].map((review, i) => (
-              <div
-                key={i}
-                className="bg-[#f5fcd0] dark:bg-[#1E1E1E] p-6 rounded-xl shadow-md"
-              >
-                <p className="text-lg italic mb-4 text-gray-900 dark:text-white">
-                  "{review.text}"
-                </p>
-                <p className="font-semibold text-[#DAA520] dark:text-[#A5D6A7]">
-                  - {review.name}
-                </p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Timeline / Milestones */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mb-20 max-w-5xl mx-auto"
-        >
-          <h2 className="text-4xl font-bold text-black dark:text-white mb-12 text-center">
-            Our Journey
-          </h2>
-          <div className="space-y-8">
-            {[
-              {
-                year: "2021",
-                milestone:
-                  "Founded with a small team of passionate watchmakers.",
-              },
-              {
-                year: "2022",
-                milestone: "Launched our first limited-edition collection.",
-              },
-              {
-                year: "2023",
-                milestone: "Expanded internationally, reaching Europe & Asia.",
-              },
-              {
-                year: "2024",
-                milestone:
-                  "Introduced sustainable materials and eco-friendly practices.",
-              },
-              {
-                year: "2025",
-                milestone: "Recognized as a premium luxury brand worldwide.",
-              },
-            ].map((event, i) => (
-              <div
-                key={i}
-                className="flex flex-col md:flex-row md:items-center gap-4"
-              >
-                <span className="text-black dark:text-white font-bold text-xl w-24">
-                  {event.year}
-                </span>
-                <p className="text-gray-900 dark:text-white text-lg">
-                  {event.milestone}
-                </p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center py-16"
-        >
-          <h2 className="text-4xl font-bold mb-4 text-black dark:text-white">
-            Discover Our Collection
-          </h2>
-          <p className="text-gray-900 dark:text-white mb-6 text-lg max-w-2xl mx-auto">
-            Explore our range of exquisite watches and accessories, designed to
-            combine elegance, precision, and durability. Join a community of
-            enthusiasts who value timeless style.
-          </p>
-          <a
-            href="/products"
-            className="inline-block bg-[#DAA520] hover:bg-[#B8860B] text-white font-semibold py-4 px-10 rounded-lg transition"
+        <div className="z-10 text-center px-6">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="text-6xl md:text-9xl font-serif italic tracking-tighter mb-8 leading-tight"
           >
-            Explore Collection
-          </a>
+            The Art of Seconds
+          </motion.h1>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "120px" }}
+            transition={{ delay: 1, duration: 0.8 }}
+            className="h-[1px] bg-[#A37E2C] mx-auto mb-8 shadow-[0_0_10px_#A37E2C]"
+          />
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 1 }}
+            className="text-[10px] md:text-xs uppercase tracking-[1em] text-[#A37E2C] font-bold"
+          >
+            Est. 2021 — Defined by Precision
+          </motion.p>
+        </div>
+      </section>
+
+      {/* Our Philosophy */}
+      <section className="py-40 px-6 max-w-6xl mx-auto border-y border-white/5 bg-gradient-to-b from-transparent via-[#080808] to-transparent">
+        <motion.div {...fadeInUp} className="text-center space-y-16">
+          <Quote className="mx-auto text-[#A37E2C] opacity-40" size={48} />
+          <h2 className="text-3xl md:text-6xl font-serif leading-[1.1] italic text-white/90">
+            "A watch does not merely tell the time; it narrates the legacy of the wearer and the soul of the craftsman."
+          </h2>
+          <div className="grid md:grid-cols-2 gap-16 text-left pt-20 border-t border-white/5">
+            <p className="text-gray-400 leading-relaxed text-lg font-light tracking-wide">
+              In an era of fleeting digital trends, the House of Rajubhai stands as a sanctuary for 
+              mechanical permanence. Our journey began in a modest workshop fueled by a single obsession: 
+              the perfect calibration of weight, light, and movement.
+            </p>
+            <p className="text-gray-400 leading-relaxed text-lg font-light tracking-wide">
+              We believe luxury is found in the invisible details—the hand-polished bevels, 
+              the silent sweep of a second hand, and the surgical-grade steel that rests against your skin. 
+              Each timepiece is a masterpiece of micro-engineering.
+            </p>
+          </div>
         </motion.div>
       </section>
+
+      {/* Vision & Mission */}
+      <section className="py-32 px-6 bg-[#080808]">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
+          {[
+            { 
+              title: "Our Vision", 
+              desc: "To redefine the global horological landscape by proving that modern innovation and ancestral craftsmanship can coexist in a single case.",
+              color: "text-[#A37E2C]"
+            },
+            { 
+              title: "Our Mission", 
+              desc: "To curate a collection that transcends seasons, providing our patrons with instruments of time that remain as relevant in fifty years as they are today.",
+              color: "text-white"
+            }
+          ].map((item, i) => (
+            <motion.div 
+              key={i}
+              whileHover={{ y: -10, borderColor: "rgba(163,126,44,0.3)" }}
+              className="p-16 border border-white/5 bg-[#0A0A0A] rounded-none transition-all duration-700 ease-out"
+            >
+              <h3 className={`text-[10px] uppercase tracking-[0.6em] font-black mb-8 ${item.color}`}>
+                {item.title}
+              </h3>
+              <p className="text-3xl font-serif text-gray-300 leading-relaxed italic">
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Pillars Grid */}
+      <section className="py-40 px-6 max-w-7xl mx-auto">
+        <h2 className="text-[11px] tracking-[0.8em] uppercase text-center text-gray-500 mb-24 font-bold">The Pillars of Our House</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-24 gap-x-16">
+          {[
+            { icon: <History size={24} />, title: "Heritage", text: "Honoring the centuries-old traditions of Swiss and Japanese horology." },
+            { icon: <Award size={24} />, title: "Excellence", text: "Zero-tolerance for imperfection. Every watch undergoes 400 hours of testing." },
+            { icon: <Leaf size={24} />, title: "Sustainability", text: "Sourcing ethically mined metals and recycled premium packaging." },
+            { icon: <Globe size={24} />, title: "Global Reach", text: "A worldwide concierge service serving collectors across six continents." },
+            { icon: <Users size={24} />, title: "Patronage", text: "Building a lifelong community through exclusive owner events." },
+            { icon: <Heart size={24} />, title: "Passion", text: "Driven by the heartbeat of mechanical movement, not batteries." },
+          ].map((val, i) => (
+            <motion.div key={i} {...fadeInUp} className="group space-y-6">
+              <div className="text-[#A37E2C] transition-transform duration-500 group-hover:scale-110">{val.icon}</div>
+              <h3 className="text-2xl font-serif italic group-hover:text-[#A37E2C] transition-colors">{val.title}</h3>
+              <p className="text-sm text-gray-500 leading-relaxed font-light uppercase tracking-widest">{val.text}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section className="py-40 px-6 bg-[#080808]">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-5xl font-serif text-center mb-32 italic">The Evolution</h2>
+          <div className="space-y-32 relative before:absolute before:left-[19px] md:before:left-1/2 before:top-0 before:h-full before:w-[1px] before:bg-gradient-to-b before:from-transparent before:via-[#A37E2C]/30 before:to-transparent">
+            {[
+              { year: "2021", event: "The Genesis", desc: "Rajubhai establishes the first atelier in Ahmedabad, focusing on bespoke custom builds." },
+              { year: "2022", event: "The Heritage Collection", desc: "Launch of our signature gold-series movements, gaining traction in the luxury market." },
+              { year: "2023", event: "Continental Expansion", desc: "Opening of flagship showrooms in Dubai and London, servicing a global clientele." },
+              { year: "2026", event: "The Future of Horology", desc: "Integration of sustainable titanium alloys and the first in-house calibre movement." }
+            ].map((step, i) => (
+              <motion.div key={i} {...fadeInUp} className={`flex flex-col md:flex-row gap-8 relative ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                <div className="absolute left-0 md:left-1/2 -translate-x-1/2 w-10 h-10 bg-[#050505] border border-[#A37E2C] rounded-full z-10 flex items-center justify-center text-[10px] font-bold text-[#A37E2C] shadow-[0_0_15px_rgba(163,126,44,0.2)]">
+                  {step.year.slice(2)}
+                </div>
+                <div className={`pl-12 md:pl-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-16 text-left md:text-right' : 'md:pl-16 text-left'}`}>
+                  <h4 className="text-[#A37E2C] text-[10px] uppercase tracking-[0.4em] font-black mb-3">{step.year}</h4>
+                  <h3 className="text-3xl font-serif italic mb-4">{step.event}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed font-light">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final Call to Action */}
+      <section className="py-48 px-6 text-center relative overflow-hidden bg-black">
+        <div className="z-10 relative space-y-12">
+          <h2 className="text-6xl md:text-8xl font-serif italic leading-none">Begin Your Legacy</h2>
+          <p className="text-gray-500 max-w-xl mx-auto font-light tracking-widest text-sm uppercase">
+            Discover the instrument that reflects your journey and defines your time.
+          </p>
+          <motion.a
+            whileHover={{ scale: 1.05, backgroundColor: "#fff", color: "#000" }}
+            whileTap={{ scale: 0.95 }}
+            href="/products"
+            className="inline-flex items-center gap-4 border border-[#A37E2C] text-[#A37E2C] text-[10px] tracking-[0.5em] uppercase font-bold py-6 px-14 transition-all duration-700"
+          >
+            Enter The Gallery <ChevronRight size={14} />
+          </motion.a>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

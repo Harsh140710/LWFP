@@ -1,351 +1,216 @@
 import React from "react";
 import Header from "../../components/Header";
-import { motion } from "framer-motion";
-import { MoveRight } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { MoveRight, Shield, Award, Droplets, Wind, Globe, History } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ScrollAnimationWrapper } from "@/animation/ScrollAnimationWrapper";
-import { containerVariant, itemVariant } from "@/animation/ScrollVarient";
-import ServicesRing from "@/animation/ServicesRing";
-import FloatingWatch from "@/animation/FloatingWatch";
 import Footer from "../../components/Footer";
-import BackgroundVideo from "@/components/BackgroundVideo";
-
-// Animation with blur + left/right
-const fadeInVariants = (direction = "left") => ({
-  hidden: {
-    opacity: 0,
-    filter: "blur(10px)",
-    x: direction === "left" ? -80 : 80,
-  },
-  visible: {
-    opacity: 1,
-    filter: "blur(0px)",
-    x: 0,
-    transition: { duration: 0.8, ease: "easeOut" },
-  },
-});
-
-const Watch = () => (
-  <ScrollAnimationWrapper>
-    <motion.div
-      variants={fadeInVariants("right")}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.4 }}
-    >
-      <model-viewer
-        src="/golden_watch.glb"
-        alt="Golden Watch"
-        auto-rotate
-        camera-controls
-        shadow-intensity="1"
-        style={{ width: "100%", height: "300px", display: "block" }}
-        camera-orbit="80deg 30deg auto"
-        field-of-view="auto"
-        disable-zoom
-      ></model-viewer>
-    </motion.div>
-  </ScrollAnimationWrapper>
-);
 
 const Home = () => {
+  const { scrollYProgress } = useScroll();
+  
+  // Parallax for a high-end feel
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 1.1]);
+
   return (
-    <div>
+    <div className="bg-[#050505] text-[#F9F6F0] selection:bg-[#A37E2C] selection:text-white font-sans overflow-x-hidden">
       <Header />
-      <BackgroundVideo />
-      <FloatingWatch />
-      {/* Hero Section */}
-      <div className="min-h-screen w-full lg:p-20 bg-[#DAA520] dark:bg-black flex flex-col lg:flex-row items-center justify-center gap-10">
-        {/* Mobile Watch */}
-        <motion.div
-          className="w-full lg:hidden flex justify-center order-1"
-          variants={fadeInVariants("left")}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          {/* <div className="w-full max-w-md px-4">
-            <Watch />
-          </div> */}
+      
+      {/* 1. CINEMATIC VIDEO HERO - THE ART OF PRECISION */}
+      <section className="relative h-screen w-full overflow-hidden">
+        <motion.div style={{ scale }} className="absolute inset-0 z-0">
+          <video 
+            autoPlay 
+            muted 
+            loop 
+            playsInline
+            className="w-full h-full object-cover opacity-70"
+          >
+            {/* Professional online watch B-roll reference */}
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-luxury-watch-mechanisms-and-details-close-up-34505-large.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-[#050505]" />
         </motion.div>
 
-        {/* Text Section */}
-        <motion.div
-          variants={fadeInVariants("right")}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          className="flex flex-col items-center lg:items-start text-center lg:text-left max-w-2xl order-2 lg:order-1"
-        >
-          <motion.h1 className="font-bold sm:text-2xl md:text-3xl lg:text-4xl text-2xl mb-5 text-[#FEFEFE] dark:text-[#F9FAFB]">
-            Redefining{" "}
-            <span
-              style={{ fontFamily: "'Great Vibes', cursive" }}
-              className="text-[#DAA520]"
-            >
-              Luxury
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          >
+            <span className="text-[#A37E2C] tracking-[0.8em] uppercase text-xs font-bold mb-6 block">
+              ESTABLISHED 1994
             </span>
-            &nbsp;, One Timeless Moment at a Time
-          </motion.h1>
-
-          <motion.p className="text-[#FEFEFE] dark:text-[#FEFEFE] mb-5">
-            Discover our curated collection of premium watches crafted for
-            elegance and precision.
-          </motion.p>
-
-          <div className="mt-3 flex flex-row gap-3 w-full justify-center lg:justify-start">
-            <Link
-              to="/products"
-              className="bg-[#DAA520] text-white uppercase px-4 py-2 rounded-xl font-bold min-w-[140px] flex items-center justify-center"
-            >
-              Shop Now
-            </Link>
-
-            <Link
-              to="/products/68e4b164be03a5ce5aacc3e8"
-              className="relative border-2 border-[#DAA520] px-4 py-2 rounded-xl min-w-[140px] flex items-center justify-center hover:cursor-pointer"
-            >
-              <span className="pr-2 text-[#FEFEFE] font-bold">
-                Explore Collection
+            <h1 className="text-[14vw] md:text-[9vw] font-serif leading-[0.85] tracking-tighter mb-12">
+              Timeless<br/>
+              <span className="italic bg-gradient-to-r from-[#D4AF37] via-[#F3E5AB] to-[#AA8B2E] bg-clip-text text-transparent">
+                Excellence
               </span>
-              <MoveRight className="size-[1.2rem] text-[#DAA520]" />
+            </h1>
+            <Link to="/products" className="group relative inline-block px-12 py-5 border border-[#A37E2C]/30 overflow-hidden transition-all duration-700">
+              <span className="absolute inset-0 w-full h-full bg-[#A37E2C] -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
+              <span className="relative text-[10px] tracking-[0.5em] uppercase font-black group-hover:text-black">
+                Enter the Boutique
+              </span>
             </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* 2. THE PHILOSOPHY - CRISP IVORY SECTION */}
+      <section className="py-64 px-6 md:px-24 bg-[#F9F6F0] text-[#1A1A1A]">
+        <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="space-y-12"
+          >
+            <h2 className="text-7xl md:text-8xl font-serif tracking-tighter leading-none text-black">
+              The pursuit of <span className="italic">perfection</span> is infinite.
+            </h2>
+            <p className="text-2xl text-gray-700 font-light leading-relaxed max-w-xl">
+              At the heart of every Timeless piece lies a commitment to the 500-hour mastery test. We operate at the intersection of Swiss micro-engineering and avant-garde aesthetic design.
+            </p>
+            <Link to="/about-us" className="inline-flex items-center gap-6 group text-[10px] font-black tracking-[0.4em] text-[#A37E2C]">
+              OUR CRAFTSMANSHIP <MoveRight className="group-hover:translate-x-4 transition-transform duration-500" />
+            </Link>
+          </motion.div>
+          
+          <div className="relative group overflow-hidden shadow-[30px_30px_0px_0px_rgba(163,126,44,0.1)]">
+            <img 
+              src="https://images.unsplash.com/photo-1585123334904-845d60e97b29?auto=format&fit=crop&q=80&w=1000" 
+              alt="Craftsmanship" 
+              className="w-full h-[700px] object-cover grayscale hover:grayscale-0 transition-all duration-1000" 
+            />
           </div>
-        </motion.div>
+        </div>
+      </section>
 
-        {/* Desktop Watch */}
-        <motion.div
-          className="hidden lg:flex w-1/2 justify-center order-2"
-          variants={fadeInVariants("left")}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <div className="w-full max-w-md">{/* <Watch /> */}</div>
-        </motion.div>
-      </div>
+      {/* 3. THE MOVEMENT - TECHNICAL MASTERY (Video Reveal) */}
+      <section className="relative py-64 bg-black overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="order-2 lg:order-1 relative h-[600px] w-full bg-[#111] overflow-hidden">
+            <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+               <source src="https://assets.mixkit.co/videos/preview/mixkit-mechanical-gears-of-a-clock-working-4318-large.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 border-[20px] border-black/80"></div>
+          </div>
+          
+          <div className="order-1 lg:order-2 space-y-10">
+            <span className="text-[#A37E2C] tracking-[0.5em] font-bold text-xs uppercase">The Internal Caliber</span>
+            <h3 className="text-5xl md:text-7xl font-serif tracking-tighter">Micro-Mechanical<br/><span className="italic">Symphony</span></h3>
+            <p className="text-gray-400 font-light text-lg leading-relaxed">
+              Our caliber 3235 movements utilize the Chronergy escapement, combining high energy efficiency with great dependability. It is resistant to strong magnetic fields and offers a power reserve of approximately 70 hours.
+            </p>
+            <div className="grid grid-cols-2 gap-8 pt-10">
+                <div className="border-l border-[#A37E2C]/30 pl-6">
+                    <p className="text-3xl font-serif mb-1">±2 sec</p>
+                    <p className="text-[9px] tracking-widest uppercase text-gray-500">Daily Accuracy</p>
+                </div>
+                <div className="border-l border-[#A37E2C]/30 pl-6">
+                    <p className="text-3xl font-serif mb-1">28,800</p>
+                    <p className="text-[9px] tracking-widest uppercase text-gray-500">Vibrations/Hour</p>
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Featured Collection */}
-      <div className="py-12 relative pt-28 z-10 bg-[#F9FAFB] dark:bg-black">
-        <h2 className="text-center font-bold text-black dark:text-white lg:text-3xl md:text-2xl text-xl py-6 -mt-20 mb-20 underline">
-          Featured Collection
-        </h2>
+      {/* 4. THE COLLECTION - ROLLING GALLERY */}
+      <section className="py-64 bg-[#050505]">
+        <div className="px-6 md:px-24 mb-32 flex flex-col md:flex-row md:items-end justify-between gap-10">
+          <div className="max-w-3xl">
+            <span className="text-[#A37E2C] tracking-[0.6em] text-[10px] font-black uppercase mb-6 block">Our Curation</span>
+            <h2 className="text-6xl md:text-8xl font-serif tracking-tighter">The 2026 Collection</h2>
+          </div>
+          <Link to="/products" className="text-[10px] font-black tracking-[0.3em] uppercase border-b border-[#A37E2C] pb-2 text-[#A37E2C]">View All Models</Link>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 md:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-b border-white/5">
           {[
-            {
-              id: 1,
-              img: "/OIP-removebg-preview.png",
-            },
-            { id: 2, img: null, description: "" }, // empty slot for animation
-            {
-              id: 3,
-              img: "/Macanic_Watch-removebg-preview.png",
-              description: "",
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={item.id}
-              variants={fadeInVariants(i % 2 === 0 ? "left" : "right")}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              className="relative group flex flex-col border-2 border-none rounded-xl overflow-hidden"
+            { name: "Day-Date Eternal", ref: "DD-902", price: "$32,500", img: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?auto=format&fit=crop&q=80&w=800" },
+            { name: "Yacht-Master Gold", ref: "YM-110", price: "$28,900", img: "https://images.unsplash.com/photo-1547996160-81dfa63595dd?auto=format&fit=crop&q=80&w=800" },
+            { name: "Sky-Dweller Stealth", ref: "SD-044", price: "$41,200", img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800" }
+          ].map((watch, i) => (
+            <motion.div 
+              key={i}
+              whileHover={{ backgroundColor: "rgba(163, 126, 44, 0.03)" }}
+              className="group relative border-r border-white/5 p-16 flex flex-col items-center transition-colors duration-700"
             >
-              <div className="bg-[#FEFEFE] dark:bg-[#0B0B0D] w-full aspect-square flex items-center justify-center">
-                {item.img ? (
-                  item.img.endsWith(".glb") || item.img.endsWith(".gltf") ? (
-                    <model-viewer
-                      src={item.img}
-                      alt="Luxury Watch"
-                      auto-rotate
-                      camera-controls
-                      shadow-intensity="1"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        maxHeight: "14rem",
-                      }}
-                      camera-orbit="80deg 30deg auto"
-                      field-of-view="auto"
-                      disable-zoom
-                    ></model-viewer>
-                  ) : (
-                    <img
-                      src={item.img}
-                      alt="Luxury Watch"
-                      className="w-full h-full object-contain scale-[1.2]"
-                    />
-                  )
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    {/* Empty space for your animation */}
-                  </div>
-                )}
+              <div className="overflow-hidden mb-12 relative aspect-[3/4] w-full">
+                <img 
+                  src={watch.img} 
+                  alt={watch.name} 
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-in-out" 
+                />
               </div>
-
-              {/* Hover Overlay */}
-              <div
-                className="absolute inset-0 flex flex-col p-5 items-center justify-center
-              backdrop-blur-sm bg-[#DAA520]
-              opacity-0 group-hover:opacity-70
-              transition-all duration-500 ease-in-out"
-              >
-                <p className="text-[#FEFEFE] font-semibold mb-10">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Quidem nemo quo ipsa repellat, officia earum reiciendis fugiat
-                  ipsum? Eaque, tempora asperiores velit magni fugit labore quo
-                  sunt reiciendis vitae dignissimos similique pariatur, ipsam
-                  exercitationem dolores nulla perferendis laudantium ipsa
-                  facere repudiandae ratione numquam amet consectetur eius
-                  adipisci! Quisquam, reprehenderit asperiores.
-                </p>
-                <Link
-                  to={"/products"}
-                  className="text-[#FEFEFE] underline uppercase text-lg sm:text-xl font-bold"
-                >
-                  Collection
-                </Link>
+              <div className="text-center">
+                <p className="text-[#A37E2C] text-[10px] tracking-[0.3em] font-bold uppercase mb-3">Ref. {watch.ref}</p>
+                <h3 className="text-3xl font-serif text-white group-hover:text-[#F3E5AB] transition-colors">{watch.name}</h3>
+                <p className="mt-4 text-gray-500 font-light text-sm italic">{watch.price}</p>
               </div>
             </motion.div>
           ))}
         </div>
+      </section>
 
-        {/* Our Services in Animated Rotating Ring */}
-        <ServicesRing />
-      </div>
-
-      {/* Brand Values */}
-      {/*  Brand Values with Infinite Scroll (Single Row, Responsive) */}
-      <section className="py-16 px-6  relative z-10 bg-[#F9FAFB] dark:bg-black text-center overflow-hidden">
-        <h2 className="text-3xl font-bold mb-20 text-[#111827] dark:text-white">
-          Why Choose Us
-        </h2>
-
-        <div className="relative z-10 w-full overflow-hidden">
-          <motion.div
-            className="flex gap-6 flex-nowrap"
-            animate={{ x: ["0%", "-100%"] }}
-            transition={{
-              repeat: Infinity,
-              duration: 25,
-              ease: "linear",
-            }}
-          >
-            {[...Array(2)].map((_, loopIndex) =>
-              [
-                "Swiss Movement",
-                "Premium Materials",
-                "Handcrafted",
-                "2-Year Warranty",
-                "Luxury Design",
-                "Lifetime Service",
-                "Global Shipping",
-                "Eco Packaging",
-              ].map((value, i) => (
-                <div
-                  key={`${loopIndex}-${i}`}
-                  className="min-w-[180px] sm:min-w-[220px] md:min-w-[250px] lg:min-w-[300px]
-              p-6 bg-white dark:bg-[#111] rounded-xl shadow-md
-              hover:bg-[#DAA520] dark:hover:bg-[#DAA520] hover:text-white transition-all duration-300"
-                >
-                  <h3 className="text-base sm:text-lg font-semibold text-[#111827]  hover:text-[#FEFEFE] dark:text-white">
-                    {value}
-                  </h3>
-                </div>
-              ))
-            )}
-          </motion.div>
+      {/* 5. HERITAGE TIMELINE - ADDING DEPTH */}
+      <section className="py-64 bg-[#F9F6F0] text-[#1A1A1A]">
+        <div className="max-w-[1200px] mx-auto px-6">
+            <div className="flex items-center gap-4 mb-20">
+                <History className="text-[#A37E2C]" size={32} />
+                <span className="text-xs font-black tracking-[0.5em] uppercase">The Legacy Timeline</span>
+            </div>
+            
+            <div className="space-y-40 relative">
+                <div className="absolute left-[50%] top-0 w-[1px] h-full bg-[#A37E2C]/20 hidden md:block"></div>
+                
+                {[
+                    { year: "1994", title: "The Foundation", desc: "Our first workshop opens in Geneva, dedicated to ultra-thin complications." },
+                    { year: "2008", title: "The Deepsea Patent", desc: "Introduction of the Ringlock system, allowing watches to withstand 3,900 meters." },
+                    { year: "2026", title: "Timeless Excellence", desc: "The launch of the perpetual caliber with AI-assisted chronometry." }
+                ].map((item, idx) => (
+                    <motion.div 
+                        key={idx}
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10`}
+                    >
+                        <div className="flex-1 text-center md:text-right">
+                            <span className="text-8xl font-serif text-[#A37E2C]/10 block mb-4">{item.year}</span>
+                            <h4 className="text-3xl font-serif mb-4">{item.title}</h4>
+                            <p className="text-gray-500 font-light max-w-sm ml-auto">{item.desc}</p>
+                        </div>
+                        <div className="w-4 h-4 rounded-full bg-[#A37E2C] z-10 hidden md:block"></div>
+                        <div className="flex-1"></div>
+                    </motion.div>
+                ))}
+            </div>
         </div>
       </section>
 
-      {/* Lifestyle Section */}
-      <section
-        className="py-16 bg-cover bg-center relative"
-        style={{ backgroundImage: "url('/lifestyle-bg.jpg')" }}
-      >
-        <div className="bg-gradient-to-br from-[#DAA520] to-[#FEFEFE] dark:bg-gradient-to-br dark:from-[#DAA520] dark:to-[#111] dark:bg-[#111] absolute inset-0"></div>
-        <motion.div
-          variants={fadeInVariants("up")}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          className="relative text-center dark:text-white max-w-3xl mx-auto px-6"
-        >
-          <h2 className="text-4xl font-bold mb-4">More than a Timepiece</h2>
-          <p className="text-lg">
-            A legacy of style, precision, and timeless elegance.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* What Our Customers Say */}
-      <section className="py-16 px-6 z-10 bg-[#DAA520] dark:bg-[#DAA520] text-center overflow-hidden">
-        <h2 className="text-3xl font-bold mb-20 text-black dark:text-white">
-          What Our Customers Say
-        </h2>
-
-        <div className="relative w-full overflow-hidden">
-          <motion.div
-            className="flex gap-6 flex-nowrap"
-            animate={{ x: ["-100%", "0%"] }}
-            transition={{
-              repeat: Infinity,
-              duration: 30, // slow smooth scroll
-              ease: "linear",
-            }}
-          >
-            {[...Array(2)].map((_, loopIndex) =>
-              [
-                {
-                  name: "Aarav S.",
-                  text: "The craftsmanship is outstanding. Feels truly premium!",
-                },
-                {
-                  name: "Emily R.",
-                  text: "Absolutely love my watch – elegant and timeless design.",
-                },
-                {
-                  name: "Daniel K.",
-                  text: "Customer service was fantastic, shipping was fast.",
-                },
-                {
-                  name: "Sophia M.",
-                  text: "I get compliments every time I wear it. Worth every penny!",
-                },
-              ].map((review, i) => (
-                <div
-                  key={`${loopIndex}-${i}`}
-                  className="min-w-[250px] sm:min-w-[300px] md:min-w-[350px] lg:min-w-[400px]
-                            p-6 bg-gray-200 text-black dark:bg-black dark:text-white dark:hover:bg-gray-900 rounded-xl shadow-2xl text-left
-                          hover:bg-gray-300 dark:hover:text-white transition-all duration-300"
-                >
-                  <p className="text-sm sm:text-base italic mb-3">
-                    “{review.text}”
-                  </p>
-                  <h4 className="text-sm sm:text-lg font-semibold">
-                    - {review.name}
-                  </h4>
-                </div>
-              ))
-            )}
-          </motion.div>
+      {/* 6. LIFESTYLE ADVERTISING - THE AMBASSADOR */}
+      <section className="relative h-[90vh] bg-black">
+        <div className="absolute inset-0 grayscale opacity-50">
+           <img 
+             src="https://images.unsplash.com/photo-1495707902641-75cac588d2e9?auto=format&fit=crop&q=80&w=1600" 
+             className="w-full h-full object-cover"
+             alt="Ambassador"
+           />
+           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black" />
+        </div>
+        <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
+            <h2 className="text-6xl md:text-[6vw] font-serif italic mb-10 tracking-tight text-white/90">Define Your <span className="not-italic text-[#D4AF37]">Era</span>.</h2>
+            <p className="max-w-xl text-gray-300 font-light text-lg mb-12">Worn by explorers who view time not as a limit, but as a canvas for legacy.</p>
+            <Link to="/products" className="px-16 py-7 border border-white hover:bg-white hover:text-black transition-all duration-500 text-[10px] tracking-[0.5em] font-black">
+                SHOP ALL MODELS
+            </Link>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-16 relative z-10 px-6 text-center bg-white dark:bg-black dark:text-white text-black">
-        <h2 className="text-3xl font-bold mb-4">Own Your Timeless Luxury</h2>
-        <p className="mb-6">Discover exclusive watches crafted for elegance.</p>
-        <Link
-          to="/products"
-          className="bg-[#DAA520] text-white px-6 py-3 rounded-xl font-semibold shadow-lg"
-        >
-          Shop Now
-        </Link>
-      </section>
-
-      {/* Footer */}
       <Footer />
     </div>
   );

@@ -1,8 +1,7 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { UserDataContext } from "@/context/UserContext";
-import ThemeToggleButton from "./ui/theme-toggle-button";
 import { Link } from "react-router-dom";
-import { Book, Home, LogIn, Search, ShoppingCart, Watch } from "lucide-react";
+import { ShoppingCart, User, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -10,215 +9,127 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import MenuButton from "@/animation/MenuButton";
-import { Separator } from "./ui/separator";
 
 const Header = () => {
-  const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
-  const searchRef = useRef(null);
-
+  const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useContext(UserDataContext);
 
-  const items = [
-    { title: "Home", url: "/home", icons: Home },
-    { title: "About Us", url: "/about-us", icons: Book },
-    { title: "Products", url: "/products", icons: Watch },
-    { title: "Log In", url: "/user/login", icons: LogIn },
-  ];
-
-  const handleSearchFocus = () => {
-    if (searchRef.current) {
-      searchRef.current.focus();
-    }
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#DAA520] dark:bg-black shadow-md">
-      {/* Main Header Row */}
-      <div className="grid grid-cols-3 items-center px-4 sm:px-6 py-4">
-        {/* Left - Menu */}
-        <div className="flex relative z-50 items-center">
+    <header
+      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-1000 ease-in-out ${
+        isScrolled
+          ? "bg-black/90 backdrop-blur-xl py-4 border-b border-white/5"
+          : "bg-transparent py-10"
+      }`}
+    >
+      <div className="max-w-[1800px] mx-auto px-6 md:px-16 flex items-center justify-between">
+        {/* LEFT: MINIMAL MENU */}
+        <div className="flex flex-1 items-center">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <button className="flex items-center gap-1 text-white dark:text-[#FEEFEF]">
-                <span className="hidden md:flex text-lg font-bold">MENU</span>
-                <MenuButton open={open} />
+              <button className="flex items-center gap-4 text-white group outline-none cursor-pointer">
+                <Menu
+                  size={22}
+                  strokeWidth={1}
+                  className="group-hover:text-[#A37E2C] transition-colors"
+                />
+                <span className="hidden lg:block text-[10px] tracking-[0.5em] font-bold uppercase group-hover:text-[#A37E2C]">
+                  Menu
+                </span>
               </button>
             </SheetTrigger>
-            <SheetContent side="top" className="h-screen dark:bg-[#0B0B0D]">
-              <SheetHeader>
-                <SheetTitle className="text-lg font-bold text-black dark:text-[#FEFEFE]">
-                  Menu
-                </SheetTitle>
-              </SheetHeader>
-              <nav className="mt-6 flex flex-col md:flex-row relative pl-10">
-                {/* Menu Items */}
-                <div className="flex flex-col gap-4 w-[200px] shrink-0">
-                  {items.map((item) => {
-                    const Icon = item.icons;
-                    return (
+
+            <SheetContent
+              side="left"
+              className="w-full sm:max-w-[450px] md:max-w-[550px] bg-black border-r border-white/5 text-white p-0 flex flex-col"
+            >
+              <div className="flex flex-col justify-center h-full px-12 md:px-20 bg-[#050505]">
+                <SheetHeader className="text-left mb-20">
+                  <SheetTitle className="text-[#A37E2C] tracking-[.5em] uppercase text-[10px] font-bold opacity-70">
+                    Navigation
+                  </SheetTitle>
+                </SheetHeader>
+
+                <nav className="flex mt-0 flex-col gap-6 md:gap-10">
+                  {["Home", "Products", "About Us", "Cart", "Help"].map(
+                    (item) => (
                       <Link
-                        key={item.title}
-                        to={item.url}
+                        key={item}
+                        to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
                         onClick={() => setOpen(false)}
-                        className="group flex items-center gap-3 px-3 py-2 rounded-lg font-medium
-                          transition-colors duration-300
-                        text-gray-800 dark:text-gray-200
-                        hover:text-[#B8860B] dark:hover:text-[#B8860B]"
+                        className="text-4xl md:text-6xl font-serif tracking-tighter hover:text-[#A37E2C] hover:italic transition-all duration-500 w-fit"
                       >
-                        <Icon className="w-5 h-5 shrink-0 transition-colors duration-300" />
-                        {item.title}
+                        {item}
                       </Link>
-                    );
-                  })}
-                </div>
+                    )
+                  )}
+                </nav>
 
-                {/* Vertical Separator */}
-                <Separator
-                  orientation="vertical"
-                  className="h-full mx-4 bg-gray-600 hidden md:block"
-                />
-
-                <div className="hidden md:flex flex-1 px-4">
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                      Products
-                    </h3>
-                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                      Your product list or any component will show here.
-                    </p>
-                  </div>
+                <div className="mt-20 pt-10 border-t border-white/5">
+                  <p className="text-[9px] tracking-[0.3em] uppercase text-gray-500 font-medium">
+                    © 2026 Timeless Excellence
+                  </p>
                 </div>
-              </nav>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
 
-        {/* Center - Logo (Responsive) */}
-        <div className="flex-1 flex justify-center items-center gap-2">
+        {/* CENTER: LOGO (Name hidden on mobile) */}
+        <Link to="/home" className="flex flex-col items-center group flex-shrink-0">
           <img
             src="/logo-2-removebg-preview.png"
-            alt="Watch-logo"
-            className="hidden md:block w-10 h-auto invert"
+            alt="Logo"
+            className="w-8 md:w-12 h-auto invert brightness-0 transition-transform duration-700 group-hover:scale-105"
           />
-          <h2 className="hidden md:block font-bold text-lg sm:text-xl md:text-2xl text-white dark:text-[#F9FAFB]">
-            Timeless
-            <span
-              style={{ fontFamily: "'Great Vibes', cursive" }}
-              className="ml-1.5 text-white"
-            >
-              Elegance
+          {/* Responsive Logic: 
+              'hidden' hides it by default (mobile).
+              'md:block' brings it back on medium screens and up.
+          */}
+          <h1 className="hidden md:block mt-4 text-white text-sm tracking-[0.4em] font-light uppercase text-center">
+            Timeless <span className="italic font-serif normal-case tracking-normal">Elegance</span>
+          </h1>
+        </Link>
+
+        {/* RIGHT: SHOP & PROFILE */}
+        <div className="flex flex-1 items-center gap-8 md:gap-12 justify-end">
+          <Link to="/cart" className="relative text-white hover:text-[#A37E2C] transition-colors">
+            <ShoppingCart size={22} strokeWidth={1} />
+            <span className="absolute -top-2 -right-3 bg-[#A37E2C] text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black">
+              0
             </span>
-          </h2>
-        </div>
+          </Link>
 
-        {/* Right - Actions */}
-        <div className="flex items-center gap-3 justify-end">
-          {/* Search (Desktop / Tablet only)
-          <div className="hidden md:flex items-center relative">
-            <input
-              ref={searchRef}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              type="search"
-              placeholder="Search"
-              className="font-semibold border border-[#B48E57] dark:border-[#B48E57] bg-transparent text-gray-900 dark:text-gray-100 px-3 py-2 rounded-lg w-44 placeholder:text-sm placeholder:text-[#B48E57] focus:outline-none focus:ring-1 focus:ring-gray-500 pr-9"
-            />
-            <button type="button" onClick={handleSearchFocus}>
-              <Search className="absolute size-[1.1rem] right-3 top-1/2 -translate-y-1/2 text-[#B48E57] dark:text-[#B48E57]" />
-            </button>
-          </div> */}
-
-          {/* Theme Toggle */}
-          <ThemeToggleButton />
-
-          {/* Cart */}
-          <div className="flex-none">
-            <div className="dropdown dropdown-end">
-              <div
-                tabIndex={0}
-                role="button"
-                className="btn btn-circle transition-all duration-300
-                bg-[#DAA520] hover:border-2 hover:border-white text-white dark:bg-[#0B0B0D] dark:text-white shadow-none border-[#DAA520] dark:border-[#111]"
-              >
-                <ShoppingCart className="w-5 h-5" />
-              </div>
-              <div
-                tabIndex={0}
-                className="card card-compact dropdown-content z-50 mt-3 w-52 shadow"
-              >
-                <div className="card-body">
-                  <span className="text-lg font-bold text-white dark:text-white">8 Items</span>
-                  <span className="text-info">Subtotal: $999</span>
-                  <div className="card-actions">
-                    <Link
-                      to="/cart"
-                      className="btn btn-primary btn-block bg-[#DAA520] hover:bg-[#B8860B] border-none"
-                    >
-                      View cart
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Profile */}
-          <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar hover:[#DAA520] hover:border hover:border-white transition-colors"
+          {user ? (
+            <Link
+              to="/user/profile"
+              className="w-10 h-10 rounded-full border border-white/10 overflow-hidden hover:border-[#A37E2C] transition-all"
             >
-              <div className="w-9 h-9 rounded-full overflow-hidden">
-                {/* Avatar from backend context */}
-                <img
-                  alt="Profile"
-                  src={user?.avatar || "/default_Avatar.jpg"}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-[#FEFEFE] dark:bg-[#0B0B0D] rounded-box z-1 mt-3 w-52 p-2 shadow"
+              <img
+                src={user?.avatar || "/default_Avatar.jpg"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </Link>
+          ) : (
+            <Link
+              to="/user/login"
+              className="px-6 py-2 border border-white/20 text-[10px] tracking-[0.3em] font-bold uppercase text-white hover:bg-white hover:text-black transition-all"
             >
-              <li>
-                <Link
-                  to={"/user/profile"}
-                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-[#B8860B] dark:hover:bg-[#B8860B] transition-colors"
-                >
-                  Profile
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={"/user/logout"}
-                  className="font-semibold text-[#1D1D1D] dark:text-white hover:bg-red-500 dark:hover:bg-red-500 transition-colors"
-                >
-                  Log Out
-                </Link>
-              </li>
-            </ul>
-          </div>
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
-
-      {/* Mobile Search (below header)
-      <div className="px-4 pb-3 flex md:hidden items-center relative bg-[#F9FAFB] dark:bg-[#0B0B0D]">
-        <input
-          ref={searchRef}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          type="search"
-          placeholder="Search"
-          className="font-semibold border border-[#E5E7EB] dark:border-[#1E293B] bg-transparent text-gray-900 dark:text-gray-100 px-3 py-2 rounded-lg w-full placeholder:text-sm placeholder:text-[#9CA3AF] focus:outline-none focus:ring-1 focus:ring-gray-500 pr-9"
-        />
-        <button type="button" onClick={handleSearchFocus}>
-          <Search className="absolute size-[1.1rem] right-6 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300" />
-        </button>
-      </div> */}
     </header>
   );
 };

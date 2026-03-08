@@ -1,225 +1,146 @@
 import React, { useState, useContext } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, Mail } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "./ui/separator";
-import { MotionRightWrapper } from "@/animation/MotionRightWrapper";
 import { UserDataContext } from "@/context/UserContext";
+import Header from "./Header";
 import axios from "axios";
 import { toast } from "sonner";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Validation error states
   const [errors, setErrors] = useState({ email: "", password: "" });
 
   const { setUser } = useContext(UserDataContext);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Real-time validation
   const validate = () => {
     const newErrors = { email: "", password: "" };
-
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Enter a valid email address";
-    }
-
-    if (!password.trim()) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters long";
-    }
-
+    if (!email.trim()) newErrors.email = "Identification required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = "Invalid format";
+    
+    if (!password.trim()) newErrors.password = "Security key required";
+    else if (password.length < 6) newErrors.password = "Minimum 6 characters";
+    
     setErrors(newErrors);
-    return !newErrors.email && !newErrors.password; // valid if no errors
+    return !newErrors.email && !newErrors.password;
   };
 
   const handelSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-
     try {
       const logInUser = { email, password };
-
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/v1/users/login`,
         logInUser
       );
-
       if (response.status === 200 || response.status === 201) {
         const { user, accessToken, refreshToken } = response.data.data;
-
-        // Save tokens
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-
-        // Update context
         setUser(user);
-
-        toast.success(`Welcome back, ${user?.fullname?.firstname || "User"}!`);
-
-        // Navigate
+        toast.success(`Welcome back to the Collection.`);
         navigate("/products", { replace: true });
       }
     } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "Something went wrong");
+      toast.error(err.response?.data?.message || "Authentication failed");
     }
   };
 
   return (
-    <div
-      className="flex flex-col lg:flex-row items-center justify-center
-             min-h-screen pt-[68px] md:pt-[74px]
-             bg-[#F9FAFB] dark:bg-black px-6"
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 40, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 22,
-          duration: 0.5,
-        }}
-        className="w-[90%] sm:w-[320px] md:w-[350px] lg:w-[450px] lg:ml-25 bg-[#F9FAFB] dark:bg-black border px-10 py-5 rounded-3xl"
-      >
-        <h2 className="font-bold sm:text-3xl md:text-4xl text-2xl mb-8 text-[#111827] dark:text-[#F9FAFB] text-center">
-          Login
-        </h2>
+    <div className="min-h-screen bg-[#050505] text-white flex flex-col">
+      {/* 1. FIXED HEADER POSITIONING */}
+      <Header />
 
-        <form onSubmit={handelSubmit} className="flex flex-col gap-4">
-          {/* Email */}
-          <Label className="font-semibold text-sm sm:text-lg md:text-lg text-black dark:text-white">
-            Enter your Email
-          </Label>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (errors.email) validate(); // re-validate on change
-            }}
-            className="w-full border font-semibold border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                       text-[#111827] dark:text-gray-100 px-3 py-2 rounded-lg
-                       placeholder:text-sm placeholder:text-[#6B7280] focus:outline-none focus:ring-1
-                       focus:ring-[#B48E57] dark:focus:ring-[#374151]"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email}</p>
-          )}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 pt-32 pb-20 relative overflow-hidden">
+        {/* Decorative Ambient Light */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#A37E2C]/5 via-transparent to-transparent opacity-50 pointer-events-none" />
 
-          {/* Password */}
-          <Label className="font-semibold text-sm sm:text-lg md:text-lg mt-2 text-black dark:text-white">
-            Enter your Password
-          </Label>
-          <div className="relative w-full">
-            <Input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (errors.password) validate();
-              }}
-              className="w-full border font-semibold border-[#D1D5DB] dark:border-gray-600 bg-[#FFFFFF] dark:bg-[#1A1A1D]
-                         text-[#111827] dark:text-gray-100 px-3 py-2 rounded-lg
-                         placeholder:text-sm placeholder:text-[#6B7280] focus:outline-none focus:ring-1
-                         focus:[#B48E57] pr-10"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-300"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-          {errors.password && (
-            <p className="text-red-500 text-sm">{errors.password}</p>
-          )}
-
-          <div className="flex items-center justify-between mt-2">
-            <label className="flex items-center space-x-2 text-sm dark:text-gray-300  focus:ring-2 focus:ring-green-500 accent-transparent">
-              <input
-                type="checkbox"
-                className="h-4 w-4 text-green-600 border-gray-300 rounded bg-white"
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    localStorage.setItem("rememberMe", email);
-                  } else {
-                    localStorage.removeItem("rememberMe");
-                  }
-                }}
-              />
-              <span>Remember me</span>
-            </label>
-
-            <button
-              type="button"
-              onClick={() => navigate("/user/forgot-password")}
-              className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full bg-[#DAA520] mt-4 hover:bg-[#B8860B]
-                       font-semibold py-2 rounded-lg transition-all dark:bg-[#DAA520] dark:hover:bg-[#B8860B] text-white "
-          >
-            Submit
-          </button>
-
-          <Separator />
-
-          <h3 className="font-semibold text-black dark:text-white">
-            You don't have an account ?{" "}
-            <Link to="/user/register" className="text-blue-800 font-bold">
-              Register
-            </Link>
-          </h3>
-        </form>
-      </motion.div>
-
-      <MotionRightWrapper>
-        <div className="hidden lg:flex w-3/4 items-center justify-center p-10 bg-transparent">
-          <div className="text-center max-w-md">
-            <motion.img
-              initial={{ opacity: 0, y: -40, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 150,
-                damping: 22,
-                duration: 0.5,
-              }}
-              src="/logo-2-removebg-preview.png"
-              alt="Product"
-              className="w-40 mx-auto mb-6 dark:invert"
-            />
-            <h2 className="text-3xl font-bold text-[#111827] dark:text-[#F9FAFB] mb-4">
-              Explore Our Collection
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="w-full max-w-[450px] z-10"
+        >
+          {/* Header Section inside Login */}
+          <div className="text-center mb-12">
+            <h2 className="text-[10px] tracking-[0.6em] uppercase font-bold text-[#A37E2C] mb-4">
+              Private Access
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Timeless elegance crafted just for you. Discover the best watches
-              and accessories.
-            </p>
+            <h1 className="text-4xl md:text-5xl font-serif italic text-white">
+              Welcome Back
+            </h1>
           </div>
-        </div>
-      </MotionRightWrapper>
+
+          <form onSubmit={handelSubmit} className="space-y-8">
+            <div className="space-y-3">
+              <Label className="text-[10px] tracking-[0.3em] uppercase font-black text-gray-500">Email Address</Label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); if (errors.email) validate(); }}
+                className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 text-white text-lg focus-visible:ring-0 focus-visible:border-[#A37E2C] transition-colors placeholder:text-gray-800"
+                placeholder="name@example.com"
+              />
+              {errors.email && <p className="text-[#A37E2C] text-[10px] tracking-widest uppercase">{errors.email}</p>}
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <Label className="text-[10px] tracking-[0.3em] uppercase font-black text-gray-500">Security Key</Label>
+                <button type="button" onClick={() => navigate("/user/forgot-password")} className="text-[9px] tracking-[0.2em] font-bold text-[#A37E2C] hover:text-white uppercase">Forgot?</button>
+              </div>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); if (errors.password) validate(); }}
+                  className="bg-transparent border-0 border-b border-white/10 rounded-none px-0 py-4 text-white text-lg focus-visible:ring-0 focus-visible:border-[#A37E2C] transition-colors"
+                  placeholder="••••••••"
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#A37E2C]">
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {errors.password && <p className="text-[#A37E2C] text-[10px] tracking-widest uppercase">{errors.password}</p>}
+            </div>
+
+            {/* Authenticate Button */}
+            <button type="submit" className="w-full bg-[#A37E2C] hover:bg-[#F3E5AB] text-black font-black uppercase tracking-[0.4em] text-[10px] py-6 transition-all duration-500 flex items-center justify-center gap-4 group">
+              Authenticate <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
+            </button>
+          </form>
+
+          {/* NEW: DIRECT EMAIL LOGIN OPTION */}
+          <div className="mt-6">
+            <Link to="/user/email-login" className="w-full border border-white/10 hover:border-white/30 text-white font-bold uppercase tracking-[0.3em] text-[9px] py-4 transition-all flex items-center justify-center gap-3">
+              <Mail size={14} /> Continue with Email Link
+            </Link>
+          </div>
+
+          {/* NEW: REGISTER BUTTON IF USER IS NEW */}
+          <div className="mt-16 text-center border-t border-white/5 pt-10">
+            <p className="text-gray-500 text-[10px] tracking-[0.3em] uppercase mb-6">
+              New to Timeless Elegance?
+            </p>
+            <Link
+              to="/user/register"
+              className="group inline-flex items-center gap-4 text-white font-black tracking-[0.4em] text-[11px] uppercase border border-white/20 px-10 py-4 hover:bg-white hover:text-black transition-all duration-700"
+            >
+              Request Membership <ArrowRight size={12} className="group-hover:translate-x-2 transition-transform" />
+            </Link>
+          </div>
+        </motion.div>
+      </main>
+
+      <footer className="py-10 text-center opacity-30">
+        <p className="text-[9px] tracking-[1em] uppercase font-bold text-gray-400">Timeless Excellence</p>
+      </footer>
     </div>
   );
 };
