@@ -7,16 +7,13 @@ import Register from "@/pages/User/Register";
 import Profile from "@/pages/User/Profile";
 import Logout from "@/components/Logout";
 import Landing from "../utils/Landing";
-import EmailLogin from "@/components/EmailLogin";
 import AboutUs from "@/components/AboutUs";
-import OTPVerification from "@/components/OtpVerifivation";
 import UserProtectedWrapper from "@/pages/User/UserProtectedWrapper";
 import Cart from "@/pages/User/Cart";
 import ProductsPage from "../pages/Product/ProductsPage";
 import ProductDetail from "../pages/Product/ProductDetail";
 import EditProfile from "../pages/User/EditProfile";
 import ForgotPassword from "../pages/User/ForgotPassword";
-import EmailRegister from "../pages/User/EmailRegister";
 import BackgroundVideo from "@/components/BackgroundVideo";
 import { CartProvider } from "@/context/CartContext";
 import CartPage from "@/pages/User/Cart";
@@ -48,9 +45,6 @@ const UserRoutes = () => {
           <Route path="login" element={<Login />} />
           <Route path="profile" element={<Profile />} />
           <Route path="register" element={<Register />} />
-          <Route path="email-login" element={<EmailLogin />} />
-          <Route path="email-register/otp-send" element={<OTPVerification />} />
-          <Route path="email-register" element={<EmailRegister />} />
           <Route path="edit" element={<EditProfile />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route

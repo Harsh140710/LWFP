@@ -210,16 +210,6 @@ const Register = () => {
             </button>
           </form>
 
-          {/* EMAIL LOGIN REDIRECT */}
-          <div className="mt-6">
-            <Link
-              to="/user/email-register"
-              className="w-full border border-white/10 hover:border-white/30 text-white font-bold uppercase tracking-[0.3em] text-[9px] py-4 transition-all flex items-center justify-center gap-3"
-            >
-              <Mail size={14} /> Continue with Email Link
-            </Link>
-          </div>
-
           {/* LOGIN REDIRECT */}
           <div className="mt-12 text-center pt-8 border-t border-white/5">
             <p className="text-gray-500 text-[10px] tracking-[0.3em] uppercase mb-4">Already a member?</p>

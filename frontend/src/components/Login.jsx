@@ -116,13 +116,6 @@ const Login = () => {
             </button>
           </form>
 
-          {/* NEW: DIRECT EMAIL LOGIN OPTION */}
-          <div className="mt-6">
-            <Link to="/user/email-login" className="w-full border border-white/10 hover:border-white/30 text-white font-bold uppercase tracking-[0.3em] text-[9px] py-4 transition-all flex items-center justify-center gap-3">
-              <Mail size={14} /> Continue with Email Link
-            </Link>
-          </div>
-
           {/* NEW: REGISTER BUTTON IF USER IS NEW */}
           <div className="mt-16 text-center border-t border-white/5 pt-10">
             <p className="text-gray-500 text-[10px] tracking-[0.3em] uppercase mb-6">

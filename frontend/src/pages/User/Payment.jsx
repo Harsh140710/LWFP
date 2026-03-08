@@ -191,23 +191,9 @@ const Payment = () => {
               <h3 className="text-[10px] tracking-[0.4em] uppercase font-bold text-[#A37E2C] mb-6">Manifest Summary</h3>
               <div className="space-y-6 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
                 {products.map((p, idx) => {
-                  // UNIVERSAL IMAGE RESOLVER
-                  const rawImage = p.images?.[0]?.url || p.image || "/placeholder.jpg";
-                  const finalImageUrl = (typeof rawImage === 'string' && rawImage.startsWith("http"))
-                    ? rawImage
-                    : `${import.meta.env.VITE_BASE_URL}${rawImage}`;
-
                   return (
                     <div key={idx} className="flex gap-4 group">
-                      <div className="w-20 h-20 overflow-hidden border border-white/5 bg-[#0a0a0a] flex-shrink-0">
-                        <img
-                          src={finalImageUrl}
-                          alt={p.title}
-                          className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-0"
-                          onLoad={(e) => e.target.classList.add('opacity-100')}
-                          onError={(e) => { e.target.src = "/placeholder.jpg"; }}
-                        />
-                      </div>
+
                       <div className="flex-1">
                         <p className="text-xs uppercase tracking-widest font-bold text-white/90 line-clamp-1">{p.title || p.name}</p>
                         <p className="text-[9px] text-gray-500 mt-1 uppercase tracking-tighter">Qty: {p.quantity || 1}</p>
@@ -280,7 +266,6 @@ const Payment = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <Footer />
       
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }

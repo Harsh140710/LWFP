@@ -131,7 +131,7 @@ const Home = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-b border-white/5">
           {[
             { name: "Day-Date Eternal", ref: "DD-902", price: "$32,500", img: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?auto=format&fit=crop&q=80&w=800" },
-            { name: "Yacht-Master Gold", ref: "YM-110", price: "$28,900", img: "https://images.unsplash.com/photo-1547996160-81dfa63595dd?auto=format&fit=crop&q=80&w=800" },
+            { name: "Yacht-Master Gold", ref: "YM-110", price: "$28,900", img: "../../../public/watch-1.jpg" },
             { name: "Sky-Dweller Stealth", ref: "SD-044", price: "$41,200", img: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800" }
           ].map((watch, i) => (
             <motion.div 

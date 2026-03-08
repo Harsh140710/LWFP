@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useContext } from "react"; // Added useContext
-import { useParams, Link, useNavigate, useLocation } from "react-router-dom"; // Added useLocation
+import { useEffect, useState, useContext } from "react";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { useCart } from "@/context/CartContext";
-import { UserDataContext } from "@/context/UserContext"; // Import your User Context
+import { UserDataContext } from "@/context/UserContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -18,12 +18,13 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState([]);
-  
+  const [isExpanded, setIsExpanded] = useState(false); // State for "Read More" logic
+
   const { addToCart } = useCart();
-  const { user } = useContext(UserDataContext); // Access the user state
-  
+  const { user } = useContext(UserDataContext);
+
   const navigate = useNavigate();
-  const location = useLocation(); // To remember where they were before login
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -48,11 +49,9 @@ export default function ProductDetail() {
     window.scrollTo(0, 0);
   }, [id]);
 
-  // Logic to guard actions
   const handleProtectedAction = (actionCallback) => {
     if (!user) {
       toast.error("Authenticity check required. Please login to continue.");
-      // Redirect to login and save current path so they can return after login
       navigate("/user/login", { state: { from: location.pathname } });
       return;
     }
@@ -137,11 +136,27 @@ export default function ProductDetail() {
 
             <div className="h-[1px] w-full bg-gradient-to-r from-white/20 to-transparent" />
 
+            {/* CURATOR'S NOTE SECTION WITH READ MORE */}
             <div className="space-y-4">
               <h3 className="text-[10px] tracking-[0.4em] uppercase font-bold text-gray-500">Curator's Note</h3>
-              <p className="text-sm leading-relaxed text-gray-400 font-light max-w-lg">
-                {product.description}
-              </p>
+              <div className="relative">
+                <p className={`text-sm leading-relaxed text-gray-400 font-light max-w-lg transition-all duration-700 ${!isExpanded ? "line-clamp-5" : ""}`}>
+                  {product.description}
+                </p>
+                
+                {product.description?.length > 250 && (
+                  <button 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="mt-4 text-[10px] tracking-[0.3em] uppercase font-black text-[#A37E2C] hover:text-white transition-colors flex items-center gap-2 group"
+                  >
+                    {isExpanded ? (
+                      <>Show Less <Minus size={10} className="group-hover:rotate-180 transition-transform duration-500" /></>
+                    ) : (
+                      <>Read More <Plus size={10} className="group-hover:rotate-90 transition-transform duration-500" /></>
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="space-y-8 pt-4">
@@ -155,7 +170,6 @@ export default function ProductDetail() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                {/* Updated Button logic */}
                 <Button 
                   onClick={handleAddToCart}
                   className="flex-1 rounded-none h-16 bg-transparent border border-white/10 hover:border-[#A37E2C] hover:bg-white hover:text-black text-[10px] tracking-[0.4em] uppercase font-bold transition-all duration-700"

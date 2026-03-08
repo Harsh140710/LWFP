@@ -104,7 +104,7 @@ const ProductsPage = () => {
         </section>
 
         {/* SEARCH & FILTER BAR - Increased Padding & Fixed Z-Index */}
-        <nav className="sticky top-16 z-[100] bg-black/90 backdrop-blur-xl border-y border-white/10 py-10 shadow-2xl">
+        <nav className="sticky top-16 z-[10] bg-black/90 backdrop-blur-xl border-y border-white/10 py-10 shadow-2xl">
           <div className="max-w-[1400px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-10">
             
             {/* Minimal Search with increased vertical padding */}

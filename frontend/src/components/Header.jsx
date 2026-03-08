@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserDataContext } from "@/context/UserContext";
+import { useCart } from "@/context/CartContext";
 import { Link } from "react-router-dom";
 import { ShoppingCart, User, Menu } from "lucide-react";
 import {
@@ -14,6 +15,11 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useContext(UserDataContext);
+  
+  const { cart } = useCart();
+
+  // Calculate total items (sum of all quantities)
+  const cartItemCount = cart.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +58,7 @@ const Header = () => {
               side="left"
               className="w-full sm:max-w-[450px] md:max-w-[550px] bg-black border-r border-white/5 text-white p-0 flex flex-col"
             >
-              <div className="flex flex-col justify-center h-full px-12 md:px-20 bg-[#050505]">
+              <div className="z-99 flex flex-col justify-center h-full px-12 md:px-20 bg-[#050505]">
                 <SheetHeader className="text-left mb-20">
                   <SheetTitle className="text-[#A37E2C] tracking-[.5em] uppercase text-[10px] font-bold opacity-70">
                     Navigation
@@ -60,18 +66,16 @@ const Header = () => {
                 </SheetHeader>
 
                 <nav className="flex mt-0 flex-col gap-6 md:gap-10">
-                  {["Home", "Products", "About Us", "Cart", "Help"].map(
-                    (item) => (
-                      <Link
-                        key={item}
-                        to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                        onClick={() => setOpen(false)}
-                        className="text-4xl md:text-6xl font-serif tracking-tighter hover:text-[#A37E2C] hover:italic transition-all duration-500 w-fit"
-                      >
-                        {item}
-                      </Link>
-                    )
-                  )}
+                  {["Home", "Products", "About Us", "Cart", "Help"].map((item) => (
+                    <Link
+                      key={item}
+                      to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                      onClick={() => setOpen(false)}
+                      className="text-4xl md:text-6xl font-serif tracking-tighter hover:text-[#A37E2C] hover:italic transition-all duration-500 w-fit"
+                    >
+                      {item}
+                    </Link>
+                  ))}
                 </nav>
 
                 <div className="mt-20 pt-10 border-t border-white/5">
@@ -84,17 +88,13 @@ const Header = () => {
           </Sheet>
         </div>
 
-        {/* CENTER: LOGO (Name hidden on mobile) */}
+        {/* CENTER: LOGO */}
         <Link to="/home" className="flex flex-col items-center group flex-shrink-0">
           <img
             src="/logo-2-removebg-preview.png"
             alt="Logo"
             className="w-8 md:w-12 h-auto invert brightness-0 transition-transform duration-700 group-hover:scale-105"
           />
-          {/* Responsive Logic: 
-              'hidden' hides it by default (mobile).
-              'md:block' brings it back on medium screens and up.
-          */}
           <h1 className="hidden md:block mt-4 text-white text-sm tracking-[0.4em] font-light uppercase text-center">
             Timeless <span className="italic font-serif normal-case tracking-normal">Elegance</span>
           </h1>
@@ -104,8 +104,10 @@ const Header = () => {
         <div className="flex flex-1 items-center gap-8 md:gap-12 justify-end">
           <Link to="/cart" className="relative text-white hover:text-[#A37E2C] transition-colors">
             <ShoppingCart size={22} strokeWidth={1} />
-            <span className="absolute -top-2 -right-3 bg-[#A37E2C] text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black">
-              0
+            
+            {/* Always show the count, even if it is 0 */}
+            <span className="absolute -top-2 -right-3 bg-[#A37E2C] text-black text-[9px] w-4.5 h-4.5 rounded-full flex items-center justify-center font-black">
+              {cartItemCount}
             </span>
           </Link>
 
