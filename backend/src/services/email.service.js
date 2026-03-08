@@ -6,6 +6,8 @@ const EXP_MIN = Number(process.env.OTP_EXPIRY_MINUTES || 3);
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
+  port: 465,
+  secure: true,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -27,7 +29,8 @@ const sendOtpEmail = async ({ email, purpose }) => {
     { email, purpose },
     {
       codeHash,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+      expiresAt,
+      maxAttempts: 5,
       attempts: 0
     },
     { upsert: true, new: true }

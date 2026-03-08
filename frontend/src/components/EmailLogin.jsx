@@ -16,23 +16,24 @@ const EmailLogin = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("1. Starting request to:", `${import.meta.env.VITE_BASE_URL}/api/v1/users/otp/email/send`);
+
     try {
       const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/users/otp/email/send`, {
         email: localEmail
       });
+      console.log("2. Response received:", res.data);
 
       if (res.data.data.exists) {
-        // User exists -> Go to Password Login
-        toast.info("WELCOME BACK", { description: "Please enter your credentials." });
         navigate("/user/login", { state: { email: localEmail } });
       } else {
-        // User is new -> Go to OTP Verification
         setEmail(localEmail);
-        toast.success("VERIFICATION SENT", { description: "New account setup initiated." });
         navigate("/user/email-register/otp-send");
       }
     } catch (err) {
-      toast.error("VAULT ERROR", { description: "Unable to verify identity." });
+      console.error("3. Error caught:", err.response?.data || err.message);
+      toast.error("VAULT ERROR", { description: err.message });
     }
   };
 
