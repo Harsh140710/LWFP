@@ -62,7 +62,7 @@ export const getAdminStats = async (req, res) => {
     ]);
 
     const categoryDistribution = categoryAgg.map((c) => ({
-      category: c.name || "Uncategorized",
+      category: c._id || "Uncategorized",
       count: c.count,
     }));
 
@@ -121,22 +121,22 @@ export const getAllOrders = async (req, res) => {
 };
 
 export const updateOrderStatus = async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
+  const { id } = req.params;
+  const { status } = req.body;
 
-    const order = await Order.findById(id);
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+  const order = await Order.findById(id);
+  if (!order) return res.status(404).json({ success: false, message: "Order not found" });
 
-    order.status = status;
+  order.status = status;
 
-    // Auto-mark paid when delivered
-    if (status === "delivered") {
-        order.isPaid = true;
-        order.paidAt = Date.now();
-    }
+  // Auto-mark paid when delivered
+  if (status === "delivered") {
+    order.isPaid = true;
+    order.paidAt = Date.now();
+  }
 
-    await order.save();
-    res.status(200).json({ success: true, data: order });
+  await order.save();
+  res.status(200).json({ success: true, data: order });
 };
 
 
@@ -161,13 +161,16 @@ export const getAdminPayments = asyncHandler(async (req, res) => {
 
   // Fetch payments after auto-update
   const payments = await Order.find()
-    .populate("user", "name email")
+    .populate("user", "fullname email username")
     .sort({ createdAt: -1 });
 
   const formattedPayments = payments.map((order) => ({
     _id: order._id,
     user: order.user
-      ? { name: order.user.name, email: order.user.email }
+      ? {
+        name: order.user.fullname || order.user.username, // Fallback logic
+        email: order.user.email
+      }
       : null,
     paymentMethod: order.paymentMethod || "cod",
     totalPrice: order.totalPrice,

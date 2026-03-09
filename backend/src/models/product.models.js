@@ -19,9 +19,9 @@ const productSchema = new Schema(
         },
 
         brand: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Brand', // Reference to the Brand model (if you have one)
             required: [true, 'Brand is required'],
-            trim: true,
         },
 
         price: {

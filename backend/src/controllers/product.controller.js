@@ -22,23 +22,16 @@ const createProduct = asyncHandler(async (req, res) => {
     const { title, description, brand, price, discountPrice, stock, category, isFeatured } = req.body;
     let productImages = []; // Array to store Cloudinary image details
 
-    // 1. Basic Validation: Check for required fields
-    if (
-        [title, description, brand, price, stock, category].some(
-            (field) => field?.trim() === "" || field === undefined
-        )
-    ) {
-        // Clean up any uploaded local files if validation fails
-        if (req.files && req.files.length > 0) {
-            deleteLocalFiles(req.files);
-        }
-        throw new ApiError(400, "All required product fields (title, description, brand, price, stock, category) are mandatory.");
+    // Validate text fields
+    if ([title, description].some(f => !fx || f.trim() === "")) {
+        deleteLocalFiles(req.files);
+        throw new ApiError(400, "Title and Description are required");
     }
 
-    // 2. Validate Category ID and existence
-    if (!mongoose.isValidObjectId(category)) {
+    // Validate ObjectIds (crucial for MongoDB)
+    if (!mongoose.isValidObjectId(brand) || !mongoose.isValidObjectId(category)) {
         deleteLocalFiles(req.files);
-        throw new ApiError(400, "Invalid category ID format.");
+        throw new ApiError(400, "Invalid Brand or Category selection. Please select from the list.");
     }
 
     const existingCategory = await Category.findById(category);
@@ -124,7 +117,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
         query.$text = { $search: req.query.keyword };
     }
 
-    const products = await Product.find(query).populate('category', 'name slug').sort({ createdAt: -1 });
+    const products = await Product.find(query)
+        .populate('category', 'name slug')
+        .populate('brand', 'name')
+        .sort({ createdAt: -1 });
 
     if (!products || products.length === 0) {
         throw new ApiError(404, "No products found.");
@@ -144,8 +140,8 @@ const getProductById = asyncHandler(async (req, res) => {
 
     // Populate category and review user details for a complete product view
     const product = await Product.findById(id)
-                                .populate('category', 'name slug description')
-                                .populate('reviews.user', 'fullname email avatar');
+        .populate('category', 'name slug description')
+        .populate('reviews.user', 'fullname email avatar');
 
     if (!product) {
         throw new ApiError(404, "Product not found.");
@@ -235,7 +231,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid product ID format.");
     }
 
-    const product = await Product.findById({_id: id});
+    const product = await Product.findById({ _id: id });
 
     if (!product) {
         throw new ApiError(404, "Product not found.");

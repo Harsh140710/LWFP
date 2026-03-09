@@ -91,10 +91,6 @@ const Login = () => {
             </div>
 
             <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label className="text-[10px] tracking-[0.3em] uppercase font-black text-gray-500">Security Key</Label>
-                <button type="button" onClick={() => navigate("/user/forgot-password")} className="text-[9px] tracking-[0.2em] font-bold text-[#A37E2C] hover:text-white uppercase">Forgot?</button>
-              </div>
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
