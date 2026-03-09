@@ -93,7 +93,7 @@ const Home = () => {
         <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1 relative h-[600px] w-full bg-[#111] overflow-hidden">
             <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-               <source src="https://assets.mixkit.co/videos/preview/mixkit-mechanical-gears-of-a-clock-working-4318-large.mp4" type="video/mp4" />
+               <source src="https://www.pexels.com/download/video/13736232" type="video/mp4" />
             </video>
             <div className="absolute inset-0 border-[20px] border-black/80"></div>
           </div>
@@ -168,8 +168,8 @@ const Home = () => {
                 <div className="absolute left-[50%] top-0 w-[1px] h-full bg-[#A37E2C]/20 hidden md:block"></div>
                 
                 {[
-                    { year: "1994", title: "The Foundation", desc: "Our first workshop opens in Geneva, dedicated to ultra-thin complications." },
-                    { year: "2008", title: "The Deepsea Patent", desc: "Introduction of the Ringlock system, allowing watches to withstand 3,900 meters." },
+                    { year: "2025", title: "The Foundation", desc: "Our first workshop opens in Geneva, dedicated to ultra-thin complications." },
+                    { year: "2025", title: "The Deepsea Patent", desc: "Introduction of the Ringlock system, allowing watches to withstand 3,900 meters." },
                     { year: "2026", title: "Timeless Excellence", desc: "The launch of the perpetual caliber with AI-assisted chronometry." }
                 ].map((item, idx) => (
                     <motion.div 
