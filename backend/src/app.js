@@ -31,9 +31,6 @@ app.use(
   })
 );
 
-app.options("*", cors());
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
