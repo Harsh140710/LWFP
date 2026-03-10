@@ -7,7 +7,7 @@ const productSchema = new Schema(
             required: [true, 'Product title is required'],
             trim: true,
             unique: true, // Ensures no two products have the exact same title
-            maxLength: [20, 'Product title cannot exceed 20 characters'],
+            maxLength: [120, 'Product title cannot exceed 20 characters'],
         },
 
         description: {

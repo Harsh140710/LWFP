@@ -121,9 +121,7 @@ export default function Products() {
       });
       productForm.images.forEach(file => formData.append("images", file));
 
-      await api.post("/api/v1/products/create", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
+      await api.post("/api/v1/products/create", formData);
 
       toast.success("Asset registered successfully");
       setOpenProduct(false);

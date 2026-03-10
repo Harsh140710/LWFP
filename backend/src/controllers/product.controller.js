@@ -6,6 +6,7 @@ import { Category } from "../models/category.models.js"; // Import Category mode
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/Cloudinary.js";
 import fs from 'fs'; // For file system operations (deleting local temp files)
 import mongoose from "mongoose"; // For isValidObjectId
+import { Brand } from "../models/brand.models.js";
 
 // Helper function to delete local files
 const deleteLocalFiles = (files) => {
@@ -22,8 +23,12 @@ const createProduct = asyncHandler(async (req, res) => {
     const { title, description, brand, price, discountPrice, stock, category, isFeatured } = req.body;
     let productImages = []; // Array to store Cloudinary image details
 
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
+
     // Validate text fields
-    if ([title, description].some(f => !fx || f.trim() === "")) {
+    // Validate text fields
+    if ([title, description].some(f => !f || f.trim() === "")) {
         deleteLocalFiles(req.files);
         throw new ApiError(400, "Title and Description are required");
     }
@@ -38,6 +43,12 @@ const createProduct = asyncHandler(async (req, res) => {
     if (!existingCategory) {
         deleteLocalFiles(req.files);
         throw new ApiError(404, "Category not found for the provided ID.");
+    }
+
+    const existingBrand = await Brand.findById(brand);
+    if (!existingBrand) {
+        deleteLocalFiles(req.files);
+        throw new ApiError(404, "Brand not found for the provided ID.");
     }
 
     // 3. Handle image uploads
@@ -263,7 +274,7 @@ const createProductReview = asyncHandler(async (req, res) => {
     const product = await Product.findById(id);
 
     if (!product) {
-        throw new new ApiError(404, "Product not found.");
+        throw new ApiError(404, "Product not found.");
     }
 
     const review = {
