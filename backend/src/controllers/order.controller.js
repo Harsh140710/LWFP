@@ -1,45 +1,48 @@
 // controllers/order.controller.js
 import { Order } from "../models/order.models.js";
-import { Product } from "../models/product.models.js"; // ✅ Required import
+import { User } from "../models/user.models.js"; // Required import
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 // Create new order
-export const createOrder = async (req, res, next) => {
-  try {
-    const { customer, orderItems, paymentMethod, shippingPrice, taxPrice, totalPrice } = req.body;
+export const createOrder = asyncHandler(async (req, res) => {
+  const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice, paymentResponse } = req.body;
 
-    if (!orderItems || orderItems.length === 0) {
-      return res.status(400).json({ success: false, message: "No order items in request" });
-    }
-
-    for (const item of orderItems) {
-      await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
-    }
-
-    const isCard = paymentMethod === "card";
-
-    const order = new Order({
-      customer,
-      orderItems,
-      paymentMethod,
-      shippingPrice,
-      taxPrice,
-      totalPrice,
-      user: req.user?._id,
-      isPaid: isCard, // Card orders are immediately paid
-      paidAt: isCard ? new Date() : null,
-      status: isCard ? "delivered" : "pending",
-    });
-
-    await order.save();
-
-    const io = req.app.get("io");
-    if (io) io.emit("product-stock-updated");
-
-    res.status(201).json({ success: true, data: order });
-  } catch (err) {
-    next(err);
+  if (orderItems && orderItems.length === 0) {
+    throw new ApiError(400, "No order items found");
   }
-};
+
+  // Initialize the order
+  const order = new Order({
+    user: req.user._id,
+    orderItems,
+    shippingAddress,
+    paymentMethod,
+    itemsPrice,
+    taxPrice,
+    shippingPrice,
+    totalPrice,
+  });
+
+  // CHECK PAYMENT LOGIC
+  // If card payment was successful, set to 'processing', NEVER 'delivered'
+  if (paymentResponse?.status === "succeeded" || paymentResponse?.status === "captured") {
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    order.paymentInfo = {
+      id: paymentResponse.id,
+      status: paymentResponse.status,
+    };
+    order.status = "processing"; // Correct: Start at processing
+  } else {
+    order.status = "pending"; // Default for COD or failed payment
+  }
+
+  const createdOrder = await order.save();
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, createdOrder, "Order structured successfully"));
+});
 
 // Get order by ID
 export const getOrderById = async (req, res, next) => {
@@ -55,10 +58,12 @@ export const getOrderById = async (req, res, next) => {
 };
 
 // Admin: Get all orders
+// Admin: Get all orders
 export const getAllOrders = async (req, res, next) => {
   try {
     const orders = await Order.find()
       .populate("orderItems.product")
+      .populate("user", "fullname email")
       .sort({ createdAt: -1 });
     res.json({ success: true, data: orders });
   } catch (err) {
@@ -67,35 +72,34 @@ export const getAllOrders = async (req, res, next) => {
 };
 
 // Admin: Update order status
-export const updateOrderStatus = async (req, res, next) => {
-  try {
-    const { status } = req.body;
-    const order = await Order.findById(req.params.id);
-    if (!order) {
-      return res.status(404).json({ success: false, message: "Order not found" });
-    }
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
 
-    //Handle stock restoration if order is canceled or returned
-    if (status === "canceled" || status === "returned") {
-      for (const item of order.orderItems) {
-        await Product.findByIdAndUpdate(item.product, {
-          $inc: { stock: item.quantity },
-        });
-      }
-    }
-
-    order.status = status;
-    await order.save();
-
-    // Emit socket event for real-time stock update
-    const io = req.app.get("io");
-    if (io) io.emit("product-stock-updated");
-
-    res.json({ success: true, data: order });
-  } catch (err) {
-    next(err);
+  if (!order) {
+    throw new ApiError(404, "Order not found in the ledger");
   }
-};
+
+  if (order.status === "delivered") {
+    throw new ApiError(400, "Asset has already been delivered");
+  }
+
+  // Update status from the admin dropdown
+  order.status = req.body.status;
+
+  if (req.body.status === "delivered") {
+    order.deliveredAt = Date.now();
+  }
+
+  const updatedOrder = await order.save();
+
+  // Trigger real-time update via Socket.io
+  const io = req.app.get("io");
+  io.emit("orderUpdated", updatedOrder);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedOrder, `Order status moved to ${order.status}`));
+});
 
 // Mark Order as Paid (Admin only)
 export const markOrderAsPaid = async (req, res, next) => {
@@ -108,7 +112,7 @@ export const markOrderAsPaid = async (req, res, next) => {
     // Update fields
     order.isPaid = true;
     order.paidAt = new Date();
-    order.status = "COMPLETED";
+    order.status = "processing";
 
     await order.save();
 

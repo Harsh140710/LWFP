@@ -159,32 +159,41 @@ export const getAdminPayments = asyncHandler(async (req, res) => {
     }
   );
 
-  // Fetch payments after auto-update
+  // Fetch payments with populated user data
   const payments = await Order.find()
     .populate("user", "fullname email username")
     .sort({ createdAt: -1 });
 
-  const formattedPayments = payments.map((order) => ({
-    _id: order._id,
-    user: order.user
-      ? {
-        name: order.user.fullname || order.user.username, // Fallback logic
-        email: order.user.email
-      }
-      : null,
-    paymentMethod: order.paymentMethod || "cod",
-    totalPrice: order.totalPrice,
-    isPaid: order.isPaid,
-    paidAt: order.paidAt,
-    status: order.status || "pending",
-    createdAt: order.createdAt,
-  }));
+  const formattedPayments = payments.map((order) => {
+    let displayName = "Guest Client";
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(200, formattedPayments, "Payments fetched successfully")
-    );
+    if (order.user) {
+      // Extract from nested fullname object (lowercase per your MongoDB)
+      if (order.user.fullname && order.user.fullname.firstname) {
+        displayName = `${order.user.fullname.firstname} ${order.user.fullname.lastname || ""}`.trim();
+      } else if (order.user.username) {
+        displayName = order.user.username;
+      }
+    }
+
+    return {
+      _id: order._id,
+      user: order.user ? {
+        name: displayName,
+        email: order.user.email
+      } : null,
+      paymentMethod: order.paymentMethod || "cod",
+      totalPrice: order.totalPrice,
+      isPaid: order.isPaid,
+      paidAt: order.paidAt,
+      status: order.status || "pending",
+      createdAt: order.createdAt,
+    };
+  });
+
+  res.status(200).json(
+    new ApiResponse(200, formattedPayments, "Payments fetched successfully")
+  );
 });
 
 export const markOrderAsPaid = async (req, res) => {

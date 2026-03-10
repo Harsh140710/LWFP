@@ -61,26 +61,38 @@ const ProductsPage = () => {
   }, []);
 
   // Inside useMemo -> filteredCategories
+  // Inside useMemo -> filteredCategories with extra safety
   const filteredCategories = useMemo(() => {
+    // 1. Ensure categories is an array
+    if (!Array.isArray(categories)) return [];
+
     return categories
       .map((cat) => {
-        const filteredProducts = cat.products.filter((prod) => {
+        // 2. Ensure cat.products exists before filtering
+        const products = cat.products || [];
+
+        const filteredProducts = products.filter((prod) => {
+          if (!prod) return false;
+
           const matchesCategory = selectedCategory === "All" || cat.name === selectedCategory;
 
-          // --- UPDATED SEARCH LOGIC ---
-          const searchLower = searchTerm.toLowerCase();
-          const brandName = prod.brand?.name || ""; // Get brand name safely
-          const matchesSearch =
-            prod.title.toLowerCase().includes(searchLower) ||
-            brandName.toLowerCase().includes(searchLower);
+          const searchLower = (searchTerm || "").toLowerCase();
+          const titleLower = (prod.title || "").toLowerCase();
+          const brandLower = (prod.brand?.name || "").toLowerCase();
 
-          const matchesPrice = !selectedPriceRange || (prod.price >= selectedPriceRange.min && prod.price <= selectedPriceRange.max);
+          const matchesSearch = titleLower.includes(searchLower) || brandLower.includes(searchLower);
+
+          // 3. Handle potential null/undefined prices
+          const price = prod.price || 0;
+          const matchesPrice = !selectedPriceRange ||
+            (price >= selectedPriceRange.min && price <= selectedPriceRange.max);
 
           return matchesCategory && matchesSearch && matchesPrice;
         });
+
         return { ...cat, products: filteredProducts };
       })
-      .filter((cat) => cat.products.length > 0);
+      .filter((cat) => cat.products && cat.products.length > 0);
   }, [categories, selectedCategory, searchTerm, selectedPriceRange]);
 
   return (

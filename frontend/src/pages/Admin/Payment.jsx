@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { io } from "socket.io-client";
+import { CheckCircle, Clock, CreditCard, Banknote, AlertCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Payment() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const fetchPayments = async () => {
     try {
@@ -18,8 +19,7 @@ export default function Payment() {
       );
       setPayments(res.data.data);
     } catch (err) {
-      console.error("Fetch payments error", err);
-      setError("Failed to load payments.");
+      toast.error("Failed to load the financial ledger.");
     } finally {
       setLoading(false);
     }
@@ -27,127 +27,101 @@ export default function Payment() {
 
   useEffect(() => {
     fetchPayments();
-
     const socket = io(import.meta.env.VITE_BASE_URL || "http://localhost:8000");
-
-    socket.on("orderUpdated", (data) => {
-      console.log("Order Updated:", data);
-      // Refresh list automatically
-      fetchPayments();
-    });
-
-    return () => {
-      socket.disconnect();
-    };
+    socket.on("orderUpdated", () => fetchPayments());
+    return () => { socket.disconnect(); };
   }, []);
 
   const markAsPaid = async (orderId) => {
     try {
       await axios.patch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/v1/admin/orders/${orderId}/mark-paid`,
+        `${import.meta.env.VITE_BASE_URL}/api/v1/admin/orders/${orderId}/mark-paid`,
         {},
         { withCredentials: true }
       );
+      toast.success("Transaction verified and updated.");
       fetchPayments();
     } catch (err) {
-      console.error("Mark as paid error", err);
+      toast.error("Verification protocol failed.");
     }
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="p-6 min-h-screen bg-gray-50 dark:bg-black"
-    >
-      <h2 className="text-3xl font-semibold text-black dark:text-white mb-6">
-        Admin Payments
-      </h2>
-
-      {error && (
-        <div className="p-4 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-lg shadow-md">
-          {error}
-        </div>
-      )}
+    <div className="p-8 bg-black min-h-screen text-white font-sans">
+      {/* HEADER - Consistent with Order Management */}
+      <div className="mb-10 border-b border-white/10 pb-6">
+        <p className="text-[10px] tracking-[0.5em] text-[#A37E2C] font-bold uppercase">Executive Suite</p>
+        <h1 className="text-3xl font-serif italic mt-2">Financial Ledger</h1>
+      </div>
 
       {loading ? (
-        <div className="text-center text-black dark:text-white mt-10">
-          Loading payments...
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A37E2C]"></div>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white dark:bg-black rounded-lg shadow-md dark:shadow-none">
-            <thead>
-              <tr className="bg-gray-200 dark:bg-black dark:border-b-2 text-black dark:text-white">
-                <th className="p-4">Payment ID</th>
-                <th className="p-4">User</th>
-                <th className="p-4">Payment Method</th>
-                <th className="p-4">Total Price</th>
-                <th className="p-4">Payment Status</th>
-                <th className="p-4">Paid At</th>
-                <th className="p-4">Order Status</th>
-                <th className="p-4">Actions</th>
+        <div className="bg-[#080808] border border-white/5 rounded-sm overflow-hidden shadow-2xl">
+          <table className="w-full text-left text-[12px]">
+            <thead className="bg-white/[0.02] border-b border-white/5 text-[#A37E2C] uppercase text-[9px] tracking-[0.2em]">
+              <tr>
+                <th className="p-5">Transaction ID</th>
+                <th className="p-5">Client</th>
+                <th className="p-5">Method</th>
+                <th className="p-5">Valuation</th>
+                <th className="p-5">Status</th>
+                <th className="p-5">Processed Date</th>
+                <th className="p-5 text-right">Verification</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-white/5">
               {payments.map((payment) => (
-                <tr
+                <motion.tr 
                   key={payment._id}
-                  className="border-b border-gray-300 dark:border-gray-700"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="hover:bg-white/[0.01] transition-colors"
                 >
-                  <td className="p-4 text-black dark:text-white">
-                    {payment._id}
+                  <td className="p-5 font-mono text-gray-500 text-[10px]">
+                    #{payment._id.slice(-8).toUpperCase()}
                   </td>
-                  <td className="p-4 text-black dark:text-white">
-                    {payment.user
-                      ? `${payment.user.name || payment.user.fullname} (${
-                          payment.user.email
-                        })`
-                      : "User Not Exist"}
+                  <td className="p-5">
+                    <p className="text-sm text-gray-500">{payment.user?.email}</p>
                   </td>
-                  <td className="p-4 text-black dark:text-white">
-                    {payment.paymentMethod === "card" && payment.isPaid
-                      ? "Card"
-                      : payment.paymentMethod === "card"
-                      ? "Card"
-                      : "Cash on Delivery"}
+                  <td className="p-5 text-gray-400 capitalize">
+                    <div className="flex items-center gap-2">
+                      {payment.paymentMethod === "card" ? <CreditCard size={14} /> : <Banknote size={14} />}
+                      {payment.paymentMethod === "cod" ? "Cash" : payment.paymentMethod}
+                    </div>
                   </td>
-                  <td className="p-4 text-black dark:text-white">
-                    ₹{Number(payment.totalPrice).toFixed(2)}
+                  <td className="p-5 text-[#A37E2C] font-semibold">
+                    ₹{Number(payment.totalPrice).toLocaleString()}
                   </td>
-                  <td
-                    className={`p-4 font-semibold ${
-                      payment.isPaid ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {payment.isPaid ? "Paid" : "Pending"}
+                  <td className="p-5">
+                    <span className={`flex items-center gap-2 px-3 py-1 rounded-full w-fit text-[10px] uppercase tracking-tighter ${
+                      payment.isPaid ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+                    }`}>
+                      {payment.isPaid ? <CheckCircle size={12}/> : <Clock size={12}/>}
+                      {payment.isPaid ? "Settled" : "Awaiting"}
+                    </span>
                   </td>
-                  <td className="p-4 text-black dark:text-white">
-                    {payment.paidAt
-                      ? new Date(payment.paidAt).toLocaleString()
-                      : "-"}
+                  <td className="p-5 text-gray-500">
+                    {payment.paidAt ? new Date(payment.paidAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : "---"}
                   </td>
-                  <td className="p-4 text-black dark:text-white">
-                    {payment.status}
-                  </td>
-                  <td className="p-4">
+                  <td className="p-5 text-right">
                     {!payment.isPaid && payment.paymentMethod === "cod" && (
                       <button
-                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                         onClick={() => markAsPaid(payment._id)}
+                        className="px-4 py-2 border border-[#A37E2C] text-[#A37E2C] text-[10px] uppercase tracking-widest hover:bg-[#A37E2C] hover:text-black transition-all duration-300 rounded-sm"
                       >
-                        Mark as Paid
+                        Verify Payment
                       </button>
                     )}
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
