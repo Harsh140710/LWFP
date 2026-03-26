@@ -9,6 +9,7 @@ import Orders from "@/pages/Admin/Orders";
 import AdminProtectedWrapper from "@/pages/Admin/AdminProtectedWrapper";
 import Payment from "@/pages/Admin/Payment"
 import Feedback from "@/pages/Admin/Feedback"
+import PageNotFound from "@/components/PageNotFound";
 
 const AdminRoutes = () => {
   return (
@@ -30,6 +31,8 @@ const AdminRoutes = () => {
         <Route path="payments" element={<Payment />} />
         <Route path="feedbacks" element={<Feedback />} />
       </Route>
+
+      <Route path="*" element={<PageNotFound />}/>
     </Routes>
   );
 };
