@@ -208,7 +208,8 @@ export default function ProductDetail() {
                   <div className="aspect-[3/4] overflow-hidden bg-[#0a0a0a] border border-white/5 mb-8 group-hover:border-[#A37E2C]/40 transition-all duration-500">
                     <img src={prod.images?.[0]?.url || "/placeholder.jpg"} className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-[1.5s]" />
                   </div>
-                  <p className="text-[9px] tracking-[0.4em] uppercase text-[#A37E2C] font-black mb-2">{prod.brand}</p>
+                  <p className="text-[9px] tracking-[0.4em] uppercase text-[#A37E2C] font-black mb-2">{prod.brand?.name || prod.brand 
+                    || "TIMELESS ELEGANCE"}</p>
                   <h3 className="text-sm tracking-widest uppercase text-white font-light group-hover:text-[#A37E2C] transition-colors">{prod.title}</h3>
                   <p className="text-sm font-light tracking-[0.2em] text-gray-500 mt-3">₹{prod.price.toLocaleString()}</p>
                 </Link>

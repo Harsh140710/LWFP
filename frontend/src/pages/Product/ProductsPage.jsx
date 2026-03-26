@@ -209,7 +209,7 @@ const ProductsPage = () => {
                         <div className="relative aspect-[3/4] overflow-hidden bg-[#080808] mb-8 border border-white/5 group-hover:border-[#A37E2C]/40 transition-all duration-700 shadow-lg">
                           <img
                             src={prod.images?.[0]?.url || "/placeholder.jpg"}
-                            className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out grayscale group-hover:grayscale-0"
+                            className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-[2s] ease-out"
                           />
                         </div>
 

@@ -22,6 +22,7 @@ import Order from "@/pages/User/Payment";
 import OrderHistory from "@/pages/User/OrderHistory";
 import HelpCenter from "@/components/HelpCenter";
 import Payment from "@/pages/User/Payment";
+import PageNotFound from "@/components/PageNotFound";
 
 const UserRoutes = () => {
   return (
@@ -113,6 +114,8 @@ const UserRoutes = () => {
             </UserProtectedWrapper>
           }
         />
+
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>
   );

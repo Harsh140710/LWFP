@@ -128,7 +128,7 @@ export default function ProfilePage() {
               <img
                 src={userData.avatar || "/default_Avatar.jpg"}
                 alt="Avatar"
-                className={`rounded-full h-64 w-64 object-cover border border-white/10 grayscale hover:grayscale-0 transition-all duration-700 ${uploading ? 'opacity-30' : ''}`}
+                className={`rounded-full h-64 w-64 object-cover border border-white/10 transition-all duration-700 ${uploading ? 'opacity-30' : ''}`}
               />
               {/* Gold border frame */}
               <div className="absolute inset-0 border border-[#A37E2C] translate-x-3 translate-y-3 -z-10 group-hover:translate-x-1 group-hover:translate-y-1 transition-transform duration-500" />

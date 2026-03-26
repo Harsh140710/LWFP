@@ -162,7 +162,7 @@ export default function CartPage() {
                 </div>
 
                 <button
-                  onClick={() => navigate("/payment", { state: { cart } })}
+                  onClick={() => navigate("/payment", { state: { products: cart } })}
                   className="w-full bg-white text-black py-5 text-[10px] tracking-[0.4em] uppercase font-black hover:bg-[#A37E2C] transition-all duration-500 shadow-2xl"
                 >
                   Secure Checkout
