@@ -9,7 +9,6 @@ import { UserDataContext } from "@/context/UserContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { Plus, Minus, ArrowLeft, ShieldCheck, Truck } from "lucide-react";
 
 export default function ProductDetail() {
@@ -218,7 +217,6 @@ export default function ProductDetail() {
           </section>
         )}
       </main>
-      <Footer />
     </div>
   );
 }
