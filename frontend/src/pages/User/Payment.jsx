@@ -98,8 +98,6 @@ const OrderForm = ({
           <input required name="lastname" placeholder="Last Name" value={userDetails.lastname} onChange={handleChange} className="bg-transparent border-b border-white/10 p-3 focus:border-[#A37E2C] outline-none transition-colors text-sm text-white" />
           <input required name="phone" placeholder="Contact Number" value={userDetails.phone} onChange={handleChange} className="bg-transparent border-b border-white/10 p-3 focus:border-[#A37E2C] outline-none transition-colors text-sm text-white" />
           <input name="email" type="email" placeholder="Email Address" value={userDetails.email} onChange={handleChange} className="bg-transparent border-b border-white/10 p-3 focus:border-[#A37E2C] outline-none transition-colors text-sm text-white" />
-          <input required name="city" placeholder="City" value={userDetails.city} onChange={handleChange} className="bg-transparent border-b border-white/10 p-3 focus:border-[#A37E2C] outline-none transition-colors text-sm text-white" />
-  <input required name="pincode" placeholder="Pincode / ZIP" value={userDetails.pincode} onChange={handleChange} className="bg-transparent border-b border-white/10 p-3 focus:border-[#A37E2C] outline-none transition-colors text-sm text-white" />
         </div>
         <textarea required name="address" placeholder="Full Residence Address" value={userDetails.address} onChange={handleChange} className="w-full bg-transparent border-b border-white/10 p-3 focus:border-[#A37E2C] outline-none transition-colors text-sm h-24 resize-none text-white" />
 
