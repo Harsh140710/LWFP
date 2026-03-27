@@ -2,26 +2,30 @@ import "./index.css";
 import { Toaster } from "sonner";
 import userRoutes from "./routes/userRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
+  const location = useLocation();
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
-      {/* Professional Luxury Toaster Configuration */}
       <Toaster
         position="top-right"
         theme="dark"
-        visibleToasts={5} // Allows more toasts to stack
-        expand={true} // Shows the stack clearly
+        visibleToasts={5}
+        expand={true}
         progressBar={true}
         toastOptions={{
-          duration: 4000, // 5 seconds gives the user time to read
+          duration: 4000,
           style: {
             background: "#080808",
             color: "#ffffff",
             border: "1px solid rgba(163, 126, 44, 0.3)",
             borderRadius: "10px",
-            padding: "30px 24px", // Increased padding makes it look bigger
-            minWidth: "350px",    // Ensures the toast has a substantial width
+            padding: "30px 24px",
+            minWidth: "350px",
             fontSize: "13px",
             letterSpacing: "0.15em",
             textTransform: "uppercase",
@@ -30,12 +34,10 @@ const App = () => {
             className: "luxury-toast"
           },
         }}
-        // This enables the progress bar at the bottom
         pauseWhenPageIsHidden
       />
 
-      {userRoutes()}
-      {adminRoutes()}
+      {isAdminRoute ? adminRoutes() : userRoutes()}
     </>
   );
 };
