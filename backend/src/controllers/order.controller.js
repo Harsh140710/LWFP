@@ -7,36 +7,51 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 // Create new order
 export const createOrder = asyncHandler(async (req, res) => {
-  const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice, paymentResponse } = req.body;
+  const { 
+    orderItems, 
+    customer, 
+    paymentMethod, 
+    itemsPrice, 
+    taxPrice, 
+    shippingPrice, 
+    totalPrice 
+  } = req.body;
 
-  if (orderItems && orderItems.length === 0) {
-    throw new ApiError(400, "No order items found");
+  // Manual check to see what the server actually "sees"
+  if (!customer?.firstname) {
+      console.log("DEBUG: Customer object received but firstname is missing", customer);
+      throw new ApiError(400, "Firstname is missing");
   }
 
-  // Initialize the order
-  const order = new Order({
-    user: req.user._id,
+  const order = await Order.create({
+    user: req.user?._id,
     orderItems,
-    shippingAddress,
+    customer: {
+      firstname: customer.firstname,
+      lastname: customer.lastname,
+      email: customer.email,
+      phone: customer.phone,
+      address: customer.address,
+      city: customer.city,
+      pincode: customer.pincode,
+    },
     paymentMethod,
-    itemsPrice,
-    taxPrice,
     shippingPrice,
+    taxPrice,
     totalPrice,
   });
 
-  // CHECK PAYMENT LOGIC
-  // If card payment was successful, set to 'processing', NEVER 'delivered'
-  if (paymentResponse?.status === "succeeded" || paymentResponse?.status === "captured") {
+  // 3. Payment Logic
+  if (paymentResponse?.status === "succeeded") {
     order.isPaid = true;
     order.paidAt = Date.now();
     order.paymentInfo = {
       id: paymentResponse.id,
       status: paymentResponse.status,
     };
-    order.status = "processing"; // Correct: Start at processing
+    order.status = "processing";
   } else {
-    order.status = "pending"; // Default for COD or failed payment
+    order.status = "pending";
   }
 
   const createdOrder = await order.save();
