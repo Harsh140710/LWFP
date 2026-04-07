@@ -75,7 +75,7 @@ Timeless-Elegance/
 
 ```bash
 git clone https://github.com/Harsh140710/LWFP.git
-cd timeless-elegance
+cd LWFP
 ```
 
 ### 2️⃣ Install dependencies
