@@ -74,7 +74,7 @@ Timeless-Elegance/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/your-username/timeless-elegance.git
+git clone https://github.com/Harsh140710/LWFP.git
 cd timeless-elegance
 ```
 
@@ -84,7 +84,7 @@ cd timeless-elegance
 
 ```bash
 cd frontend
-npm install
+npm install or pnpm install
 ```
 
 **Backend:**
@@ -101,13 +101,13 @@ npm install
 **Backend:**
 
 ```bash
-npm run dev
+npm run dev or pnpm run dev
 ```
 
 **Frontend:**
 
 ```bash
-npm run dev
+npm run dev or pnpm run dev
 ```
 
 ---
