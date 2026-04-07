@@ -1,124 +1,159 @@
-Luxury-Watch-App/ (Your main project directory)
-├── backend/ (Node.js/Express/MongoDB - Your API)
-│   ├── .env (Environment variables like DB connection, JWT secrets, Cloudinary keys)
-│   ├── package.json (Backend dependencies, scripts)
-│   ├── node_modules/ (Installed backend packages - ignored by Git)
-│   ├── public/
-│   │   ├── temp/ (Temporary storage for Multer uploads - ignored by Git)
-│   │   └── images/ (Maybe for static images served directly - optional)
-│   │
-│   └── src/ (Backend source code)
-│       ├── app.js (Main Express application setup, middleware, route mounting)
-│       ├── index.js (Entry point to connect DB and start server - or app.js can do this)
-│       ├── constants.js (Global constants like DB_NAME)
-│       │
-│       ├── db/
-│       │   └── index.js (MongoDB connection logic)
-│       │
-│       ├── models/
-│       │   ├── user.model.js (User Schema: authentication, profile)
-│       │   ├── product.model.js (Product Schema: name, price, description, images, category, stock)
-│       │   ├── category.model.js (Category Schema: name, description - for product categories)
-│       │   ├── order.model.js (Order Schema: user, items, total, status, shipping info)
-│       │   ├── review.model.js (Review Schema: user, product, rating, comment)
-│       │   └── cart.model.js (Cart Schema: user, items, total - for shopping cart)
-│       │
-│       ├── controllers/
-│       │   ├── user.controller.js (User registration, login, profile management)
-│       │   ├── product.controller.js (Add, get, update, delete products)
-│       │   ├── category.controller.js(Add, get, update, delete categories)
-│       │   ├── order.controller.js (Place order, get orders, update order status - admin)
-│       │   ├── review.controller.js (Add, get reviews)
-│       │   ├── cart.controller.js (Add to cart, get cart, update cart)
-│       │
-│       ├── routes/
-│       │   ├── user.routes.js (API endpoints for user: /api/v1/users/register, /login etc.)
-│       │   ├── product.routes.js (API endpoints for products: /api/v1/products/add, /:id etc.)
-│       │   ├── category.routes.js (API endpoints for categories)
-│       │   ├── order.routes.js (API endpoints for orders)
-│       │   ├── review.routes.js (API endpoints for reviews)
-│       │   ├── cart.routes.js (API endpoints for cart)
-│       │
-│       ├── middlewares/
-│       │   ├── auth.middleware.js (JWT verification, role-based access control like isAdmin)
-│       │   ├── multer.middleware.js (Multer setup for file uploads)
-│       │   └── error.middleware.js (Optional: Separate file for global error handling)
-│       │
-│       ├── utils/
-│       │   ├── ApiError.js (Custom error class for structured API errors)
-│       │   ├── ApiResponse.js (Custom success response class for structured API responses)
-│       │   ├── asyncHandler.js (Utility to simplify async/await error handling)
-│       │   ├── cloudinary.js (Cloudinary upload/delete utility)
-│       │   ├── cookieOptions.js (Optional: for common cookie settings)
-│       │   └── emailService.js (Optional: for sending transactional emails)
-│       │
-│       └── .gitignore (Backend specific ignore rules)
-│
-├── frontend/ (React/Next.js/Vite - Your User Interface)
-│   ├── .env (Frontend specific environment variables like VITE_BACKEND_URL)
-│   ├── package.json (Frontend dependencies, scripts)
-│   ├── node_modules/ (Installed frontend packages - ignored by Git)
-│   ├── public/ (Static assets like index.html, logo, favicons)
-│   │   ├── index.html (For React/Vite)
-│   │   └── favicon.ico
-│   │   └── logo.png
-│   │
-│   └── src/ (Frontend source code)
-│       ├── App.js (Main React component)
-│       ├── main.jsx (React entry point, root rendering)
-│       ├── index.css (Global styles)
-│       │
-│       ├── assets/ (Images, icons, fonts specific to frontend)
-│       │   ├── images/
-│       │   └── icons/
-│       │
-│       ├── components/ (Reusable UI components)
-│       │   ├── Header.jsx
-│       │   ├── Footer.jsx
-│       │   ├── Navbar.jsx
-│       │   ├── ProductCard.jsx
-│       │   ├── Carousel.jsx
-│       │   ├── Loader.jsx
-│       │   ├── Modal.jsx
-│       │   └── ... (other common UI elements)
-│       │
-│       ├── pages/ (Top-level components corresponding to routes/views)
-│       │   ├── HomePage.jsx
-│       │   ├── ProductsPage.jsx
-│       │   ├── ProductDetailPage.jsx
-│       │   ├── LoginPage.jsx
-│       │   ├── RegisterPage.jsx
-│       │   ├── ProfilePage.jsx
-│       │   ├── CartPage.jsx
-│       │   ├── CheckoutPage.jsx
-│       │   ├── AdminDashboard.jsx (If building admin panel in frontend)
-│       │   └── ... (other specific pages)
-│       │
-│       ├── context/ (React Context API for global state management)
-│       │   ├── AuthContext.js
-│       │   ├── CartContext.js
-│       │   └── ... (other contexts like Product/Order context)
-│       │
-│       ├── hooks/ (Custom React Hooks)
-│       │   ├── useAuth.js
-│       │   ├── useCart.js
-│       │   └── ... (other reusable logic)
-│       │
-│       ├── api/ (Functions to interact with backend API)
-│       │   ├── auth.js (Login, Register, Logout API calls)
-│       │   ├── products.js (Get products, details, add to cart etc.)
-│       │   ├── cart.js
-│       │   └── orders.js
-│       │
-│       ├── utils/ (Frontend specific utility functions)
-│       │   ├── helpers.js (General utility functions)
-│       │   ├── constants.js (Frontend constants)
-│       │   └── validation.js (Frontend form validation)
-│       │
-│       ├── routes/ (Frontend routing configuration, e.g., using React Router DOM)
-│       │   ├── AppRoutes.jsx
-│       │   └── ProtectedRoute.jsx
-│       │
-│       └── .gitignore (Frontend specific ignore rules)
+# ✨ Timeless Elegance – MERN Stack E-commerce Application
 
-└── .gitignore (Root level ignore for general files like .vscode/)
+🚀 **Live Demo:** https://timeless-elegancee-frontend.onrender.com
+
+---
+
+## 📌 Overview
+
+**Timeless Elegance** is a full-stack e-commerce web application built using the **MERN stack**. It provides a seamless shopping experience with secure authentication, product management, and responsive UI.
+
+---
+
+## 🛠️ Tech Stack
+
+**Frontend:**
+
+* React.js
+* Tailwind CSS
+* Axios
+
+**Backend:**
+
+* Node.js
+* Express.js
+
+**Database:**
+
+* MongoDB
+
+**Other Tools & Services:**
+
+* Cloudinary (Image Uploads)
+* JWT Authentication
+* Render (Deployment)
+
+---
+
+## ✨ Features
+
+### 👤 User Features
+
+* User Registration & Login (JWT Authentication)
+* Browse Products
+* View Product Details
+* Add to Cart
+* Responsive UI for all devices
+
+### 🔐 Admin Features
+
+* Add / Update / Delete Products
+* Manage Product Listings
+* Upload Product Images (Cloudinary Integration)
+
+---
+
+## 📂 Project Structure
+
+```
+Timeless-Elegance/
+│
+├── frontend/        # React Frontend
+├── backend/         # Node.js + Express Backend
+├── controllers/     # Business Logic
+├── models/          # Database Schemas
+├── routes/          # API Routes
+├── middleware/      # Auth & Error Handling
+└── config/          # DB & Cloudinary Config
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/your-username/timeless-elegance.git
+cd timeless-elegance
+```
+
+### 2️⃣ Install dependencies
+
+**Frontend:**
+
+```bash
+cd frontend
+npm install
+```
+
+**Backend:**
+
+```bash
+cd backend
+npm install
+```
+
+---
+
+### 3️⃣ Run the Application 
+
+**Backend:**
+
+```bash
+npm run dev
+```
+
+**Frontend:**
+
+```bash
+npm run dev
+```
+
+---
+
+## 📡 API Endpoints (Sample)
+
+* `POST /api/v1/users/register` → Register user
+* `POST /api/v1/users/login` → Login user
+* `GET /api/v1/products` → Get all products
+* `POST /api/v1/products` → Add product (Admin)
+* `PATCH /api/v1/products/update/:id` → Update product
+
+---
+
+## 📸 Screenshots
+
+Home page :-
+![Home page](image.png)
+
+Products page :-
+![Products page](image-1.png)
+
+Products Details page :-
+![Products details page](image-2.png)
+
+
+## 🚀 Future Improvements
+
+* Payment Gateway Integration
+* Order Management System
+* Wishlist Feature
+* Product Reviews & Ratings
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to fork this repo and submit a pull request.
+
+---
+
+## 📧 Contact
+
+**Harsh Suthar**
+📩 [harshsuthar6355@gmail.com](mailto:harshsuthar6355@gmail.com)
+
+---
+
+⭐ If you like this project, don’t forget to **star the repository!**
