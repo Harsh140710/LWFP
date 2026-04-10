@@ -53,18 +53,9 @@ const OrderForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Validate all required fields locally
-    const { firstname, lastname, email, phone, address, city, pincode } =
-      userDetails;
-    if (
-      !firstname ||
-      !lastname ||
-      !email ||
-      !phone ||
-      !address ||
-      !city ||
-      !pincode
-    ) {
+    // Validation...
+    const { firstname, lastname, email, phone, address, city, pincode } = userDetails;
+    if (!firstname || !lastname || !email || !phone || !address || !city || !pincode) {
       toast.error("Please complete all registry details.");
       return;
     }
@@ -82,57 +73,42 @@ const OrderForm = ({
         image: p.images?.url || p.image || "/placeholder.jpg",
       }));
 
-      // MATCH THE BACKEND: Change 'shippingAddress' to 'customer'
-      const payload = {
+      const basePayload = {
         orderItems,
-        customer: {
-          firstname,
-          lastname,
-          email,
-          phone,
-          address,
-          city,
-          pincode,
-        },
+        customer: { firstname, lastname, email, phone, address, city, pincode },
         paymentMethod,
         shippingPrice: 40,
         taxPrice: 0,
-        itemsPrice: subtotal,
         totalPrice,
       };
 
-      console.log("Sending Payload:", payload);
-      
       if (paymentMethod === "cod") {
+        // For COD, we send the payload without paymentResponse
         await axios.post(
           `${import.meta.env.VITE_BASE_URL}/api/v1/orders/addOrderItems`,
-          payload,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+          basePayload,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         setShowSuccess(true);
       } else {
-        // Handle Card Payment
+        // STRIPE FLOW
         const { data: clientSecretData } = await axios.post(
           `${import.meta.env.VITE_BASE_URL}/api/v1/payment/create-payment-intent`,
           { amount: Math.round(totalPrice * 100) },
-          { headers: { Authorization: `Bearer ${token}` } },
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         const cardElement = elements.getElement(CardElement);
         const { error, paymentIntent } = await stripe.confirmCardPayment(
           clientSecretData.clientSecret,
-          {
-            payment_method: { card: cardElement },
-          },
+          { payment_method: { card: cardElement } }
         );
 
         if (error) throw new Error(error.message);
 
         if (paymentIntent.status === "succeeded") {
           const cardPayload = {
-            ...payload,
+            ...basePayload,
             paymentResponse: {
               id: paymentIntent.id,
               status: paymentIntent.status,
@@ -142,18 +118,14 @@ const OrderForm = ({
           await axios.post(
             `${import.meta.env.VITE_BASE_URL}/api/v1/orders/addOrderItems`,
             cardPayload,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
+            { headers: { Authorization: `Bearer ${token}` } }
           );
           setShowSuccess(true);
         }
       }
     } catch (err) {
-      // Logic to show the specific backend error message if available
       const backendError = err.response?.data?.message || err.message;
       toast.error(backendError || "Transaction declined.");
-      console.error("Order Error:", err.response?.data);
     } finally {
       setLoading(false);
     }

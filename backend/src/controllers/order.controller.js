@@ -6,60 +6,59 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 // Create new order
-export const createOrder = asyncHandler(async (req, res) => {
-  const { 
-    orderItems, 
-    customer, 
-    paymentMethod, 
-    itemsPrice, 
-    taxPrice, 
-    shippingPrice, 
-    totalPrice 
-  } = req.body;
+export const createOrder = async (req, res, next) => {
+  try {
+    const {
+      customer,
+      orderItems,
+      paymentMethod,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+      paymentResponse
+    } = req.body;
 
-  // Manual check to see what the server actually "sees"
-  if (!customer?.firstname) {
-      console.log("DEBUG: Customer object received but firstname is missing", customer);
-      throw new ApiError(400, "Firstname is missing");
+    if (!orderItems || orderItems.length === 0) {
+      return res.status(400).json({ success: false, message: "No order items in request" });
+    }
+
+    // Update Stock
+    for (const item of orderItems) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
+    }
+
+    const isCard = paymentMethod === "card";
+
+    const order = new Order({
+      customer,
+      orderItems,
+      paymentMethod,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+      user: req.user?._id,
+      isPaid: isCard,
+      paidAt: isCard ? new Date() : null,
+      // If card payment succeeded, you might want to store the stripe ID
+      paymentResult: isCard ? {
+        id: paymentResponse?.id,
+        status: paymentResponse?.status,
+      } : null,
+      status: "pending",
+    });
+
+    await order.save();
+
+    const io = req.app.get("io");
+    if (io) io.emit("product-stock-updated");
+
+    res.status(201).json({ success: true, data: order });
+  } catch (err) {
+    // This prevents the "paymentResponse is not defined" ReferenceError
+    console.error("Order Creation Error:", err);
+    next(err);
   }
-
-  const order = await Order.create({
-    user: req.user?._id,
-    orderItems,
-    customer: {
-      firstname: customer.firstname,
-      lastname: customer.lastname,
-      email: customer.email,
-      phone: customer.phone,
-      address: customer.address,
-      city: customer.city,
-      pincode: customer.pincode,
-    },
-    paymentMethod,
-    shippingPrice,
-    taxPrice,
-    totalPrice,
-  });
-
-  // 3. Payment Logic
-  if (paymentResponse?.status === "succeeded") {
-    order.isPaid = true;
-    order.paidAt = Date.now();
-    order.paymentInfo = {
-      id: paymentResponse.id,
-      status: paymentResponse.status,
-    };
-    order.status = "processing";
-  } else {
-    order.status = "pending";
-  }
-
-  const createdOrder = await order.save();
-
-  return res
-    .status(201)
-    .json(new ApiResponse(201, createdOrder, "Order structured successfully"));
-});
+};
 
 // Get order by ID
 export const getOrderById = async (req, res, next) => {
